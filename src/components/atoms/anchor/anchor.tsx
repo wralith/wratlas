@@ -1,6 +1,6 @@
 import { clsx } from "clsx"
 import type { ComponentChildren, JSX } from "preact"
-import styles from "./anchor.module.css"
+import { anchor, label, icon } from "./anchor.css.ts"
 
 export type AnchorProps = {
   color?: "primary" | "secondary" | "muted"
@@ -13,10 +13,10 @@ export const Anchor = (props: AnchorProps) => {
   const { color = "muted", underline = false, left, right, children, ...rest } = props
 
   return (
-    <a {...rest} data-color={color} data-underline={underline ? "" : undefined} class={clsx(styles.anchor, rest.class)}>
-      {left && <span class={styles.icon}>{left}</span>}
-      {children && <span class={styles.label}>{children}</span>}
-      {right && <span class={styles.icon}>{right}</span>}
+    <a {...rest} class={clsx(anchor({ color, underline }), rest.class)}>
+      {left && <span class={icon}>{left}</span>}
+      {children && <span class={label}>{children}</span>}
+      {right && <span class={icon}>{right}</span>}
     </a>
   )
 }

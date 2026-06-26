@@ -1,6 +1,6 @@
 import { clsx } from "clsx"
 import type { ButtonHTMLAttributes, ComponentChildren } from "preact"
-import styles from "./button.module.css"
+import { button, label, labelIconOnly, spinner } from "./button.css.ts"
 
 export type ButtonProps = {
   color?: "primary" | "secondary"
@@ -16,14 +16,18 @@ export const Button = (props: ButtonProps) => {
   return (
     <button
       {...rest}
-      data-color={color}
-      data-size={size}
       disabled={rest.disabled || loading}
-      class={clsx(styles.button, rest.class)}
+      class={clsx(
+        button({
+          color,
+          size: size !== "small" ? size : undefined,
+        }),
+        rest.class,
+      )}
     >
-      {loading && <span class={styles.spinner} />}
+      {loading && <span class={spinner} />}
       {!loading && left && <>{left}</>}
-      {!loading && children && <span class={styles.label}>{children}</span>}
+      {!loading && children && <span class={clsx(label, size === "icon-only" && labelIconOnly)}>{children}</span>}
       {!loading && right && <>{right}</>}
     </button>
   )

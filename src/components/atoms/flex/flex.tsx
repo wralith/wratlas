@@ -1,6 +1,6 @@
 import { clsx } from "clsx"
 import type { ComponentChildren, JSX } from "preact"
-import styles from "./flex.module.css"
+import { flex } from "./flex.css.ts"
 
 export type FlexProps = {
   direction?: "row" | "column"
@@ -18,13 +18,17 @@ export const Flex = (props: FlexProps) => {
   return (
     <div
       {...rest}
-      data-direction={direction}
-      data-justify={justify}
-      data-align={align}
-      data-wrap={wrap ? "" : undefined}
-      data-gap={gap}
-      data-inline={inline ? "" : undefined}
-      class={clsx(styles.flex, rest.class)}
+      class={clsx(
+        flex({
+          inline,
+          direction: direction !== "row" ? direction : undefined,
+          justify: justify !== "start" ? justify : undefined,
+          align: align !== "start" ? align : undefined,
+          wrap,
+          gap,
+        }),
+        rest.class,
+      )}
     >
       {children}
     </div>

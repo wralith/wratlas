@@ -1,9 +1,10 @@
+import { clsx } from "clsx"
 import { Paintbrush, Settings } from "lucide-preact"
 import { useLocation } from "preact-iso"
 import { Anchor } from "./atoms/anchor/anchor"
 import { Button } from "./atoms/button/button"
 import { Flex } from "./atoms/flex/flex"
-import styles from "./header.module.css"
+import { container, brand, header, link, linkActive } from "./header.css.ts"
 
 const navLinks = [
   { label: "Home", href: "/" },
@@ -16,19 +17,14 @@ export const Header = () => {
   const { url } = useLocation()
 
   return (
-    <div class={styles.container}>
-      <header class={styles.header}>
+    <div class={container}>
+      <header class={header}>
         <Flex align="center" justify="between" gap="lg">
-          <span class={styles.brand}>Wratlas</span>
+          <span class={brand}>Wratlas</span>
           <Flex gap="sm">
-            {navLinks.map(link => (
-              <Anchor
-                key={link.href}
-                href={link.href}
-                class={styles.link}
-                data-active={url === link.href ? "" : undefined}
-              >
-                {link.label}
+            {navLinks.map(navLink => (
+              <Anchor key={navLink.href} href={navLink.href} class={clsx(link, url === navLink.href && linkActive)}>
+                {navLink.label}
               </Anchor>
             ))}
           </Flex>

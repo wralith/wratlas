@@ -1,7 +1,7 @@
 export type NotFoundPageProps = {
   default?: boolean
 }
-const NotFoundPage = (props: NotFoundPageProps) => {
+const NotFoundPage = (_props: NotFoundPageProps) => {
   return <div>Not Found</div>
 }
 

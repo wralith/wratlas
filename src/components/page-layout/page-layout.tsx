@@ -1,6 +1,6 @@
 import type { ComponentChildren } from "preact"
 import { Header } from "../header"
-import styles from "./page-layout.module.css"
+import { layout, content } from "./page-layout.css.ts"
 
 export type PageLayoutProps = {
   children: ComponentChildren
@@ -8,9 +8,9 @@ export type PageLayoutProps = {
 
 export const PageLayout = ({ children }: PageLayoutProps) => {
   return (
-    <div class={styles.layout}>
+    <div class={layout}>
       <Header />
-      <main class={styles.content}>{children}</main>
+      <main class={content}>{children}</main>
     </div>
   )
 }

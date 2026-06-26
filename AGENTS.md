@@ -9,7 +9,7 @@ EVERYTHING IN CODE SHOULD BE SUPER SIMPLE AND READABLE.
 - **Bundler:** Vite with `@preact/preset-vite`.
 - **Routing:** `preact-iso` (`LocationProvider`, `Router`, `Route`, `lazy`).
 - **State:** `@preact/signals`.
-- **Styling:** CSS Modules (`*.module.css`) + CSS custom properties (`vars.css`).
+- **Styling:** vanilla-extract (`*.css.ts`) with `@vanilla-extract/recipes` for variants.
 - **Icons:** `lucide-preact`.
 - **Linting/Formatting:** Biome. Run `bun format` before committing.
 - **Package manager:** Bun.
@@ -18,8 +18,9 @@ EVERYTHING IN CODE SHOULD BE SUPER SIMPLE AND READABLE.
 
 - **No comments in code** unless absolutely necessary.
 - **No default exports** except page components (lazy needs them).
-- **CSS Modules** for component styles. Use `styles` import pattern.
-- **CSS custom properties** from `vars.css` for all colors, spacing, typography.
+- **vanilla-extract** for component styles. Use named imports from `*.css.ts` files.
+- **Design tokens** from `src/styles/vars.css.ts` — always reference via the typed `vars` object.
+- **Recipes** (`@vanilla-extract/recipes`) for components with style variants.
 - **No prop drilling** — use signals or composition.
 - **Atoms** in `components/atoms/` for tiny reusable UI primitives.
 - **Arrow functions** for components.

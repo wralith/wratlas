@@ -63,15 +63,25 @@ export const button = recipe({
       },
     },
     size: {
+      small: {
+        gap: 6,
+        height: 24,
+        padding: "4px 8px",
+        fontSize: "0.6875rem",
+      },
+      medium: {},
+      large: {
+        gap: 10,
+        height: 36,
+        padding: "10px 20px",
+        fontSize: vars.textSize.base,
+      },
       "icon-only": {
         padding: 6,
       },
-      large: {
-        padding: "10px 20px",
-        height: 36,
-        fontSize: vars.textSize.base,
-        gap: 10,
-      },
     },
+  },
+  defaultVariants: {
+    size: "medium",
   },
 })

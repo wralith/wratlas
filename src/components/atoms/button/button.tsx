@@ -1,10 +1,11 @@
 import { clsx } from "clsx"
 import type { ButtonHTMLAttributes, ComponentChildren } from "preact"
+import type { RecipeVariants } from "@vanilla-extract/recipes"
 import { button, label, labelIconOnly, spinner } from "./button.css.ts"
 
-export type ButtonProps = {
-  color?: "primary" | "secondary"
-  size?: "icon-only" | "small" | "large"
+type ButtonVariants = RecipeVariants<typeof button>
+
+export type ButtonProps = ButtonVariants & {
   loading?: boolean
   left?: ComponentChildren
   right?: ComponentChildren
@@ -17,13 +18,7 @@ export const Button = (props: ButtonProps) => {
     <button
       {...rest}
       disabled={rest.disabled || loading}
-      class={clsx(
-        button({
-          color,
-          size: size !== "small" ? size : undefined,
-        }),
-        rest.class,
-      )}
+      class={clsx(button({ color, size }), rest.class)}
     >
       {loading && <span class={spinner} />}
       {!loading && left && <>{left}</>}

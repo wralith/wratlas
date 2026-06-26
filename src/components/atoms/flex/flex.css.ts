@@ -10,9 +10,11 @@ export const flex = recipe({
       true: { display: "inline-flex" },
     },
     direction: {
+      row: {},
       column: { flexDirection: "column" },
     },
     justify: {
+      start: {},
       center: { justifyContent: "center" },
       end: { justifyContent: "flex-end" },
       between: { justifyContent: "space-between" },
@@ -20,6 +22,7 @@ export const flex = recipe({
       evenly: { justifyContent: "space-evenly" },
     },
     align: {
+      start: {},
       center: { alignItems: "center" },
       end: { alignItems: "flex-end" },
       stretch: { alignItems: "stretch" },

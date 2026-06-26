@@ -21,6 +21,7 @@ EVERYTHING IN CODE SHOULD BE SUPER SIMPLE AND READABLE.
 - **vanilla-extract** for component styles. Use named imports from `*.css.ts` files.
 - **Design tokens** from `src/styles/vars.css.ts` — always reference via the typed `vars` object.
 - **Recipes** (`@vanilla-extract/recipes`) for components with style variants.
+- **`RecipeVariants<typeof recipe>`** for component prop types — never manually redefine variant props.
 - **No prop drilling** — use signals or composition.
 - **Atoms** in `components/atoms/` for tiny reusable UI primitives.
 - **Arrow functions** for components.

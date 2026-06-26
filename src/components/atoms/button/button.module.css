@@ -3,7 +3,8 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  border: 2px solid var(--color-primary);
+  border: 2px solid var(--color-border);
+  height: 30px;
   border-radius: var(--radius-xs);
   padding: 6px 12px;
   font-family: var(--font-ui);
@@ -16,11 +17,13 @@
 
   &[data-color="primary"] {
     background-color: var(--color-primary);
+    border-color: var(--color-primary);
     color: var(--color-dark);
   }
 
   &[data-color="secondary"] {
     background-color: var(--color-secondary);
+    border-color: var(--color-secondary);
     color: var(--color-dark);
   }
 
@@ -30,6 +33,7 @@
 
   &[data-size="large"] {
     padding: 10px 20px;
+    height: 36px;
     font-size: var(--text-base);
     gap: 8px;
   }
@@ -47,10 +51,16 @@
 
 .label {
   line-height: 1;
+
+  .button[data-size="icon-only"] & {
+    line-height: 0;
+  }
 }
 
 .icon {
   display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @keyframes spin {

@@ -1,11 +1,11 @@
 import { PageLayout } from "../components/page-layout/page-layout"
 
-const HomePage = (props: { path: string }) => {
+const LibraryPage = () => {
   return (
     <PageLayout>
-      <h1>Welcome to the Home Page</h1>
+      <h1>Library</h1>
     </PageLayout>
   )
 }
 
-export default HomePage
+export default LibraryPage

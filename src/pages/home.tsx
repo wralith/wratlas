@@ -1,13 +1,10 @@
-import { Header } from "../components/header"
+import { PageLayout } from "../components/page-layout/page-layout"
 
 const HomePage = () => {
   return (
-    <div>
-      <Header />
-      <div>
-        <h1>Welcome to the Home Page</h1>
-      </div>
-    </div>
+    <PageLayout>
+      <h1>Welcome to the Home Page</h1>
+    </PageLayout>
   )
 }
 

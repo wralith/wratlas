@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@preact/signals": "^2.9.2",
+    "clsx": "^2.1.1",
+    "lucide-preact": "^1.21.0",
     "preact": "^10.29.2",
     "preact-iso": "^2.12.0"
   },

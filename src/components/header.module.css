@@ -1,0 +1,14 @@
+.container {
+  margin: 1rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  border: 1px solid var(--color-border);
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-md);
+  height: 60px;
+}

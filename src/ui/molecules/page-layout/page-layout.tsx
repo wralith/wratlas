@@ -1,7 +1,7 @@
-import { clsx } from "clsx"
 import type { ComponentChildren } from "preact"
 import { Header } from "@/components/header"
-import { content, contextFull, layout } from "@/ui/molecules/page-layout/page-layout.css.ts"
+import { cn } from "@/lib/cn"
+import { content, contentFull, layout } from "@/ui/molecules/page-layout/page-layout.css.ts"
 
 export type PageLayoutProps = {
   children: ComponentChildren
@@ -12,7 +12,7 @@ export const PageLayout = ({ children, full }: PageLayoutProps) => {
   return (
     <div class={layout}>
       <Header />
-      <main class={clsx(content, full && contextFull)}>{children}</main>
+      <main class={cn(content, full && contentFull)}>{children}</main>
     </div>
   )
 }

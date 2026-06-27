@@ -3,6 +3,7 @@ import { vars } from "@/styles/vars.css.ts"
 
 export const container = style({
   margin: "1rem",
+  marginBottom: "0.5rem",
 })
 
 export const brand = style({

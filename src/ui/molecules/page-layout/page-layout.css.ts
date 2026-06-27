@@ -17,7 +17,7 @@ export const content = style({
   borderRadius: vars.radius.md,
 })
 
-export const contextFull = style({
+export const contentFull = style({
   margin: 0,
   padding: 0,
   background: "none",

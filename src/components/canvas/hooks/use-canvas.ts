@@ -10,12 +10,12 @@ export const useCanvas = () => {
     const el = canvasRef.current
     if (!el) return
 
-    const parent = el.parentElement
-    if (!parent) return
+    const host = el.parentElement
+    if (!host) return
 
     const canvas = new FabricCanvas(el, {
-      width: parent.clientWidth,
-      height: parent.clientHeight,
+      width: host.clientWidth,
+      height: host.clientHeight,
       backgroundColor: "transparent",
       selection: true,
       preserveObjectStacking: true,
@@ -29,16 +29,19 @@ export const useCanvas = () => {
     fabricCanvas.value = canvas
     canvasReady.value = true
 
+    let resizeTimer: ReturnType<typeof setTimeout>
     const observer = new ResizeObserver(() => {
-      const p = el.parentElement
-      if (!p) return
-      canvas.setDimensions({
-        width: p.clientWidth,
-        height: p.clientHeight,
-      })
-      canvas.requestRenderAll()
+      clearTimeout(resizeTimer)
+      resizeTimer = setTimeout(() => {
+        canvas.setDimensions({
+          width: host.clientWidth,
+          height: host.clientHeight,
+        })
+
+        canvas.requestRenderAll()
+      }, 50)
     })
-    observer.observe(parent)
+    observer.observe(host)
 
     return () => {
       observer.disconnect()

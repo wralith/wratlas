@@ -11,7 +11,5 @@ export const wrapper = style({
 })
 
 export const canvasHost = style({
-  width: "100%",
-  height: "100%",
   display: "block",
 })

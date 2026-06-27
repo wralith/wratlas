@@ -1,6 +1,6 @@
 import { useSignalEffect } from "@preact/signals"
-import { removeActiveObject } from "@/components/canvas/canvas-actions"
 import { fabricCanvas } from "@/components/canvas/canvas.store"
+import { removeActiveObject } from "@/components/canvas/canvas-actions"
 
 export const useObjectDelete = () => {
   useSignalEffect(() => {

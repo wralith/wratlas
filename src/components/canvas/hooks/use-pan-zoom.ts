@@ -1,7 +1,7 @@
 import { batch, useSignalEffect } from "@preact/signals"
 import type { TPointerEvent, TPointerEventInfo } from "fabric"
 import { Point } from "fabric"
-import { activeTool, fabricCanvas, panX, panY, zoomLevel } from "@/components/canvas/canvas.store"
+import { fabricCanvas, panX, panY, zoomLevel } from "@/components/canvas/canvas.store"
 
 export const usePanZoom = () => {
   useSignalEffect(() => {

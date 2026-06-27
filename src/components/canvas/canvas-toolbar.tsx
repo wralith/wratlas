@@ -1,8 +1,8 @@
 import { Plus, Trash2 } from "lucide-preact"
 import { useRef } from "preact/hooks"
-import { addImagesFromFiles, removeActiveObject } from "@/components/canvas/canvas-actions"
 import { fabricCanvas } from "@/components/canvas/canvas.store"
-import { group, label, toolbar } from "@/components/canvas/canvas-toolbar.css"
+import { addImagesFromFiles, removeActiveObject } from "@/components/canvas/canvas-actions"
+import { group, label, toolbar, container } from "@/components/canvas/canvas-toolbar.css"
 import { Button } from "@/ui/atoms/button/button"
 
 export const CanvasToolbar = () => {
@@ -24,7 +24,7 @@ export const CanvasToolbar = () => {
       scaleToWidth: 400,
     })
 
-    ;(e.target as HTMLInputElement).value = ""
+    if (inputRef.current) inputRef.current.value = ""
   }
 
   const handleRemove = () => {
@@ -34,18 +34,20 @@ export const CanvasToolbar = () => {
   }
 
   return (
-    <div class={toolbar}>
-      <div class={group}>
-        <span class={label}>Canvas</span>
-      </div>
-      <div class={group}>
-        <Button color="secondary" size="small" left={<Plus size={14} />} onClick={handleAddClick}>
-          Add Image
-        </Button>
-        <Button color="secondary" size="small" left={<Trash2 size={14} />} onClick={handleRemove}>
-          Remove
-        </Button>
-        <input ref={inputRef} type="file" accept="image/*" multiple onChange={handleFileChange} hidden />
+    <div class={container}>
+      <div class={toolbar}>
+        <div class={group}>
+          <span class={label}>Canvas</span>
+        </div>
+        <div class={group}>
+          <Button size="icon-only" onClick={handleAddClick}>
+            <Plus size={14} />
+          </Button>
+          <Button size="icon-only" onClick={handleRemove}>
+            <Trash2 size={14} />
+          </Button>
+          <input ref={inputRef} type="file" accept="image/*" multiple onChange={handleFileChange} hidden />
+        </div>
       </div>
     </div>
   )

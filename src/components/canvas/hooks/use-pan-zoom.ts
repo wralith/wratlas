@@ -1,6 +1,6 @@
 import { useSignalEffect } from "@preact/signals"
 import { Point } from "fabric"
-import { fabricCanvas, zoomLevel, panX, panY } from "../canvas.store"
+import { fabricCanvas, panX, panY, zoomLevel } from "@/components/canvas/canvas.store"
 
 export const usePanZoom = () => {
   useSignalEffect(() => {

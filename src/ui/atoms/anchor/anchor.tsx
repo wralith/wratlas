@@ -1,7 +1,7 @@
+import type { RecipeVariants } from "@vanilla-extract/recipes"
 import { clsx } from "clsx"
 import type { ComponentChildren, JSX } from "preact"
-import type { RecipeVariants } from "@vanilla-extract/recipes"
-import { anchor, label, icon } from "./anchor.css.ts"
+import { anchor, icon, label } from "@/ui/atoms/anchor/anchor.css.ts"
 
 type AnchorVariants = RecipeVariants<typeof anchor>
 

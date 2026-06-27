@@ -1,6 +1,6 @@
 import { Canvas as FabricCanvas } from "fabric"
 import { useEffect, useRef } from "preact/hooks"
-import { canvasReady, fabricCanvas } from "../canvas.store"
+import { canvasReady, fabricCanvas } from "@/components/canvas/canvas.store"
 
 export const useCanvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)

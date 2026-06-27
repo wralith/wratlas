@@ -1,5 +1,5 @@
 import { globalStyle } from "@vanilla-extract/css"
-import { vars } from "./vars.css.ts"
+import { vars } from "@/styles/vars.css.ts"
 
 globalStyle("*, *::before, *::after", {
   boxSizing: "border-box",

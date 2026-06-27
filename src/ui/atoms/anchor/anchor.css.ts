@@ -1,6 +1,6 @@
 import { style } from "@vanilla-extract/css"
 import { recipe } from "@vanilla-extract/recipes"
-import { vars } from "../../../styles/vars.css.ts"
+import { vars } from "@/styles/vars.css.ts"
 
 export const label = style({
   lineHeight: 1,

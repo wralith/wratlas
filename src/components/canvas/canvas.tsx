@@ -1,7 +1,7 @@
-import { useCanvas } from "./hooks/use-canvas"
-import { usePanZoom } from "./hooks/use-pan-zoom"
-import { useDragDrop } from "./hooks/use-drag-drop"
-import { wrapper, canvasHost } from "./canvas.css"
+import { canvasHost, wrapper } from "@/components/canvas/canvas.css"
+import { useCanvas } from "@/components/canvas/hooks/use-canvas"
+import { useDragDrop } from "@/components/canvas/hooks/use-drag-drop"
+import { usePanZoom } from "@/components/canvas/hooks/use-pan-zoom"
 
 export const Canvas = () => {
   const { canvasRef } = useCanvas()

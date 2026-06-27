@@ -1,6 +1,6 @@
 import { useSignalEffect } from "@preact/signals"
 import { FabricImage } from "fabric"
-import { fabricCanvas } from "../canvas.store"
+import { fabricCanvas } from "@/components/canvas/canvas.store"
 
 export const useDragDrop = () => {
   useSignalEffect(() => {

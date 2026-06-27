@@ -23,7 +23,7 @@ EVERYTHING IN CODE SHOULD BE SUPER SIMPLE AND READABLE.
 - **Recipes** (`@vanilla-extract/recipes`) for components with style variants.
 - **`RecipeVariants<typeof recipe>`** for component prop types — never manually redefine variant props.
 - **No prop drilling** — use signals or composition.
-- **Atoms** in `components/atoms/` for tiny reusable UI primitives.
+- **Atoms** in `ui/atoms/` for tiny reusable UI primitives; **molecules** in `ui/molecules/`. `src/components/` is for app-specific components only.
 - **Arrow functions** for components.
 - **No wrapper divs** unless needed for layout.
 - **Keep files under ~300 lines.** Don't split if colocation is fine.

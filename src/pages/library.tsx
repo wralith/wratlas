@@ -1,4 +1,4 @@
-import { PageLayout } from "../components/page-layout/page-layout"
+import { PageLayout } from "@/ui/molecules/page-layout/page-layout"
 
 const LibraryPage = () => {
   return (

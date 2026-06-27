@@ -1,6 +1,6 @@
 import { keyframes, style } from "@vanilla-extract/css"
 import { recipe } from "@vanilla-extract/recipes"
-import { vars } from "../../../styles/vars.css.ts"
+import { vars } from "@/styles/vars.css.ts"
 
 const spin = keyframes({
   to: { transform: "rotate(360deg)" },

@@ -1,10 +1,10 @@
 import { clsx } from "clsx"
 import { Paintbrush, Settings } from "lucide-preact"
 import { useLocation } from "preact-iso"
-import { Anchor } from "./atoms/anchor/anchor"
-import { Button } from "./atoms/button/button"
-import { Flex } from "./atoms/flex/flex"
-import { container, brand, header, link, linkActive } from "./header.css.ts"
+import { Anchor } from "@/ui/atoms/anchor/anchor"
+import { Button } from "@/ui/atoms/button/button"
+import { Flex } from "@/ui/atoms/flex/flex"
+import { brand, container, header, link, linkActive } from "@/components/header.css.ts"
 
 const navLinks = [
   { label: "Home", href: "/" },

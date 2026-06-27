@@ -1,6 +1,6 @@
 import { clsx } from "clsx"
 import type { JSX } from "preact"
-import { card, borderless } from "./card.css.ts"
+import { borderless, card } from "@/ui/atoms/card/card.css.ts"
 
 export type CardProps = {
   border?: boolean

@@ -1,7 +1,7 @@
 import type { RecipeVariants } from "@vanilla-extract/recipes"
 import { clsx } from "clsx"
 import type { JSX } from "preact"
-import { flex } from "./flex.css.ts"
+import { flex } from "@/ui/atoms/flex/flex.css.ts"
 
 type FlexVariants = RecipeVariants<typeof flex>
 

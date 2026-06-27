@@ -1,7 +1,7 @@
+import type { RecipeVariants } from "@vanilla-extract/recipes"
 import { clsx } from "clsx"
 import type { ButtonHTMLAttributes, ComponentChildren } from "preact"
-import type { RecipeVariants } from "@vanilla-extract/recipes"
-import { button, label, labelIconOnly, spinner } from "./button.css.ts"
+import { button, label, labelIconOnly, spinner } from "@/ui/atoms/button/button.css.ts"
 
 type ButtonVariants = RecipeVariants<typeof button>
 

@@ -33,6 +33,8 @@ export const useDragDrop = () => {
           img.set({
             left: scenePoint.x,
             top: scenePoint.y,
+            originX: "center",
+            originY: "center",
           })
           img.scaleToWidth(Math.min(img.width! * (1 / zoom), 600))
           canvas.add(img)
@@ -57,7 +59,7 @@ export const useDragDrop = () => {
         const url = URL.createObjectURL(file)
         try {
           const img = await FabricImage.fromURL(url)
-          const center = canvas.getCenterPoint()
+          const center = canvas.getVpCenter()
           img.set({
             left: center.x,
             top: center.y,

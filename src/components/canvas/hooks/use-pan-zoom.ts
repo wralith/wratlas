@@ -1,14 +1,19 @@
-import { useSignalEffect } from "@preact/signals"
+import { batch, useSignalEffect } from "@preact/signals"
+import type { TPointerEvent, TPointerEventInfo } from "fabric"
 import { Point } from "fabric"
-import { fabricCanvas, panX, panY, zoomLevel } from "@/components/canvas/canvas.store"
+import { activeTool, fabricCanvas, panX, panY, zoomLevel } from "@/components/canvas/canvas.store"
 
 export const usePanZoom = () => {
   useSignalEffect(() => {
     const canvas = fabricCanvas.value
     if (!canvas) return
 
-    const handleWheel = (opt: { e: WheelEvent }) => {
+    const handleWheel = (opt: TPointerEventInfo<WheelEvent>) => {
       const e = opt.e
+
+      e.preventDefault()
+      e.stopPropagation()
+
       const delta = -e.deltaY
       let zoom = canvas.getZoom()
       zoom *= 0.999 ** delta
@@ -17,62 +22,75 @@ export const usePanZoom = () => {
       canvas.zoomToPoint(new Point(e.offsetX, e.offsetY), zoom)
       canvas.requestRenderAll()
 
-      zoomLevel.value = zoom
-      const vpt = canvas.viewportTransform
-      if (vpt) {
-        panX.value = vpt[4]
-        panY.value = vpt[5]
-      }
+      batch(() => {
+        zoomLevel.value = zoom
+        const vpt = canvas.viewportTransform
+        if (vpt) {
+          panX.value = vpt[4]
+          panY.value = vpt[5]
+        }
+      })
     }
 
     let isPanning = false
     let lastX = 0
     let lastY = 0
 
-    const handleMouseDown = (opt: { e: MouseEvent }) => {
-      const ev = opt.e
-      if (ev.button === 1) {
+    const handleMouseDown = (opt: TPointerEventInfo<TPointerEvent>) => {
+      const e = opt.e
+
+      if (e instanceof MouseEvent && e.button === 1) {
         isPanning = true
-        lastX = ev.clientX
-        lastY = ev.clientY
+        lastX = e.clientX
+        lastY = e.clientY
         canvas.selection = false
         canvas.defaultCursor = "grabbing"
-        ev.preventDefault()
+        e.preventDefault()
       }
     }
 
-    const handleMouseMove = (opt: { e: MouseEvent }) => {
+    const handleMouseMove = (opt: TPointerEventInfo<MouseEvent>) => {
       if (!isPanning) return
+
       const ev = opt.e
       const vpt = canvas.viewportTransform
       if (vpt) {
         vpt[4] += ev.clientX - lastX
         vpt[5] += ev.clientY - lastY
+
         lastX = ev.clientX
         lastY = ev.clientY
+
         canvas.requestRenderAll()
-        panX.value = vpt[4]
-        panY.value = vpt[5]
+
+        batch(() => {
+          panX.value = vpt[4]
+          panY.value = vpt[5]
+        })
       }
     }
 
     const handleMouseUp = () => {
-      if (isPanning) {
-        isPanning = false
-        canvas.selection = true
-        canvas.defaultCursor = "default"
+      if (!isPanning) {
+        return
       }
+
+      isPanning = false
+      canvas.selection = true
+      canvas.defaultCursor = "default"
     }
 
     const disposers = [
-      canvas.on("mouse:wheel", handleWheel as any),
-      canvas.on("mouse:down", handleMouseDown as any),
-      canvas.on("mouse:move", handleMouseMove as any),
-      canvas.on("mouse:up", handleMouseUp as any),
+      canvas.on("mouse:wheel", handleWheel),
+      canvas.on("mouse:down", handleMouseDown),
+      canvas.on("mouse:move", handleMouseMove),
+      canvas.on("mouse:up", handleMouseUp),
     ]
 
     return () => {
-      disposers.forEach(d => d())
+      disposers.forEach(d => {
+        d()
+      })
     }
   })
 }

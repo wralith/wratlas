@@ -1,7 +1,7 @@
 import { signal } from "@preact/signals"
 import type { Canvas as FabricCanvas } from "fabric"
 
-export type CanvasTool = "select" | "draw" | "text" | "sticky"
+export type CanvasTool = "select" | "draw" | "text" | "sticky" | "pan"
 
 export const activeTool = signal<CanvasTool>("select")
 export const zoomLevel = signal(1)

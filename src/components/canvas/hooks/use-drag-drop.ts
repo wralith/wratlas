@@ -1,6 +1,6 @@
 import { useSignalEffect } from "@preact/signals"
-import { FabricImage } from "fabric"
 import { fabricCanvas } from "@/components/canvas/canvas.store"
+import { addImagesFromFiles } from "@/components/canvas/canvas-actions"
 
 export const useDragDrop = () => {
   useSignalEffect(() => {
@@ -23,55 +23,33 @@ export const useDragDrop = () => {
 
       const zoom = canvas.getZoom()
 
-      for (const file of Array.from(files)) {
-        if (!file.type.startsWith("image/")) continue
-
-        const url = URL.createObjectURL(file)
-        try {
-          const img = await FabricImage.fromURL(url)
-          const scenePoint = canvas.getScenePoint(e)
-          img.set({
-            left: scenePoint.x,
-            top: scenePoint.y,
-            originX: "center",
-            originY: "center",
-          })
+      await addImagesFromFiles(canvas, files, {
+        getPosition: () => canvas.getScenePoint(e),
+        originX: "center",
+        originY: "center",
+        onImageAdded: img => {
           img.scaleToWidth(Math.min(img.width! * (1 / zoom), 600))
-          canvas.add(img)
-          canvas.setActiveObject(img)
-          canvas.requestRenderAll()
-        } finally {
-          URL.revokeObjectURL(url)
-        }
-      }
+        },
+      })
     }
 
     const handlePaste = async (e: ClipboardEvent) => {
       const items = e.clipboardData?.items
       if (!items) return
 
+      const files: File[] = []
       for (const item of Array.from(items)) {
-        if (!item.type.startsWith("image/")) continue
-
-        const file = item.getAsFile()
-        if (!file) continue
-
-        const url = URL.createObjectURL(file)
-        try {
-          const img = await FabricImage.fromURL(url)
-          const center = canvas.getVpCenter()
-          img.set({
-            left: center.x,
-            top: center.y,
-          })
-          img.scaleToWidth(400)
-          canvas.add(img)
-          canvas.setActiveObject(img)
-          canvas.requestRenderAll()
-        } finally {
-          URL.revokeObjectURL(url)
+        if (item.type.startsWith("image/")) {
+          const file = item.getAsFile()
+          if (file) files.push(file)
         }
       }
+      if (!files.length) return
+
+      await addImagesFromFiles(canvas, files, {
+        getPosition: () => canvas.getVpCenter(),
+        scaleToWidth: 400,
+      })
     }
 
     wrapperEl.addEventListener("dragover", handleDragOver)

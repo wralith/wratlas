@@ -16,6 +16,7 @@
     "@vanilla-extract/recipes": "^0.5.7",
     "@vanilla-extract/vite-plugin": "^5.2.3",
     "clsx": "^2.1.1",
+    "fabric": "^7.4.0",
     "lucide-preact": "^1.21.0",
     "preact": "^10.29.2",
     "preact-iso": "^2.12.0"

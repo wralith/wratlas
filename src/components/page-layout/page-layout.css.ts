@@ -16,3 +16,14 @@ export const content = style({
   border: `1px solid ${vars.color.border}`,
   borderRadius: vars.radius.md,
 })
+
+export const contextFull = style({
+  margin: 0,
+  padding: 0,
+  background: "none",
+  border: "none",
+  borderRadius: 0,
+  display: "flex",
+  flexDirection: "column",
+  overflow: "hidden",
+})

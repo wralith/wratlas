@@ -1,6 +1,5 @@
 import { useSignalEffect } from "@preact/signals"
-import { fabricCanvas } from "@/components/canvas/canvas.store"
-import { addImagesFromFiles } from "@/components/canvas/canvas-actions"
+import { addImagesToActiveCanvas, fabricCanvas } from "@/components/canvas/canvas.store"
 
 const MAX_IMAGE_SIZE = 50 * 1024 * 1024 // 50MB
 
@@ -32,19 +31,10 @@ export const useDragDrop = () => {
       const files = e.dataTransfer?.files
       if (!files) return
 
-      const imageFiles = filterOversized(Array.from(files).filter(f => f.type.startsWith("image/")))
-      if (!imageFiles.length) return
+      const images = filterOversized(Array.from(files).filter(f => f.type.startsWith("image/")))
+      if (!images.length) return
 
-      const zoom = canvas.getZoom()
-
-      await addImagesFromFiles(canvas, imageFiles, {
-        getPosition: () => canvas.getScenePoint(e),
-        originX: "center",
-        originY: "center",
-        onImageAdded: img => {
-          if (img.width) img.scaleToWidth(Math.min(img.width * (1 / zoom), 600))
-        },
-      })
+      await addImagesToActiveCanvas(images)
     }
 
     const handlePaste = async (e: ClipboardEvent) => {
@@ -62,10 +52,7 @@ export const useDragDrop = () => {
       const files = filterOversized(rawFiles)
       if (!files.length) return
 
-      await addImagesFromFiles(canvas, files, {
-        getPosition: () => canvas.getVpCenter(),
-        scaleToWidth: 400,
-      })
+      await addImagesToActiveCanvas(files)
     }
 
     wrapperEl.addEventListener("dragover", handleDragOver)

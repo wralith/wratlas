@@ -24,6 +24,24 @@ export const group = style({
   gap: vars.space.sm,
 })
 
+export const controls = style({
+  display: "flex",
+  alignItems: "center",
+  gap: vars.space.sm,
+})
+
+export const input = style({
+  height: 30,
+  border: `1px solid ${vars.color.border}`,
+  backgroundColor: vars.bg.base,
+  color: vars.text.primary,
+  fontFamily: vars.font.ui,
+  fontSize: vars.textSize.sm,
+  padding: "0 8px",
+  borderRadius: vars.radius.xs,
+  outline: "none",
+})
+
 export const label = style({
   fontSize: vars.textSize.sm,
   color: vars.text.muted,

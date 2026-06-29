@@ -1,5 +1,5 @@
 import { useSignalEffect } from "@preact/signals"
-import { addImagesToActiveCanvas, fabricCanvas } from "@/components/canvas/canvas.store"
+import { controller, fabricCanvas } from "@/components/canvas/canvas.store"
 
 const MAX_IMAGE_SIZE = 50 * 1024 * 1024 // 50MB
 
@@ -34,7 +34,7 @@ export const useDragDrop = () => {
       const images = filterOversized(Array.from(files).filter(f => f.type.startsWith("image/")))
       if (!images.length) return
 
-      await addImagesToActiveCanvas(images)
+      await controller.add_image(images)
     }
 
     const handlePaste = async (e: ClipboardEvent) => {
@@ -52,7 +52,7 @@ export const useDragDrop = () => {
       const files = filterOversized(rawFiles)
       if (!files.length) return
 
-      await addImagesToActiveCanvas(files)
+      await controller.add_image(files)
     }
 
     wrapperEl.addEventListener("dragover", handleDragOver)

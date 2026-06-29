@@ -1,18 +1,16 @@
 import { Download, FileUp, Plus, Trash2 } from "lucide-preact"
 import { useRef, useState } from "preact/hooks"
 import {
-  activeCanvas,
   activeCanvasId,
-  addImagesToActiveCanvas,
-  canvases,
-  createCanvasDoc,
+  activeCanvasName,
+  controller,
+  canvasList,
+  canvas_store,
   fabricCanvas,
-  renameCanvasDoc,
-  setActiveCanvasDoc,
 } from "@/components/canvas/canvas.store"
 import { removeActiveObject } from "@/components/canvas/canvas-actions"
 import { container, controls, group, input, label, toolbar } from "@/components/canvas/canvas-toolbar.css"
-import type { CanvasSnapshot } from "@/lib/canvas-doc/manager"
+import { create_canvas } from "@/lib/canvas-doc/store"
 import { Button } from "@/ui/atoms/button/button"
 
 export const CanvasToolbar = () => {
@@ -20,26 +18,27 @@ export const CanvasToolbar = () => {
   const importRef = useRef<HTMLInputElement>(null)
   const [draftName, setDraftName] = useState("")
 
-  const currentCanvas = activeCanvas.value
-  const canRename = !!currentCanvas
+  const currentCanvasId = activeCanvasId.value
+  const currentCanvasName = activeCanvasName.value
+  const canRename = !!currentCanvasId
 
   const handleAddClick = () => {
     inputRef.current?.click()
   }
 
   const handleCreateCanvas = () => {
-    createCanvasDoc(draftName || "Untitled Canvas")
+    void controller.add_canvas(create_canvas(draftName || "Untitled Canvas"))
   }
 
   const handleRenameCanvas = () => {
-    if (!currentCanvas) return
-    renameCanvasDoc(currentCanvas.id, draftName)
+    if (!currentCanvasId) return
+    canvas_store.rename_canvas(currentCanvasId, draftName)
     setDraftName("")
   }
 
   const handleCanvasChange = async (e: Event) => {
     const id = (e.target as HTMLSelectElement).value
-    await setActiveCanvasDoc(id)
+    await controller.switch_canvas(id)
   }
 
   const handleExport = async () => {}
@@ -57,7 +56,7 @@ export const CanvasToolbar = () => {
     const canvas = fabricCanvas.value
     if (!canvas) return
 
-    await addImagesToActiveCanvas(files)
+    await controller.add_image(files)
 
     if (inputRef.current) inputRef.current.value = ""
   }
@@ -75,7 +74,7 @@ export const CanvasToolbar = () => {
           <span class={label}>Canvas</span>
           <div class={controls}>
             <select class={input} value={activeCanvasId.value} onChange={handleCanvasChange}>
-              {canvases?.value.map((canvas: CanvasSnapshot) => (
+              {canvasList.value.map(canvas => (
                 <option key={canvas.id} value={canvas.id}>
                   {canvas.name}
                 </option>
@@ -84,7 +83,7 @@ export const CanvasToolbar = () => {
             <input
               class={input}
               type="text"
-              placeholder={currentCanvas?.name ?? "Canvas name"}
+              placeholder={currentCanvasName || "Canvas name"}
               value={draftName}
               onInput={e => setDraftName((e.target as HTMLInputElement).value)}
             />

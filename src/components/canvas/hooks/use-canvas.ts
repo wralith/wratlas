@@ -1,6 +1,6 @@
 import { Canvas as FabricCanvas } from "fabric"
 import { useEffect, useRef } from "preact/hooks"
-import { canvasReady, fabricCanvas, manager } from "@/components/canvas/canvas.store"
+import { controller, canvasReady, fabricCanvas } from "@/components/canvas/canvas.store"
 
 export const useCanvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -25,7 +25,7 @@ export const useCanvas = () => {
       stopContextMenu: true,
     })
 
-    manager.init_canvas(canvas)
+    controller.init(canvas)
 
     fabricRef.current = canvas
     fabricCanvas.value = canvas

@@ -1,23 +1,24 @@
-import { batch, useSignalEffect } from "@preact/signals"
+import { batch, untracked, useSignalEffect } from "@preact/signals"
 import type { Canvas as FabricCanvas } from "fabric"
-import { activeCanvasId, fabricCanvas, manager, panX, panY, zoomLevel } from "@/components/canvas/canvas.store"
-import type { CanvasSnapshot } from "@/lib/canvas-doc/manager"
+import {
+  activeCanvas,
+  activeCanvasId,
+  controller,
+  canvas_store,
+  fabricCanvas,
+  panX,
+  panY,
+  zoomLevel,
+} from "@/components/canvas/canvas.store"
+import { create_canvas_snapshot_patch } from "@/lib/canvas-doc/snapshot"
+import { debounce } from "@/lib/debounce"
 
-const SAVE_DEBOUNCE_MS = 300
+const SAVE_DEBOUNCE_MS = 100
 
 type ViewportState = {
   zoom: number
   x: number
   y: number
-}
-
-const readViewport = (canvas: FabricCanvas): ViewportState => {
-  const vpt = canvas.viewportTransform
-  return {
-    zoom: canvas.getZoom(),
-    x: vpt?.[4] ?? 0,
-    y: vpt?.[5] ?? 0,
-  }
 }
 
 const writeViewport = (canvas: FabricCanvas, viewport?: Partial<ViewportState>) => {
@@ -34,40 +35,26 @@ const writeViewport = (canvas: FabricCanvas, viewport?: Partial<ViewportState>) 
   })
 }
 
-const toSnapshot = (canvas: FabricCanvas) => {
-  // @ts-expect-error fabric canvas toJSON does not include custom properties by default, but we can pass them in as an array
-  const snapshot = canvas.toJSON(["_image_id"]) as CanvasSnapshot
-  return {
-    ...snapshot,
-    viewport: readViewport(canvas),
-  }
-}
-
 export const useCanvasPersistence = () => {
   useSignalEffect(() => {
     const canvas = fabricCanvas.value
     const canvasId = activeCanvasId.value
+    const isHydrating = controller.is_hydrating.value
 
-    if (!canvas || !canvasId) return
+    if (!canvas || !canvasId || isHydrating) return
 
-    let isHydrating = true
-    let saveTimer: ReturnType<typeof setTimeout> | undefined
+    let isSettingUp = true
 
-    const queueSave = () => {
-      if (isHydrating) return
+    const queueSave = debounce(() => {
+      if (isSettingUp || controller.is_hydrating.value) return
+      canvas_store.update_canvas(canvasId, create_canvas_snapshot_patch(canvas))
+    }, SAVE_DEBOUNCE_MS)
 
-      if (saveTimer) {
-        clearTimeout(saveTimer)
-      }
+    const initialViewport = untracked(() => activeCanvas.value.viewport)
+    writeViewport(canvas, initialViewport)
 
-      saveTimer = setTimeout(() => {
-        manager.update_active_canvas(toSnapshot(canvas))
-      }, SAVE_DEBOUNCE_MS)
-    }
-
-    writeViewport(canvas, manager.active_canvas.viewport)
     canvas.requestRenderAll()
-    isHydrating = false
+    isSettingUp = false
 
     const disposers = [
       canvas.on("object:added", queueSave),
@@ -79,13 +66,7 @@ export const useCanvasPersistence = () => {
     ]
 
     return () => {
-      if (saveTimer) {
-        clearTimeout(saveTimer)
-      }
-
-      if (!isHydrating) {
-        manager.update_active_canvas(toSnapshot(canvas))
-      }
+      queueSave.cancel()
 
       disposers.forEach(dispose => {
         dispose()

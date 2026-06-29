@@ -5,6 +5,9 @@ export const container = style({
   minHeight: vars.hudHeight,
   margin: "1.5rem",
   marginTop: 0,
+  position: "absolute",
+  width: "calc(100% - 3rem)",
+  zIndex: vars.z.overlayTop,
 })
 
 export const toolbar = style({
@@ -14,8 +17,10 @@ export const toolbar = style({
   height: vars.hudHeight,
   padding: `0 ${vars.space.md}`,
   border: `1px solid ${vars.color.border}`,
+  borderTop: "none",
   backgroundColor: vars.bg.surface,
   flexShrink: 0,
+  borderRadius: `0 0 ${vars.radius.md} ${vars.radius.md}`,
 })
 
 export const group = style({

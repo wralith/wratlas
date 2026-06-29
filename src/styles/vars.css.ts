@@ -55,6 +55,7 @@ export const vars = createGlobalTheme(":root", {
     roadmapLines: "2",
     hud: "100",
     overlay: "999",
+    overlayTop: "1000",
   },
   transition: {
     fast: "150ms cubic-bezier(0.4, 0, 0.2, 1)",

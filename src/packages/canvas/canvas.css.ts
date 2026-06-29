@@ -8,6 +8,7 @@ export const wrapper = style({
   backgroundColor: vars.bg.base,
   backgroundImage: "radial-gradient(circle, #313244 1px, transparent 1px)",
   backgroundSize: "24px 24px",
+  borderTop: `1px solid ${vars.color.border}`,
 })
 
 export const canvasHost = style({

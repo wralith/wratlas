@@ -1,7 +1,7 @@
 import { computed, effect, signal } from "@preact/signals"
 import { nanoid } from "nanoid"
 import { debounce } from "@/lib/debounce"
-import { safe_parse_json } from "../safe-parse-json"
+import { safe_parse_json } from "@/lib/safe-parse-json"
 import type { CanvasListItem, CanvasSnapshot, CanvasStorage } from "./types"
 import { ensure_canvas_doc_fabric_props } from "./types"
 
@@ -40,7 +40,7 @@ const get_initial_storage = (): CanvasStorage => {
   return create_default_canvas_storage()
 }
 
-export const createCanvasStore = () => {
+export const create_canvas_store = () => {
   ensure_canvas_doc_fabric_props()
 
   const storage = signal<CanvasStorage>(get_initial_storage())
@@ -110,4 +110,4 @@ export const createCanvasStore = () => {
   }
 }
 
-export type CanvasStore = ReturnType<typeof createCanvasStore>
+export type CanvasStore = ReturnType<typeof create_canvas_store>

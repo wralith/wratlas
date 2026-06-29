@@ -1,6 +1,6 @@
 import { Canvas as FabricCanvas } from "fabric"
 import { useEffect, useRef } from "preact/hooks"
-import { controller, canvasReady, fabricCanvas } from "@/components/canvas/canvas.store"
+import { canvas_controller, canvas_ready, fabric_canvas } from "../state"
 
 export const useCanvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -25,11 +25,11 @@ export const useCanvas = () => {
       stopContextMenu: true,
     })
 
-    controller.init(canvas)
+    canvas_controller.init(canvas)
 
     fabricRef.current = canvas
-    fabricCanvas.value = canvas
-    canvasReady.value = true
+    fabric_canvas.value = canvas
+    canvas_ready.value = true
 
     let resizeTimer: ReturnType<typeof setTimeout>
     const observer = new ResizeObserver(() => {
@@ -49,8 +49,8 @@ export const useCanvas = () => {
       observer.disconnect()
       canvas.dispose()
       fabricRef.current = null
-      fabricCanvas.value = null
-      canvasReady.value = false
+      fabric_canvas.value = null
+      canvas_ready.value = false
     }
   }, [])
 

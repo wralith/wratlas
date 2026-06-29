@@ -6,7 +6,7 @@ export type ImageOptions = {
   scaleToWidth?: number
 }
 
-export const removeActiveObject = (canvas: FabricCanvas) => {
+export const remove_active_object = (canvas: FabricCanvas) => {
   const activeObj = canvas.getActiveObject()
   if (!activeObj) return
   canvas.remove(activeObj)

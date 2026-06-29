@@ -1,17 +1,17 @@
 import { batch, untracked, useSignalEffect } from "@preact/signals"
 import type { Canvas as FabricCanvas } from "fabric"
-import {
-  activeCanvas,
-  activeCanvasId,
-  controller,
-  canvas_store,
-  fabricCanvas,
-  panX,
-  panY,
-  zoomLevel,
-} from "@/components/canvas/canvas.store"
-import { create_canvas_snapshot_patch } from "@/lib/canvas-doc/snapshot"
 import { debounce } from "@/lib/debounce"
+import { create_canvas_snapshot_patch } from "../internal/snapshot"
+import {
+  active_canvas,
+  active_canvas_id,
+  canvas_controller,
+  canvas_store,
+  fabric_canvas,
+  pan_x,
+  pan_y,
+  zoom_level,
+} from "../state"
 
 const SAVE_DEBOUNCE_MS = 100
 
@@ -21,7 +21,7 @@ type ViewportState = {
   y: number
 }
 
-const writeViewport = (canvas: FabricCanvas, viewport?: Partial<ViewportState>) => {
+const write_viewport = (canvas: FabricCanvas, viewport?: Partial<ViewportState>) => {
   const zoom = viewport?.zoom ?? 1
   const x = viewport?.x ?? 0
   const y = viewport?.y ?? 0
@@ -29,29 +29,29 @@ const writeViewport = (canvas: FabricCanvas, viewport?: Partial<ViewportState>) 
   canvas.setViewportTransform([zoom, 0, 0, zoom, x, y])
 
   batch(() => {
-    zoomLevel.value = zoom
-    panX.value = x
-    panY.value = y
+    zoom_level.value = zoom
+    pan_x.value = x
+    pan_y.value = y
   })
 }
 
-export const useCanvasPersistence = () => {
+export const usePersistence = () => {
   useSignalEffect(() => {
-    const canvas = fabricCanvas.value
-    const canvasId = activeCanvasId.value
-    const isHydrating = controller.is_hydrating.value
+    const canvas = fabric_canvas.value
+    const canvasId = active_canvas_id.value
+    const isHydrating = canvas_controller.is_hydrating.value
 
     if (!canvas || !canvasId || isHydrating) return
 
     let isSettingUp = true
 
     const queueSave = debounce(() => {
-      if (isSettingUp || controller.is_hydrating.value) return
+      if (isSettingUp || canvas_controller.is_hydrating.value) return
       canvas_store.update_canvas(canvasId, create_canvas_snapshot_patch(canvas))
     }, SAVE_DEBOUNCE_MS)
 
-    const initialViewport = untracked(() => activeCanvas.value.viewport)
-    writeViewport(canvas, initialViewport)
+    const initialViewport = untracked(() => active_canvas.value.viewport)
+    write_viewport(canvas, initialViewport)
 
     canvas.requestRenderAll()
     isSettingUp = false

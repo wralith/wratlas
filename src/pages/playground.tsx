@@ -1,11 +1,9 @@
-import { Canvas } from "@/components/canvas/canvas"
-import { CanvasToolbar } from "@/components/canvas/canvas-toolbar"
+import { Canvas } from "@/packages/canvas/canvas"
 import { PageLayout } from "@/ui/molecules/page-layout/page-layout"
 
 const PlaygroundPage = () => {
   return (
     <PageLayout full>
-      <CanvasToolbar />
       <Canvas />
     </PageLayout>
   )

@@ -9,7 +9,7 @@ import { ensure_canvas_doc_fabric_props } from "./types"
 
 const image_store = createStore("wratlas-canvas-images-db", "images")
 
-export const createCanvasController = (store: CanvasStore) => {
+export const create_canvas_controller = (store: CanvasStore) => {
   ensure_canvas_doc_fabric_props()
 
   let canvas: FabricCanvas | null = null

@@ -1,11 +1,11 @@
 import { batch, useSignalEffect } from "@preact/signals"
 import type { TPointerEvent, TPointerEventInfo } from "fabric"
 import { Point } from "fabric"
-import { fabricCanvas, panX, panY, zoomLevel } from "@/components/canvas/canvas.store"
+import { fabric_canvas, pan_x, pan_y, zoom_level } from "../state"
 
 export const usePanZoom = () => {
   useSignalEffect(() => {
-    const canvas = fabricCanvas.value
+    const canvas = fabric_canvas.value
     if (!canvas) return
 
     const handleWheel = (opt: TPointerEventInfo<WheelEvent>) => {
@@ -23,11 +23,11 @@ export const usePanZoom = () => {
       canvas.requestRenderAll()
 
       batch(() => {
-        zoomLevel.value = zoom
+        zoom_level.value = zoom
         const vpt = canvas.viewportTransform
         if (vpt) {
-          panX.value = vpt[4]
-          panY.value = vpt[5]
+          pan_x.value = vpt[4]
+          pan_y.value = vpt[5]
         }
       })
     }
@@ -64,8 +64,8 @@ export const usePanZoom = () => {
         canvas.requestRenderAll()
 
         batch(() => {
-          panX.value = vpt[4]
-          panY.value = vpt[5]
+          pan_x.value = vpt[4]
+          pan_y.value = vpt[5]
         })
       }
     }

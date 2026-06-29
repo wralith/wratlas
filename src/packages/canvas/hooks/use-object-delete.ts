@@ -1,10 +1,10 @@
 import { useSignalEffect } from "@preact/signals"
-import { fabricCanvas } from "@/components/canvas/canvas.store"
-import { removeActiveObject } from "@/components/canvas/canvas-actions"
+import { remove_active_object } from "../actions"
+import { fabric_canvas } from "../state"
 
 export const useObjectDelete = () => {
   useSignalEffect(() => {
-    const canvas = fabricCanvas.value
+    const canvas = fabric_canvas.value
     if (!canvas) return
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -15,7 +15,7 @@ export const useObjectDelete = () => {
       if (tag === "INPUT" || tag === "TEXTAREA" || (e.target as HTMLElement).isContentEditable) return
 
       e.preventDefault()
-      removeActiveObject(canvas)
+      remove_active_object(canvas)
     }
 
     document.addEventListener("keydown", handleKeyDown)

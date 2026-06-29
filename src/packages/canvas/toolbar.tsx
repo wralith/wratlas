@@ -1,25 +1,25 @@
 import { Download, FileUp, Plus, Trash2 } from "lucide-preact"
 import { useRef, useState } from "preact/hooks"
-import {
-  activeCanvasId,
-  activeCanvasName,
-  controller,
-  canvasList,
-  canvas_store,
-  fabricCanvas,
-} from "@/components/canvas/canvas.store"
-import { removeActiveObject } from "@/components/canvas/canvas-actions"
-import { container, controls, group, input, label, toolbar } from "@/components/canvas/canvas-toolbar.css"
-import { create_canvas } from "@/lib/canvas-doc/store"
 import { Button } from "@/ui/atoms/button/button"
+import { remove_active_object } from "./actions"
+import { create_canvas } from "./internal/store"
+import {
+  active_canvas_id,
+  active_canvas_name,
+  canvas_controller,
+  canvas_list,
+  canvas_store,
+  fabric_canvas,
+} from "./state"
+import { container, controls, group, input, label, toolbar } from "./toolbar.css"
 
 export const CanvasToolbar = () => {
   const inputRef = useRef<HTMLInputElement>(null)
   const importRef = useRef<HTMLInputElement>(null)
   const [draftName, setDraftName] = useState("")
 
-  const currentCanvasId = activeCanvasId.value
-  const currentCanvasName = activeCanvasName.value
+  const currentCanvasId = active_canvas_id.value
+  const currentCanvasName = active_canvas_name.value
   const canRename = !!currentCanvasId
 
   const handleAddClick = () => {
@@ -27,7 +27,7 @@ export const CanvasToolbar = () => {
   }
 
   const handleCreateCanvas = () => {
-    void controller.add_canvas(create_canvas(draftName || "Untitled Canvas"))
+    void canvas_controller.add_canvas(create_canvas(draftName || "Untitled Canvas"))
   }
 
   const handleRenameCanvas = () => {
@@ -38,7 +38,7 @@ export const CanvasToolbar = () => {
 
   const handleCanvasChange = async (e: Event) => {
     const id = (e.target as HTMLSelectElement).value
-    await controller.switch_canvas(id)
+    await canvas_controller.switch_canvas(id)
   }
 
   const handleExport = async () => {}
@@ -53,18 +53,18 @@ export const CanvasToolbar = () => {
     const files = (e.target as HTMLInputElement).files
     if (!files?.length) return
 
-    const canvas = fabricCanvas.value
+    const canvas = fabric_canvas.value
     if (!canvas) return
 
-    await controller.add_image(files)
+    await canvas_controller.add_image(files)
 
     if (inputRef.current) inputRef.current.value = ""
   }
 
   const handleRemove = () => {
-    const canvas = fabricCanvas.value
+    const canvas = fabric_canvas.value
     if (!canvas) return
-    removeActiveObject(canvas)
+    remove_active_object(canvas)
   }
 
   return (
@@ -73,8 +73,8 @@ export const CanvasToolbar = () => {
         <div class={group}>
           <span class={label}>Canvas</span>
           <div class={controls}>
-            <select class={input} value={activeCanvasId.value} onChange={handleCanvasChange}>
-              {canvasList.value.map(canvas => (
+            <select class={input} value={active_canvas_id.value} onChange={handleCanvasChange}>
+              {canvas_list.value.map(canvas => (
                 <option key={canvas.id} value={canvas.id}>
                   {canvas.name}
                 </option>

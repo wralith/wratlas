@@ -28,6 +28,7 @@ export const vars = createGlobalTheme(":root", {
     display: "Instrument Serif, serif",
   },
   textSize: {
+    xs: "0.625rem",
     sm: "0.75rem",
     base: "0.875rem",
     lg: "1.125rem",

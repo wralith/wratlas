@@ -1,6 +1,7 @@
 import { LoadingOverlay } from "@/ui/atoms/loading-overlay/loading-overlay"
 import { canvasHost, wrapper } from "./canvas.css"
 import { CanvasContextMenu } from "./canvas-context-menu"
+import { CanvasZoomControl } from "./canvas-zoom-control"
 import { useCanvas } from "./hooks/use-canvas"
 import { useCanvasShortcuts } from "./hooks/use-canvas-shortcuts"
 import { useDragDrop } from "./hooks/use-drag-drop"
@@ -28,6 +29,7 @@ export const Canvas = () => {
     <div class={wrapper}>
       <CanvasToolbar />
       <CanvasContextMenu />
+      <CanvasZoomControl />
       <canvas ref={canvasRef} class={canvasHost} />
       <CanvasLoadingOverlay />
     </div>

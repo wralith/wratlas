@@ -1,5 +1,6 @@
 import { useSignalEffect } from "@preact/signals"
 import { Point } from "fabric"
+import { MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } from "../constants"
 import { is_editable_target, is_mod_key, sync_viewport_signals } from "../internal/controls"
 import { canvas_controller, fabric_canvas } from "../state"
 
@@ -39,7 +40,7 @@ export const useCanvasShortcuts = () => {
 
       if (is_mod_combo(e, "=") || is_mod_combo(e, "+")) {
         e.preventDefault()
-        const zoom = Math.min(canvas.getZoom() * 1.1, 20)
+        const zoom = Math.min(canvas.getZoom() * ZOOM_STEP, MAX_ZOOM)
         const center = canvas.getCenterPoint()
         canvas.zoomToPoint(new Point(center.x, center.y), zoom)
         canvas.requestRenderAll()
@@ -49,7 +50,7 @@ export const useCanvasShortcuts = () => {
 
       if (is_mod_combo(e, "-")) {
         e.preventDefault()
-        const zoom = Math.max(canvas.getZoom() / 1.1, 0.1)
+        const zoom = Math.max(canvas.getZoom() / ZOOM_STEP, MIN_ZOOM)
         const center = canvas.getCenterPoint()
         canvas.zoomToPoint(new Point(center.x, center.y), zoom)
         canvas.requestRenderAll()

@@ -1,6 +1,7 @@
 import { useSignalEffect } from "@preact/signals"
 import type { TPointerEvent, TPointerEventInfo } from "fabric"
 import { Point } from "fabric"
+import { clamp_zoom } from "../constants"
 import { is_mod_key, sync_viewport_signals } from "../internal/controls"
 import { fabric_canvas } from "../state"
 
@@ -30,7 +31,7 @@ export const usePanZoom = () => {
         const delta = -e.deltaY
         let zoom = canvas.getZoom()
         zoom *= 0.999 ** delta
-        zoom = Math.min(Math.max(zoom, 0.1), 20)
+        zoom = clamp_zoom(zoom)
 
         canvas.zoomToPoint(new Point(e.offsetX, e.offsetY), zoom)
         refreshViewport()

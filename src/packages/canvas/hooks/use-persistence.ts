@@ -1,6 +1,7 @@
 import { batch, untracked, useSignalEffect } from "@preact/signals"
 import type { Canvas as FabricCanvas } from "fabric"
 import { debounce } from "@/lib/debounce"
+import { clamp_zoom } from "../constants"
 import { create_canvas_snapshot_patch } from "../internal/snapshot"
 import {
   active_canvas,
@@ -22,7 +23,7 @@ type ViewportState = {
 }
 
 const write_viewport = (canvas: FabricCanvas, viewport?: Partial<ViewportState>) => {
-  const zoom = viewport?.zoom ?? 1
+  const zoom = clamp_zoom(viewport?.zoom ?? 1)
   const x = viewport?.x ?? 0
   const y = viewport?.y ?? 0
 

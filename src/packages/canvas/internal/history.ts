@@ -1,5 +1,6 @@
 import { signal } from "@preact/signals"
 import type { Canvas as FabricCanvas } from "fabric"
+import { clamp_zoom } from "../constants"
 import { create_canvas_snapshot_patch, IMAGE_ID_KEY } from "./snapshot"
 
 const HISTORY_LIMIT = 100
@@ -105,7 +106,8 @@ export const create_canvas_history = ({
       })
 
       const { zoom, x, y } = snapshot.viewport
-      canvas.setViewportTransform([zoom, 0, 0, zoom, x, y])
+      const safe_zoom = clamp_zoom(zoom)
+      canvas.setViewportTransform([safe_zoom, 0, 0, safe_zoom, x, y])
       canvas.requestRenderAll()
     } finally {
       is_restoring.value = false

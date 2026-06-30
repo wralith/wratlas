@@ -2,8 +2,9 @@ import { signal } from "@preact/signals"
 import type { Canvas as FabricCanvas } from "fabric"
 import { FabricImage } from "fabric"
 import { createStore, del, get, keys, set } from "idb-keyval"
-import { create_canvas_snapshot_patch } from "./snapshot"
+import { clamp_zoom } from "../constants"
 import { create_canvas_history } from "./history"
+import { create_canvas_snapshot_patch } from "./snapshot"
 import type { CanvasStore } from "./store"
 import type { CanvasSnapshot } from "./types"
 import { ensure_canvas_doc_fabric_props } from "./types"
@@ -78,7 +79,8 @@ export const create_canvas_controller = (store: CanvasStore) => {
       await canvas.loadFromJSON(snapshot)
 
       const { zoom = 1, x = 0, y = 0 } = snapshot.viewport || {}
-      canvas.setViewportTransform([zoom, 0, 0, zoom, x, y])
+      const safe_zoom = clamp_zoom(zoom)
+      canvas.setViewportTransform([safe_zoom, 0, 0, safe_zoom, x, y])
       canvas.requestRenderAll()
       history.reset_for_active_canvas()
     } finally {

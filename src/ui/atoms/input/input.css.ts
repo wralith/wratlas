@@ -12,4 +12,18 @@ export const input = style({
   padding: "0 8px",
   borderRadius: vars.radius.xs,
   outline: "none",
+  selectors: {
+    '&[type="number"]': {
+      MozAppearance: "textfield",
+      appearance: "textfield",
+    },
+    '&[type="number"]::-webkit-outer-spin-button': {
+      WebkitAppearance: "none",
+      margin: 0,
+    },
+    '&[type="number"]::-webkit-inner-spin-button': {
+      WebkitAppearance: "none",
+      margin: 0,
+    },
+  },
 })

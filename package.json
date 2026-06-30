@@ -11,7 +11,10 @@
     "format": "biome format --write .",
     "lint": "biome lint .",
     "lint:fix": "biome lint --write .",
-    "check": "bun run format && bun run lint && bun run typecheck"
+    "check": "bun run format && bun run lint && bun run typecheck",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed",
+    "e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.19",
@@ -29,6 +32,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.1",
+    "@playwright/test": "^1.56.1",
     "@preact/preset-vite": "^2.10.5",
     "@types/node": "^24.13.2",
     "happy-dom": "^20.10.6",

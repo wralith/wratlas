@@ -88,6 +88,7 @@ export const Combobox = (props: ComboboxProps) => {
         onClick={() => setOpen(prev => !prev)}
         aria-haspopup="listbox"
         aria-expanded={open}
+        aria-label={placeholder}
       >
         <span class={styles.triggerLabel}>{selectedOption?.label || placeholder}</span>
         <ChevronDown size={14} />
@@ -104,7 +105,7 @@ export const Combobox = (props: ComboboxProps) => {
             />
           </div>
 
-          <ul class={styles.list} role="listbox">
+          <ul class={styles.list}>
             {filteredOptions.length === 0 && <li class={styles.empty}>{emptyLabel}</li>}
             {filteredOptions.map(option => (
               <li key={option.id}>

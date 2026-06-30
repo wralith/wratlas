@@ -2,6 +2,8 @@ import { Canvas as FabricCanvas, FabricObject } from "fabric"
 import { useEffect, useRef } from "preact/hooks"
 import { canvas_controller, canvas_ready, fabric_canvas } from "../state"
 
+const CANVAS_BACKGROUND_COLOR = "#1e1e2e"
+
 export const useCanvas = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const fabricRef = useRef<FabricCanvas | null>(null)
@@ -16,7 +18,7 @@ export const useCanvas = () => {
     const canvas = new FabricCanvas(el, {
       width: host.clientWidth,
       height: host.clientHeight,
-      backgroundColor: "transparent",
+      backgroundColor: CANVAS_BACKGROUND_COLOR,
       selection: true,
       selectionColor: "rgba(249, 226, 175, 0.12)",
       selectionBorderColor: "#f9e2af",

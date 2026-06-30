@@ -1,10 +1,10 @@
-export const debounce = <T extends (...args: any[]) => void>(
-  func: T,
+export const debounce = <TArgs extends unknown[]>(
+  func: (...args: TArgs) => void,
   wait: number,
-): ((...args: Parameters<T>) => void) & { cancel: () => void } => {
+): ((...args: TArgs) => void) & { cancel: () => void } => {
   let timeoutId: ReturnType<typeof setTimeout> | undefined
 
-  const debounced = (...args: Parameters<T>) => {
+  const debounced = (...args: TArgs) => {
     if (timeoutId) {
       clearTimeout(timeoutId)
     }

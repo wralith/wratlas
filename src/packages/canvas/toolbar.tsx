@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "preact/hooks"
 import { Button } from "@/ui/atoms/button/button"
 import { Input } from "@/ui/atoms/input/input"
 import { Modal } from "@/ui/atoms/modal/modal"
+import { Tooltip } from "@/ui/atoms/tooltip/tooltip"
 import { remove_active_object } from "./actions"
 import { create_canvas } from "./internal/store"
 import {
@@ -106,18 +107,26 @@ export const CanvasToolbar = () => {
           </div>
         </div>
         <div class={styles.group}>
-          <Button size="icon-only" onClick={openImport}>
-            <FileUp size={14} />
-          </Button>
-          <Button size="icon-only" onClick={handleExport}>
-            <Download size={14} />
-          </Button>
-          <Button size="icon-only" onClick={() => inputRef.current?.click()}>
-            <Plus size={14} />
-          </Button>
-          <Button size="icon-only" onClick={handleRemove}>
-            <Trash2 size={14} />
-          </Button>
+          <Tooltip content="Import">
+            <Button size="icon-only" onClick={openImport}>
+              <FileUp size={14} />
+            </Button>
+          </Tooltip>
+          <Tooltip content="Export">
+            <Button size="icon-only" onClick={handleExport}>
+              <Download size={14} />
+            </Button>
+          </Tooltip>
+          <Tooltip content="Add Image">
+            <Button size="icon-only" onClick={() => inputRef.current?.click()}>
+              <Plus size={14} />
+            </Button>
+          </Tooltip>
+          <Tooltip content="Delete">
+            <Button size="icon-only" onClick={handleRemove}>
+              <Trash2 size={14} />
+            </Button>
+          </Tooltip>
           <input ref={inputRef} type="file" accept="image/*" multiple onChange={handleFileChange} hidden />
           <input
             ref={importRef}

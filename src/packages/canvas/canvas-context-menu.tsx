@@ -3,16 +3,16 @@ import type { Canvas as FabricCanvas, TPointerEvent, TPointerEventInfo } from "f
 import { useMemo, useRef, useState } from "preact/hooks"
 import { sync_viewport_signals } from "./internal/controls"
 import {
-  can_bring_active_image_forward,
-  can_bring_active_image_to_front,
-  can_send_active_image_backward,
-  can_send_active_image_to_back,
+  can_bring_active_object_forward,
+  can_bring_active_object_to_front,
+  can_send_active_object_backward,
+  can_send_active_object_to_back,
   remove_active_object,
 } from "./actions"
 import { canvas_controller, fabric_canvas } from "./state"
 import { Menu, type MenuItem } from "@/ui/atoms/menu/menu"
 
-type MenuTarget = "image" | "canvas" | null
+type MenuTarget = "object" | "canvas" | null
 
 type MenuState = {
   open: boolean
@@ -58,14 +58,14 @@ export const CanvasContextMenu = () => {
 
       native.preventDefault()
 
-      if (event.target?.type.toLowerCase() === "image") {
+      if (event.target) {
         activeCanvas.setActiveObject(event.target)
         activeCanvas.requestRenderAll()
         setState({
           open: true,
           x: native.clientX,
           y: native.clientY,
-          target: "image",
+          target: "object",
         })
         return
       }
@@ -85,7 +85,7 @@ export const CanvasContextMenu = () => {
     const disposeMouseDown = activeCanvas.on("mouse:down", handleMouseDown)
 
     return () => {
-      activeCanvas.upperCanvasEl.removeEventListener("contextmenu", handleNativeContextMenu)
+      activeCanvas.upperCanvasEl?.removeEventListener("contextmenu", handleNativeContextMenu)
       disposeMouseDown()
     }
   })
@@ -93,7 +93,7 @@ export const CanvasContextMenu = () => {
   const items = useMemo<MenuItem[]>(() => {
     if (!canvas || !state.target) return []
 
-    if (state.target === "image") {
+    if (state.target === "object") {
       return [
         {
           id: "order",
@@ -102,65 +102,69 @@ export const CanvasContextMenu = () => {
             {
               id: "bring-forward",
               label: "Bring forward",
-              disabled: !can_bring_active_image_forward(canvas),
+              disabled: !can_bring_active_object_forward(canvas),
             },
             {
               id: "bring-to-front",
               label: "Bring to front",
-              disabled: !can_bring_active_image_to_front(canvas),
+              disabled: !can_bring_active_object_to_front(canvas),
             },
             {
               id: "send-backward",
               label: "Send backward",
-              disabled: !can_send_active_image_backward(canvas),
+              disabled: !can_send_active_object_backward(canvas),
             },
             {
               id: "send-to-back",
               label: "Send to back",
-              disabled: !can_send_active_image_to_back(canvas),
+              disabled: !can_send_active_object_to_back(canvas),
             },
           ],
         },
-        { id: "copy-image", label: "Copy image" },
-        { id: "delete-image", label: "Delete image", danger: true },
+        { id: "copy-object", label: "Copy object" },
+        { id: "delete-object", label: "Delete object", danger: true },
       ]
     }
 
     return [
       { id: "add-image", label: "Add image" },
-      { id: "reset-view", label: "Reset view", disabled: is_default_view(canvas) },
+      {
+        id: "reset-view",
+        label: "Reset view",
+        disabled: is_default_view(canvas),
+      },
     ]
   }, [canvas, state.target])
 
   const handleSelect = (id: string) => {
     if (!canvas) return
 
-    if (id === "copy-image") {
+    if (id === "copy-object") {
       void canvas_controller.copy_image_to_clipboard()
       return
     }
 
     if (id === "bring-to-front") {
-      void canvas_controller.order_active_image_to_front()
+      void canvas_controller.order_active_object_to_front()
       return
     }
 
     if (id === "bring-forward") {
-      void canvas_controller.order_active_image_forward()
+      void canvas_controller.order_active_object_forward()
       return
     }
 
     if (id === "send-to-back") {
-      void canvas_controller.order_active_image_to_back()
+      void canvas_controller.order_active_object_to_back()
       return
     }
 
     if (id === "send-backward") {
-      void canvas_controller.order_active_image_backward()
+      void canvas_controller.order_active_object_backward()
       return
     }
 
-    if (id === "delete-image") {
+    if (id === "delete-object") {
       remove_active_object(canvas)
       return
     }

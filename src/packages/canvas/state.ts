@@ -9,6 +9,8 @@ export const canvas_controller = create_canvas_controller(canvas_store)
 export type CanvasTool = "select" | "draw" | "text" | "sticky" | "pan"
 
 export const active_tool = signal<CanvasTool>("select")
+export const rectangle_color = signal("#444444")
+export const is_rectangle_drawing = signal(false)
 export const zoom_level = signal(1)
 export const pan_x = signal(0)
 export const pan_y = signal(0)

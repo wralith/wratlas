@@ -14,87 +14,86 @@ export const remove_active_object = (canvas: FabricCanvas) => {
   canvas.requestRenderAll()
 }
 
-export const get_active_image = (canvas: FabricCanvas) => {
+export const get_active_object = (canvas: FabricCanvas) => {
   const active_object = canvas.getActiveObject()
   if (!active_object) return null
-  if (active_object.type.toLowerCase() !== "image") return null
   return active_object
 }
 
-export const can_send_active_image_to_back = (canvas: FabricCanvas) => {
-  const active_image = get_active_image(canvas)
-  if (!active_image) return false
+export const can_send_active_object_to_back = (canvas: FabricCanvas) => {
+  const active_object = get_active_object(canvas)
+  if (!active_object) return false
 
   const objects = canvas.getObjects()
-  return objects[0] !== active_image
+  return objects[0] !== active_object
 }
 
-export const can_send_active_image_backward = (canvas: FabricCanvas) => {
-  const active_image = get_active_image(canvas)
-  if (!active_image) return false
+export const can_send_active_object_backward = (canvas: FabricCanvas) => {
+  const active_object = get_active_object(canvas)
+  if (!active_object) return false
 
   const objects = canvas.getObjects()
-  const index = objects.indexOf(active_image)
+  const index = objects.indexOf(active_object)
   return index > 0
 }
 
-export const can_bring_active_image_to_front = (canvas: FabricCanvas) => {
-  const active_image = get_active_image(canvas)
-  if (!active_image) return false
+export const can_bring_active_object_to_front = (canvas: FabricCanvas) => {
+  const active_object = get_active_object(canvas)
+  if (!active_object) return false
 
   const objects = canvas.getObjects()
-  return objects.at(-1) !== active_image
+  return objects.at(-1) !== active_object
 }
 
-export const can_bring_active_image_forward = (canvas: FabricCanvas) => {
-  const active_image = get_active_image(canvas)
-  if (!active_image) return false
+export const can_bring_active_object_forward = (canvas: FabricCanvas) => {
+  const active_object = get_active_object(canvas)
+  if (!active_object) return false
 
   const objects = canvas.getObjects()
-  const index = objects.indexOf(active_image)
+  const index = objects.indexOf(active_object)
   return index >= 0 && index < objects.length - 1
 }
 
-export const send_active_image_to_back = (canvas: FabricCanvas) => {
-  const active_image = get_active_image(canvas)
-  if (!active_image) return false
-  if (!can_send_active_image_to_back(canvas)) return false
+export const send_active_object_to_back = (canvas: FabricCanvas) => {
+  const active_object = get_active_object(canvas)
+  if (!active_object) return false
+  if (!can_send_active_object_to_back(canvas)) return false
 
-  canvas.sendObjectToBack(active_image)
-  canvas.setActiveObject(active_image)
+  canvas.sendObjectToBack(active_object)
+  canvas.setActiveObject(active_object)
   canvas.requestRenderAll()
   return true
 }
 
-export const send_active_image_backward = (canvas: FabricCanvas) => {
-  const active_image = get_active_image(canvas)
-  if (!active_image) return false
-  if (!can_send_active_image_backward(canvas)) return false
+export const send_active_object_backward = (canvas: FabricCanvas) => {
+  const active_object = get_active_object(canvas)
+  if (!active_object) return false
+  if (!can_send_active_object_backward(canvas)) return false
 
-  canvas.sendObjectBackwards(active_image)
-  canvas.setActiveObject(active_image)
+  canvas.sendObjectBackwards(active_object)
+  canvas.setActiveObject(active_object)
   canvas.requestRenderAll()
   return true
 }
 
-export const bring_active_image_to_front = (canvas: FabricCanvas) => {
-  const active_image = get_active_image(canvas)
-  if (!active_image) return false
-  if (!can_bring_active_image_to_front(canvas)) return false
+export const bring_active_object_to_front = (canvas: FabricCanvas) => {
+  const active_object = get_active_object(canvas)
+  if (!active_object) return false
+  if (!can_bring_active_object_to_front(canvas)) return false
 
-  canvas.bringObjectToFront(active_image)
-  canvas.setActiveObject(active_image)
+  canvas.bringObjectToFront(active_object)
+  canvas.setActiveObject(active_object)
   canvas.requestRenderAll()
   return true
 }
 
-export const bring_active_image_forward = (canvas: FabricCanvas) => {
-  const active_image = get_active_image(canvas)
-  if (!active_image) return false
-  if (!can_bring_active_image_forward(canvas)) return false
+export const bring_active_object_forward = (canvas: FabricCanvas) => {
+  const active_object = get_active_object(canvas)
+  if (!active_object) return false
+  if (!can_bring_active_object_forward(canvas)) return false
 
-  canvas.bringObjectForward(active_image)
-  canvas.setActiveObject(active_image)
+  canvas.bringObjectForward(active_object)
+  canvas.setActiveObject(active_object)
   canvas.requestRenderAll()
   return true
 }

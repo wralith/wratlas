@@ -9,6 +9,7 @@ import { useHistory } from "./hooks/use-history"
 import { useObjectDelete } from "./hooks/use-object-delete"
 import { usePanZoom } from "./hooks/use-pan-zoom"
 import { usePersistence } from "./hooks/use-persistence"
+import { useRectangleDraw } from "./hooks/use-rectangle-draw"
 import { canvas_controller } from "./state"
 import { CanvasToolbar } from "./toolbar"
 
@@ -24,6 +25,7 @@ export const Canvas = () => {
   useObjectDelete()
   useCanvasShortcuts()
   usePersistence()
+  useRectangleDraw()
 
   return (
     <div class={wrapper}>

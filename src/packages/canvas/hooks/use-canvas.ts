@@ -19,6 +19,7 @@ export const useCanvas = () => {
       width: host.clientWidth,
       height: host.clientHeight,
       backgroundColor: CANVAS_BACKGROUND_COLOR,
+      uniformScaling: true,
       selection: true,
       selectionColor: "rgba(249, 226, 175, 0.12)",
       selectionBorderColor: "#f9e2af",
@@ -44,6 +45,20 @@ export const useCanvas = () => {
     fabric_canvas.value = canvas
     canvas_ready.value = true
 
+    const update_uniform_scaling = () => {
+      const active = canvas.getActiveObject()
+      console.log(active)
+      canvas.uniformScaling = active?.type !== "rect"
+    }
+
+    const disposers = [
+      canvas.on("selection:created", update_uniform_scaling),
+      canvas.on("selection:updated", update_uniform_scaling),
+      canvas.on("selection:cleared", () => {
+        canvas.uniformScaling = true
+      }),
+    ]
+
     let resizeTimer: ReturnType<typeof setTimeout>
     const observer = new ResizeObserver(() => {
       clearTimeout(resizeTimer)
@@ -60,6 +75,9 @@ export const useCanvas = () => {
 
     return () => {
       observer.disconnect()
+      disposers.forEach(d => {
+        d()
+      })
       canvas_controller.dispose()
       canvas.dispose()
       fabricRef.current = null

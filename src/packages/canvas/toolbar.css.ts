@@ -21,6 +21,46 @@ export const toolbar = style({
   backgroundColor: vars.bg.surface,
   flexShrink: 0,
   borderRadius: `0 0 ${vars.radius.md} ${vars.radius.md}`,
+  gap: vars.space.md,
+})
+
+export const leftSection = style({
+  display: "flex",
+  alignItems: "center",
+  gap: vars.space.sm,
+  minWidth: 0,
+})
+
+export const rightSection = style({
+  display: "flex",
+  alignItems: "center",
+  gap: vars.space.sm,
+})
+
+export const toolGroup = style({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: vars.space.xs,
+  padding: `0 ${vars.space.xs}`,
+  borderLeft: `1px solid ${vars.color.border}`,
+})
+
+export const colorField = style({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: vars.space.xs,
+  paddingLeft: vars.space.xs,
+  borderLeft: `1px solid ${vars.color.border}`,
+})
+
+export const colorInput = style({
+  width: 28,
+  height: 28,
+  padding: 0,
+  border: `1px solid ${vars.color.border}`,
+  borderRadius: vars.radius.xs,
+  background: "transparent",
+  cursor: "pointer",
 })
 
 export const select = style({

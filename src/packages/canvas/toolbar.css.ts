@@ -23,18 +23,6 @@ export const toolbar = style({
   borderRadius: `0 0 ${vars.radius.md} ${vars.radius.md}`,
 })
 
-export const group = style({
-  display: "flex",
-  alignItems: "center",
-  gap: vars.space.sm,
-})
-
-export const controls = style({
-  display: "flex",
-  alignItems: "center",
-  gap: vars.space.sm,
-})
-
 export const select = style({
   height: 30,
   border: `1px solid ${vars.color.border}`,

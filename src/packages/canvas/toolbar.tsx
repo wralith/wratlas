@@ -1,6 +1,7 @@
-import { Download, FileUp, Keyboard, Plus, Trash2 } from "lucide-preact"
+import { Download, FileUp, Keyboard, Pencil, Plus, Trash2 } from "lucide-preact"
 import { useEffect, useRef, useState } from "preact/hooks"
 import { Button } from "@/ui/atoms/button/button"
+import { Flex } from "@/ui/atoms/flex/flex"
 import { Input } from "@/ui/atoms/input/input"
 import { Modal } from "@/ui/atoms/modal/modal"
 import { Tooltip } from "@/ui/atoms/tooltip/tooltip"
@@ -23,6 +24,7 @@ export const CanvasToolbar = () => {
   const { importRef, openImport, handleImport, handleExport } = useCanvasImportExport()
   const [draftName, setDraftName] = useState("")
   const [modalOpen, setModalOpen] = useState(false)
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [modalMode, setModalMode] = useState<"add" | "rename">("add")
   const [shortcutsOpen, setShortcutsOpen] = useState(false)
 
@@ -74,6 +76,18 @@ export const CanvasToolbar = () => {
     if (inputRef.current) inputRef.current.value = ""
   }
 
+  const openDeleteModal = () => {
+    if (!currentCanvasId) return
+    if (canvas_list.value.length <= 1) return
+    setDeleteModalOpen(true)
+  }
+
+  const handleDeleteCanvas = async () => {
+    if (!currentCanvasId) return
+    await canvas_controller.delete_canvas(currentCanvasId)
+    setDeleteModalOpen(false)
+  }
+
   const handleRemove = () => {
     const canvas = fabric_canvas.value
     if (!canvas) return
@@ -83,25 +97,36 @@ export const CanvasToolbar = () => {
   return (
     <div class={styles.container}>
       <div class={styles.toolbar}>
-        <div class={styles.group}>
+        <Flex align="center" gap="sm">
           <span class={styles.label}>Canvas</span>
-          <div class={styles.controls}>
-            <select class={styles.select} value={active_canvas_id.value} onChange={handleCanvasChange}>
-              {canvas_list.value.map(canvas => (
-                <option key={canvas.id} value={canvas.id}>
-                  {canvas.name}
-                </option>
-              ))}
-            </select>
-            <Button size="small" onClick={openAddModal} left={<Plus size={12} />}>
-              New
+          <select class={styles.select} value={active_canvas_id.value} onChange={handleCanvasChange}>
+            {canvas_list.value.map(canvas => (
+              <option key={canvas.id} value={canvas.id}>
+                {canvas.name}
+              </option>
+            ))}
+          </select>
+          <Tooltip content="New Canvas">
+            <Button size="icon-only" onClick={openAddModal}>
+              <Plus size={14} />
             </Button>
-            <Button size="small" onClick={openRenameModal} disabled={!currentCanvasId}>
-              Rename
+          </Tooltip>
+          <Tooltip content="Rename Canvas">
+            <Button size="icon-only" onClick={openRenameModal} disabled={!currentCanvasId}>
+              <Pencil size={14} />
             </Button>
-          </div>
-        </div>
-        <div class={styles.group}>
+          </Tooltip>
+          <Tooltip content="Delete Canvas">
+            <Button
+              size="icon-only"
+              color="error"
+              variant="light"
+              onClick={openDeleteModal}
+              disabled={canvas_list.value.length <= 1}
+            >
+              <Trash2 size={14} />
+            </Button>
+          </Tooltip>
           <Tooltip content="Import">
             <Button size="icon-only" onClick={openImport}>
               <FileUp size={14} />
@@ -112,12 +137,15 @@ export const CanvasToolbar = () => {
               <Download size={14} />
             </Button>
           </Tooltip>
+        </Flex>
+
+        <Flex align="center" gap="sm">
           <Tooltip content="Add Image">
             <Button size="icon-only" onClick={() => inputRef.current?.click()}>
               <Plus size={14} />
             </Button>
           </Tooltip>
-          <Tooltip content="Delete">
+          <Tooltip content="Delete Object">
             <Button size="icon-only" onClick={handleRemove}>
               <Trash2 size={14} />
             </Button>
@@ -135,7 +163,7 @@ export const CanvasToolbar = () => {
             onChange={handleImport}
             hidden
           />
-        </div>
+        </Flex>
       </div>
 
       <Modal
@@ -167,6 +195,23 @@ export const CanvasToolbar = () => {
       />
 
       <CanvasToolbarShortcutsModal open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
+
+      <Modal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        header="Delete Canvas"
+        content={`Are you sure you want to delete "${currentCanvasName}"?`}
+        footer={
+          <>
+            <Button size="small" onClick={() => setDeleteModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button size="small" color="error" onClick={handleDeleteCanvas}>
+              Delete
+            </Button>
+          </>
+        }
+      />
     </div>
   )
 }

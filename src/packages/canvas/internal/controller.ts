@@ -113,6 +113,15 @@ export const create_canvas_controller = (store: CanvasStore) => {
     await load_active_canvas()
   }
 
+  const delete_canvas = async (id: string) => {
+    await save_state()
+    const deleted = store.delete_canvas(id)
+    if (!deleted) return false
+    await load_active_canvas()
+    await collect_orphan_images()
+    return true
+  }
+
   const add_image = async (files: FileList | File[]) => {
     if (!canvas) return
 
@@ -193,6 +202,7 @@ export const create_canvas_controller = (store: CanvasStore) => {
     save_state,
     switch_canvas,
     add_canvas,
+    delete_canvas,
     add_image,
     get_image_blob,
     set_image_blob,

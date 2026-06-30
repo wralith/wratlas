@@ -94,6 +94,29 @@ export const create_canvas_store = () => {
     }
   }
 
+  const delete_canvas = (id: string) => {
+    const current = storage.value.canvases
+    if (current.length <= 1) return false
+
+    const index = current.findIndex(canvas => canvas.id === id)
+    if (index < 0) return false
+
+    const next_canvases = current.filter(canvas => canvas.id !== id)
+    let next_active_id = storage.value.activeCanvasId
+
+    if (storage.value.activeCanvasId === id) {
+      const fallback = next_canvases[index] ?? next_canvases[index - 1] ?? next_canvases[0]
+      next_active_id = fallback.id
+    }
+
+    storage.value = {
+      activeCanvasId: next_active_id,
+      canvases: next_canvases,
+    }
+
+    return true
+  }
+
   return {
     storage,
     canvases,
@@ -107,6 +130,7 @@ export const create_canvas_store = () => {
     update_canvas,
     update_active_canvas,
     rename_canvas,
+    delete_canvas,
   }
 }
 

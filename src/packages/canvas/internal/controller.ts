@@ -1,7 +1,7 @@
 import { signal } from "@preact/signals"
 import type { Canvas as FabricCanvas } from "fabric"
 import { FabricImage } from "fabric"
-import { createStore, get, set } from "idb-keyval"
+import { createStore, del, get, keys, set } from "idb-keyval"
 import { create_canvas_snapshot_patch } from "./snapshot"
 import { create_canvas_history } from "./history"
 import type { CanvasStore } from "./store"
@@ -27,9 +27,29 @@ export const create_canvas_controller = (store: CanvasStore) => {
     is_hydrating: () => is_hydrating.value,
   })
 
+  const collect_orphan_images = async () => {
+    const referenced_ids = new Set<string>()
+
+    for (const snapshot of store.canvases.value) {
+      for (const object of snapshot.objects) {
+        if (object.type.toLowerCase() !== "image" || !object._image_id) continue
+        referenced_ids.add(object._image_id)
+      }
+    }
+
+    const stored_keys = await keys(image_store)
+    const deletions = stored_keys
+      .filter(key => typeof key === "string" && !referenced_ids.has(key))
+      .map(key => del(key, image_store))
+
+    await Promise.allSettled(deletions)
+  }
+
   const init = (fabricCanvas: FabricCanvas) => {
     canvas = fabricCanvas
-    void load_active_canvas()
+    void load_active_canvas().then(async () => {
+      await collect_orphan_images()
+    })
   }
 
   const load_active_canvas = async () => {

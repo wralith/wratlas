@@ -31,6 +31,10 @@ export const item = style({
   textAlign: "left",
   padding: `${vars.space.xs} ${vars.space.sm}`,
   cursor: "pointer",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  gap: vars.space.sm,
   selectors: {
     "&:hover": {
       backgroundColor: vars.bg.base,
@@ -43,6 +47,12 @@ export const item = style({
       backgroundColor: "transparent",
     },
   },
+})
+
+export const submenuArrow = style({
+  color: vars.text.muted,
+  fontSize: vars.textSize.sm,
+  lineHeight: 1,
 })
 
 export const itemTone = styleVariants({

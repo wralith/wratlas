@@ -3,6 +3,12 @@ import type { Canvas as FabricCanvas } from "fabric"
 import { FabricImage } from "fabric"
 import { createStore, del, get, keys, set } from "idb-keyval"
 import { clamp_zoom } from "../constants"
+import {
+  bring_active_image_forward,
+  bring_active_image_to_front,
+  send_active_image_backward,
+  send_active_image_to_back,
+} from "../actions"
 import { create_canvas_history } from "./history"
 import { create_canvas_snapshot_patch } from "./snapshot"
 import type { CanvasStore } from "./store"
@@ -194,6 +200,50 @@ export const create_canvas_controller = (store: CanvasStore) => {
     return true
   }
 
+  const order_active_image_to_back = async () => {
+    if (!canvas) return false
+
+    const did_reorder = send_active_image_to_back(canvas)
+    if (!did_reorder) return false
+
+    history.capture()
+    await save_state()
+    return true
+  }
+
+  const order_active_image_backward = async () => {
+    if (!canvas) return false
+
+    const did_reorder = send_active_image_backward(canvas)
+    if (!did_reorder) return false
+
+    history.capture()
+    await save_state()
+    return true
+  }
+
+  const order_active_image_to_front = async () => {
+    if (!canvas) return false
+
+    const did_reorder = bring_active_image_to_front(canvas)
+    if (!did_reorder) return false
+
+    history.capture()
+    await save_state()
+    return true
+  }
+
+  const order_active_image_forward = async () => {
+    if (!canvas) return false
+
+    const did_reorder = bring_active_image_forward(canvas)
+    if (!did_reorder) return false
+
+    history.capture()
+    await save_state()
+    return true
+  }
+
   const dispose = () => {
     history.dispose()
   }
@@ -212,6 +262,10 @@ export const create_canvas_controller = (store: CanvasStore) => {
     undo: history.undo,
     redo: history.redo,
     copy_image_to_clipboard,
+    order_active_image_backward,
+    order_active_image_to_back,
+    order_active_image_forward,
+    order_active_image_to_front,
     dispose,
     is_hydrating,
     is_restoring_history: history.is_restoring,

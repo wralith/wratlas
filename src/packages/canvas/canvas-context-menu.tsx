@@ -2,7 +2,13 @@ import { useSignalEffect } from "@preact/signals"
 import type { Canvas as FabricCanvas, TPointerEvent, TPointerEventInfo } from "fabric"
 import { useMemo, useRef, useState } from "preact/hooks"
 import { sync_viewport_signals } from "./internal/controls"
-import { remove_active_object } from "./actions"
+import {
+  can_bring_active_image_forward,
+  can_bring_active_image_to_front,
+  can_send_active_image_backward,
+  can_send_active_image_to_back,
+  remove_active_object,
+} from "./actions"
 import { canvas_controller, fabric_canvas } from "./state"
 import { Menu, type MenuItem } from "@/ui/atoms/menu/menu"
 
@@ -89,6 +95,32 @@ export const CanvasContextMenu = () => {
 
     if (state.target === "image") {
       return [
+        {
+          id: "order",
+          label: "Order",
+          children: [
+            {
+              id: "bring-forward",
+              label: "Bring forward",
+              disabled: !can_bring_active_image_forward(canvas),
+            },
+            {
+              id: "bring-to-front",
+              label: "Bring to front",
+              disabled: !can_bring_active_image_to_front(canvas),
+            },
+            {
+              id: "send-backward",
+              label: "Send backward",
+              disabled: !can_send_active_image_backward(canvas),
+            },
+            {
+              id: "send-to-back",
+              label: "Send to back",
+              disabled: !can_send_active_image_to_back(canvas),
+            },
+          ],
+        },
         { id: "copy-image", label: "Copy image" },
         { id: "delete-image", label: "Delete image", danger: true },
       ]
@@ -105,6 +137,26 @@ export const CanvasContextMenu = () => {
 
     if (id === "copy-image") {
       void canvas_controller.copy_image_to_clipboard()
+      return
+    }
+
+    if (id === "bring-to-front") {
+      void canvas_controller.order_active_image_to_front()
+      return
+    }
+
+    if (id === "bring-forward") {
+      void canvas_controller.order_active_image_forward()
+      return
+    }
+
+    if (id === "send-to-back") {
+      void canvas_controller.order_active_image_to_back()
+      return
+    }
+
+    if (id === "send-backward") {
+      void canvas_controller.order_active_image_backward()
       return
     }
 

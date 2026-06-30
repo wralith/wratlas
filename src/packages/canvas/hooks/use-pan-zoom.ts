@@ -9,6 +9,15 @@ export const usePanZoom = () => {
     const canvas = fabric_canvas.value
     if (!canvas) return
 
+    const refreshViewport = () => {
+      const vpt = canvas.viewportTransform
+      if (!vpt) return
+
+      canvas.setViewportTransform([...vpt])
+      canvas.requestRenderAll()
+      sync_viewport_signals(canvas)
+    }
+
     const handleWheel = (opt: TPointerEventInfo<WheelEvent>) => {
       const e = opt.e
 
@@ -24,16 +33,14 @@ export const usePanZoom = () => {
         zoom = Math.min(Math.max(zoom, 0.1), 20)
 
         canvas.zoomToPoint(new Point(e.offsetX, e.offsetY), zoom)
-        canvas.requestRenderAll()
-        sync_viewport_signals(canvas)
+        refreshViewport()
         return
       }
 
       const vpt = canvas.viewportTransform
       vpt[4] -= e.deltaX
       vpt[5] -= e.deltaY
-      canvas.requestRenderAll()
-      sync_viewport_signals(canvas)
+      refreshViewport()
     }
 
     let isPanning = false
@@ -54,6 +61,7 @@ export const usePanZoom = () => {
       isPanning = false
       canvas.selection = true
       canvas.defaultCursor = "default"
+      refreshViewport()
     }
 
     const handleMouseDown = (opt: TPointerEventInfo<TPointerEvent>) => {
@@ -77,8 +85,7 @@ export const usePanZoom = () => {
         lastX = ev.clientX
         lastY = ev.clientY
 
-        canvas.requestRenderAll()
-        sync_viewport_signals(canvas)
+        refreshViewport()
       }
     }
 

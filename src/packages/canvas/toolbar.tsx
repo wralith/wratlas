@@ -1,6 +1,8 @@
 import { Download, FileUp, Plus, Trash2 } from "lucide-preact"
-import { useRef, useState } from "preact/hooks"
+import { useEffect, useRef, useState } from "preact/hooks"
 import { Button } from "@/ui/atoms/button/button"
+import { Input } from "@/ui/atoms/input/input"
+import { Modal } from "@/ui/atoms/modal/modal"
 import { remove_active_object } from "./actions"
 import { create_canvas } from "./internal/store"
 import {
@@ -11,29 +13,44 @@ import {
   canvas_store,
   fabric_canvas,
 } from "./state"
-import { container, controls, group, input, label, toolbar } from "./toolbar.css"
+import * as styles from "./toolbar.css"
 
 export const CanvasToolbar = () => {
   const inputRef = useRef<HTMLInputElement>(null)
   const importRef = useRef<HTMLInputElement>(null)
   const [draftName, setDraftName] = useState("")
+  const [modalOpen, setModalOpen] = useState(false)
+  const [modalMode, setModalMode] = useState<"add" | "rename">("add")
+
+  useEffect(() => {
+    if (modalOpen) {
+      document.getElementById("canvas-name")?.focus()
+    }
+  }, [modalOpen])
 
   const currentCanvasId = active_canvas_id.value
   const currentCanvasName = active_canvas_name.value
-  const canRename = !!currentCanvasId
 
-  const handleAddClick = () => {
-    inputRef.current?.click()
-  }
-
-  const handleCreateCanvas = () => {
-    void canvas_controller.add_canvas(create_canvas(draftName || "Untitled Canvas"))
-  }
-
-  const handleRenameCanvas = () => {
-    if (!currentCanvasId) return
-    canvas_store.rename_canvas(currentCanvasId, draftName)
+  const openAddModal = () => {
     setDraftName("")
+    setModalMode("add")
+    setModalOpen(true)
+  }
+
+  const openRenameModal = () => {
+    setDraftName(currentCanvasName || "")
+    setModalMode("rename")
+    setModalOpen(true)
+  }
+
+  const handleModalSubmit = () => {
+    if (modalMode === "add") {
+      void canvas_controller.add_canvas(create_canvas(draftName || "Untitled Canvas"))
+    } else {
+      if (!currentCanvasId) return
+      canvas_store.rename_canvas(currentCanvasId, draftName)
+    }
+    setModalOpen(false)
   }
 
   const handleCanvasChange = async (e: Event) => {
@@ -68,41 +85,34 @@ export const CanvasToolbar = () => {
   }
 
   return (
-    <div class={container}>
-      <div class={toolbar}>
-        <div class={group}>
-          <span class={label}>Canvas</span>
-          <div class={controls}>
-            <select class={input} value={active_canvas_id.value} onChange={handleCanvasChange}>
+    <div class={styles.container}>
+      <div class={styles.toolbar}>
+        <div class={styles.group}>
+          <span class={styles.label}>Canvas</span>
+          <div class={styles.controls}>
+            <select class={styles.select} value={active_canvas_id.value} onChange={handleCanvasChange}>
               {canvas_list.value.map(canvas => (
                 <option key={canvas.id} value={canvas.id}>
                   {canvas.name}
                 </option>
               ))}
             </select>
-            <input
-              class={input}
-              type="text"
-              placeholder={currentCanvasName || "Canvas name"}
-              value={draftName}
-              onInput={e => setDraftName((e.target as HTMLInputElement).value)}
-            />
-            <Button size="small" onClick={handleRenameCanvas} disabled={!canRename || !draftName.trim()}>
-              Rename
-            </Button>
-            <Button size="small" onClick={handleCreateCanvas} left={<Plus size={12} />}>
+            <Button size="small" onClick={openAddModal} left={<Plus size={12} />}>
               New
+            </Button>
+            <Button size="small" onClick={openRenameModal} disabled={!currentCanvasId}>
+              Rename
             </Button>
           </div>
         </div>
-        <div class={group}>
+        <div class={styles.group}>
           <Button size="icon-only" onClick={openImport}>
             <FileUp size={14} />
           </Button>
           <Button size="icon-only" onClick={handleExport}>
             <Download size={14} />
           </Button>
-          <Button size="icon-only" onClick={handleAddClick}>
+          <Button size="icon-only" onClick={() => inputRef.current?.click()}>
             <Plus size={14} />
           </Button>
           <Button size="icon-only" onClick={handleRemove}>
@@ -118,6 +128,34 @@ export const CanvasToolbar = () => {
           />
         </div>
       </div>
+
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        header={modalMode === "add" ? "Add Canvas" : "Rename Canvas"}
+        content={
+          <Input
+            type="text"
+            id="canvas-name"
+            placeholder="Canvas name"
+            value={draftName}
+            onInput={e => setDraftName((e.target as HTMLInputElement).value)}
+            onKeyDown={e => {
+              if (e.key === "Enter" && draftName.trim()) handleModalSubmit()
+            }}
+          />
+        }
+        footer={
+          <>
+            <Button size="small" onClick={() => setModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button size="small" color="primary" onClick={handleModalSubmit} disabled={!draftName.trim()}>
+              {modalMode === "add" ? "Add" : "Rename"}
+            </Button>
+          </>
+        }
+      />
     </div>
   )
 }

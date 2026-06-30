@@ -35,7 +35,7 @@ export const controls = style({
   gap: vars.space.sm,
 })
 
-export const input = style({
+export const select = style({
   height: 30,
   border: `1px solid ${vars.color.border}`,
   backgroundColor: vars.bg.base,

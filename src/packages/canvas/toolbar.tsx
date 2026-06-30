@@ -5,6 +5,7 @@ import { Input } from "@/ui/atoms/input/input"
 import { Modal } from "@/ui/atoms/modal/modal"
 import { Tooltip } from "@/ui/atoms/tooltip/tooltip"
 import { remove_active_object } from "./actions"
+import { useCanvasImportExport } from "./hooks/use-canvas-import-export"
 import { create_canvas } from "./internal/store"
 import {
   active_canvas_id,
@@ -19,7 +20,7 @@ import { CanvasToolbarShortcutsModal } from "./toolbar-shortcuts-modal"
 
 export const CanvasToolbar = () => {
   const inputRef = useRef<HTMLInputElement>(null)
-  const importRef = useRef<HTMLInputElement>(null)
+  const { importRef, openImport, handleImport, handleExport } = useCanvasImportExport()
   const [draftName, setDraftName] = useState("")
   const [modalOpen, setModalOpen] = useState(false)
   const [modalMode, setModalMode] = useState<"add" | "rename">("add")
@@ -60,14 +61,6 @@ export const CanvasToolbar = () => {
     const id = (e.target as HTMLSelectElement).value
     await canvas_controller.switch_canvas(id)
   }
-
-  const handleExport = async () => {}
-
-  const openImport = () => {
-    importRef.current?.click()
-  }
-
-  const handleImport = async (_e: Event) => {}
 
   const handleFileChange = async (e: Event) => {
     const files = (e.target as HTMLInputElement).files

@@ -68,7 +68,6 @@ export const create_canvas_controller = (store: CanvasStore) => {
           const blob = await get<Blob>(obj._image_id, image_store)
           if (blob) {
             const url = URL.createObjectURL(blob)
-            // @ts-expect-error FabricObject.fromObject accepts custom properties, but the type definition doesn't reflect that
             obj.src = url
             active_blob_urls.push(url)
           }
@@ -153,6 +152,12 @@ export const create_canvas_controller = (store: CanvasStore) => {
     await save_state()
   }
 
+  const get_image_blob = (image_id: string) => get<Blob>(image_id, image_store)
+
+  const set_image_blob = async (image_id: string, blob: Blob) => {
+    await set(image_id, blob, image_store)
+  }
+
   const copy_image_to_clipboard = async () => {
     if (!canvas || !navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
       return false
@@ -189,6 +194,8 @@ export const create_canvas_controller = (store: CanvasStore) => {
     switch_canvas,
     add_canvas,
     add_image,
+    get_image_blob,
+    set_image_blob,
     capture_history_snapshot: history.capture,
     undo: history.undo,
     redo: history.redo,

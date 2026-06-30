@@ -15,8 +15,11 @@ export const ensure_canvas_doc_fabric_props = () => {
   fabric_props_initialized = true
 }
 
-export type CanvasFabricObject = FabricObject & {
+export type CanvasFabricObject = {
+  type: string
   _image_id?: string
+  src?: string
+  [key: string]: unknown
 }
 
 export type CanvasSnapshot = {

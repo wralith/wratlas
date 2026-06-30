@@ -10,7 +10,8 @@
     "typecheck": "tsc --build --noEmit",
     "format": "biome format --write .",
     "lint": "biome lint .",
-    "lint:fix": "biome lint --write ."
+    "lint:fix": "biome lint --write .",
+    "check": "bun run format && bun run lint && bun run typecheck"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.19",

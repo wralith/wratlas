@@ -1,7 +1,8 @@
-import { batch, useSignalEffect } from "@preact/signals"
+import { useSignalEffect } from "@preact/signals"
 import type { TPointerEvent, TPointerEventInfo } from "fabric"
 import { Point } from "fabric"
-import { fabric_canvas, pan_x, pan_y, zoom_level } from "../state"
+import { is_mod_key, sync_viewport_signals } from "../internal/controls"
+import { fabric_canvas } from "../state"
 
 export const usePanZoom = () => {
   useSignalEffect(() => {
@@ -14,37 +15,52 @@ export const usePanZoom = () => {
       e.preventDefault()
       e.stopPropagation()
 
-      const delta = -e.deltaY
-      let zoom = canvas.getZoom()
-      zoom *= 0.999 ** delta
-      zoom = Math.min(Math.max(zoom, 0.1), 20)
+      if (!canvas.viewportTransform) return
 
-      canvas.zoomToPoint(new Point(e.offsetX, e.offsetY), zoom)
+      if (is_mod_key(e)) {
+        const delta = -e.deltaY
+        let zoom = canvas.getZoom()
+        zoom *= 0.999 ** delta
+        zoom = Math.min(Math.max(zoom, 0.1), 20)
+
+        canvas.zoomToPoint(new Point(e.offsetX, e.offsetY), zoom)
+        canvas.requestRenderAll()
+        sync_viewport_signals(canvas)
+        return
+      }
+
+      const vpt = canvas.viewportTransform
+      vpt[4] -= e.deltaX
+      vpt[5] -= e.deltaY
       canvas.requestRenderAll()
-
-      batch(() => {
-        zoom_level.value = zoom
-        const vpt = canvas.viewportTransform
-        if (vpt) {
-          pan_x.value = vpt[4]
-          pan_y.value = vpt[5]
-        }
-      })
+      sync_viewport_signals(canvas)
     }
 
     let isPanning = false
+    let isSpacePressed = false
     let lastX = 0
     let lastY = 0
+
+    const startPanning = (clientX: number, clientY: number) => {
+      isPanning = true
+      lastX = clientX
+      lastY = clientY
+      canvas.selection = false
+      canvas.defaultCursor = "grabbing"
+    }
+
+    const stopPanning = () => {
+      if (!isPanning) return
+      isPanning = false
+      canvas.selection = true
+      canvas.defaultCursor = "default"
+    }
 
     const handleMouseDown = (opt: TPointerEventInfo<TPointerEvent>) => {
       const e = opt.e
 
-      if (e instanceof MouseEvent && e.button === 1) {
-        isPanning = true
-        lastX = e.clientX
-        lastY = e.clientY
-        canvas.selection = false
-        canvas.defaultCursor = "grabbing"
+      if (e instanceof MouseEvent && (e.button === 1 || (e.button === 0 && isSpacePressed))) {
+        startPanning(e.clientX, e.clientY)
         e.preventDefault()
       }
     }
@@ -62,23 +78,34 @@ export const usePanZoom = () => {
         lastY = ev.clientY
 
         canvas.requestRenderAll()
-
-        batch(() => {
-          pan_x.value = vpt[4]
-          pan_y.value = vpt[5]
-        })
+        sync_viewport_signals(canvas)
       }
     }
 
     const handleMouseUp = () => {
-      if (!isPanning) {
+      stopPanning()
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code !== "Space") return
+      if (e.repeat) return
+      if (e.target instanceof HTMLElement && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) {
         return
       }
 
-      isPanning = false
-      canvas.selection = true
-      canvas.defaultCursor = "default"
+      isSpacePressed = true
+      canvas.defaultCursor = isPanning ? "grabbing" : "grab"
+      e.preventDefault()
     }
+
+    const handleKeyUp = (e: KeyboardEvent) => {
+      if (e.code !== "Space") return
+      isSpacePressed = false
+      canvas.defaultCursor = isPanning ? "grabbing" : "default"
+    }
+
+    document.addEventListener("keydown", handleKeyDown)
+    document.addEventListener("keyup", handleKeyUp)
 
     const disposers = [
       canvas.on("mouse:wheel", handleWheel),
@@ -88,6 +115,9 @@ export const usePanZoom = () => {
     ]
 
     return () => {
+      document.removeEventListener("keydown", handleKeyDown)
+      document.removeEventListener("keyup", handleKeyUp)
+      stopPanning()
       disposers.forEach(d => {
         d()
       })

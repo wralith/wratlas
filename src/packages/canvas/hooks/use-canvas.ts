@@ -47,6 +47,7 @@ export const useCanvas = () => {
 
     return () => {
       observer.disconnect()
+      canvas_controller.dispose()
       canvas.dispose()
       fabricRef.current = null
       fabric_canvas.value = null

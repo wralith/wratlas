@@ -3,6 +3,7 @@ import type { Canvas as FabricCanvas } from "fabric"
 import { FabricImage } from "fabric"
 import { createStore, get, set } from "idb-keyval"
 import { create_canvas_snapshot_patch } from "./snapshot"
+import { create_canvas_history } from "./history"
 import type { CanvasStore } from "./store"
 import type { CanvasSnapshot } from "./types"
 import { ensure_canvas_doc_fabric_props } from "./types"
@@ -16,9 +17,19 @@ export const create_canvas_controller = (store: CanvasStore) => {
   let active_blob_urls: string[] = []
   const is_hydrating = signal(false)
 
+  const history = create_canvas_history({
+    get_canvas: () => canvas,
+    get_active_canvas_id: () => store.active_canvas_id.value,
+    get_image_blob: image_id => get<Blob>(image_id, image_store),
+    save_state: async () => {
+      await save_state()
+    },
+    is_hydrating: () => is_hydrating.value,
+  })
+
   const init = (fabricCanvas: FabricCanvas) => {
     canvas = fabricCanvas
-    load_active_canvas()
+    void load_active_canvas()
   }
 
   const load_active_canvas = async () => {
@@ -50,6 +61,7 @@ export const create_canvas_controller = (store: CanvasStore) => {
       const { zoom = 1, x = 0, y = 0 } = snapshot.viewport || {}
       canvas.setViewportTransform([zoom, 0, 0, zoom, x, y])
       canvas.requestRenderAll()
+      history.reset_for_active_canvas()
     } finally {
       is_hydrating.value = false
     }
@@ -121,6 +133,35 @@ export const create_canvas_controller = (store: CanvasStore) => {
     await save_state()
   }
 
+  const copy_image_to_clipboard = async () => {
+    if (!canvas || !navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
+      return false
+    }
+
+    const active_object = canvas.getActiveObject()
+    if (!active_object) return false
+
+    const object_canvas = active_object.toCanvasElement({
+      enableRetinaScaling: true,
+      format: "png",
+      multiplier: 1,
+      withoutTransform: false,
+      withoutShadow: false,
+    })
+
+    const blob = await new Promise<Blob | null>(resolve => {
+      object_canvas.toBlob(resolve, "image/png")
+    })
+
+    if (!blob) return false
+    await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })])
+    return true
+  }
+
+  const dispose = () => {
+    history.dispose()
+  }
+
   return {
     init,
     load_active_canvas,
@@ -128,6 +169,12 @@ export const create_canvas_controller = (store: CanvasStore) => {
     switch_canvas,
     add_canvas,
     add_image,
+    capture_history_snapshot: history.capture,
+    undo: history.undo,
+    redo: history.redo,
+    copy_image_to_clipboard,
+    dispose,
     is_hydrating,
+    is_restoring_history: history.is_restoring,
   }
 }

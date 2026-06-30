@@ -1,7 +1,9 @@
 import { LoadingOverlay } from "@/ui/atoms/loading-overlay/loading-overlay"
 import { canvasHost, wrapper } from "./canvas.css"
 import { useCanvas } from "./hooks/use-canvas"
+import { useCanvasShortcuts } from "./hooks/use-canvas-shortcuts"
 import { useDragDrop } from "./hooks/use-drag-drop"
+import { useHistory } from "./hooks/use-history"
 import { useObjectDelete } from "./hooks/use-object-delete"
 import { usePanZoom } from "./hooks/use-pan-zoom"
 import { usePersistence } from "./hooks/use-persistence"
@@ -15,8 +17,10 @@ export const Canvas = () => {
   const { canvasRef } = useCanvas()
 
   usePanZoom()
+  useHistory()
   useDragDrop()
   useObjectDelete()
+  useCanvasShortcuts()
   usePersistence()
 
   return (

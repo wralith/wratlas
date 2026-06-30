@@ -52,3 +52,41 @@ export const label = style({
   color: vars.text.muted,
   fontFamily: vars.font.ui,
 })
+
+export const shortcutsList = style({
+  display: "grid",
+  gap: vars.space.sm,
+})
+
+export const shortcutsRow = style({
+  display: "grid",
+  gridTemplateColumns: "minmax(180px, 1fr) auto",
+  alignItems: "center",
+  gap: vars.space.lg,
+})
+
+export const shortcutKeys = style({
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
+  gap: vars.space.xs,
+})
+
+export const shortcutKeyPart = style({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: vars.space.xs,
+})
+
+export const shortcutPlus = style({
+  color: vars.text.muted,
+  fontFamily: vars.font.ui,
+  fontSize: vars.textSize.sm,
+})
+
+export const shortcutLabel = style({
+  color: vars.text.primary,
+  fontFamily: vars.font.ui,
+  fontSize: vars.textSize.sm,
+  whiteSpace: "nowrap",
+})

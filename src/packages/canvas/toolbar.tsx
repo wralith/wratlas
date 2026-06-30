@@ -1,4 +1,4 @@
-import { Download, FileUp, Plus, Trash2 } from "lucide-preact"
+import { Download, FileUp, Keyboard, Plus, Trash2 } from "lucide-preact"
 import { useEffect, useRef, useState } from "preact/hooks"
 import { Button } from "@/ui/atoms/button/button"
 import { Input } from "@/ui/atoms/input/input"
@@ -15,6 +15,7 @@ import {
   fabric_canvas,
 } from "./state"
 import * as styles from "./toolbar.css"
+import { CanvasToolbarShortcutsModal } from "./toolbar-shortcuts-modal"
 
 export const CanvasToolbar = () => {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -22,6 +23,7 @@ export const CanvasToolbar = () => {
   const [draftName, setDraftName] = useState("")
   const [modalOpen, setModalOpen] = useState(false)
   const [modalMode, setModalMode] = useState<"add" | "rename">("add")
+  const [shortcutsOpen, setShortcutsOpen] = useState(false)
 
   useEffect(() => {
     if (modalOpen) {
@@ -127,6 +129,11 @@ export const CanvasToolbar = () => {
               <Trash2 size={14} />
             </Button>
           </Tooltip>
+          <Tooltip content="Shortcuts">
+            <Button size="icon-only" onClick={() => setShortcutsOpen(true)}>
+              <Keyboard size={14} />
+            </Button>
+          </Tooltip>
           <input ref={inputRef} type="file" accept="image/*" multiple onChange={handleFileChange} hidden />
           <input
             ref={importRef}
@@ -165,6 +172,8 @@ export const CanvasToolbar = () => {
           </>
         }
       />
+
+      <CanvasToolbarShortcutsModal open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
     </div>
   )
 }

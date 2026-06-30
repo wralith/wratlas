@@ -5,6 +5,7 @@ import { Flex } from "@/ui/atoms/flex/flex"
 import { Input } from "@/ui/atoms/input/input"
 import { Modal } from "@/ui/atoms/modal/modal"
 import { Tooltip } from "@/ui/atoms/tooltip/tooltip"
+import { Combobox, type ComboboxAction } from "@/ui/molecules/combobox/combobox"
 import { remove_active_object } from "./actions"
 import { useCanvasImportExport } from "./hooks/use-canvas-import-export"
 import { create_canvas } from "./internal/store"
@@ -59,8 +60,7 @@ export const CanvasToolbar = () => {
     setModalOpen(false)
   }
 
-  const handleCanvasChange = async (e: Event) => {
-    const id = (e.target as HTMLSelectElement).value
+  const handleCanvasChange = async (id: string) => {
     await canvas_controller.switch_canvas(id)
   }
 
@@ -94,39 +94,46 @@ export const CanvasToolbar = () => {
     remove_active_object(canvas)
   }
 
+  const canvasActions: ComboboxAction[] = [
+    {
+      id: "create",
+      label: "Create Canvas",
+      icon: Plus,
+      onSelect: openAddModal,
+    },
+    {
+      id: "rename",
+      label: "Rename Canvas",
+      icon: Pencil,
+      onSelect: openRenameModal,
+      disabled: !currentCanvasId,
+    },
+    {
+      id: "delete",
+      label: "Delete Canvas",
+      icon: Trash2,
+      tone: "danger" as const,
+      onSelect: openDeleteModal,
+      disabled: canvas_list.value.length <= 1,
+    },
+  ]
+
   return (
     <div class={styles.container}>
       <div class={styles.toolbar}>
         <Flex align="center" gap="sm">
-          <span class={styles.label}>Canvas</span>
-          <select class={styles.select} value={active_canvas_id.value} onChange={handleCanvasChange}>
-            {canvas_list.value.map(canvas => (
-              <option key={canvas.id} value={canvas.id}>
-                {canvas.name}
-              </option>
-            ))}
-          </select>
-          <Tooltip content="New Canvas">
-            <Button size="icon-only" onClick={openAddModal}>
-              <Plus size={14} />
-            </Button>
-          </Tooltip>
-          <Tooltip content="Rename Canvas">
-            <Button size="icon-only" onClick={openRenameModal} disabled={!currentCanvasId}>
-              <Pencil size={14} />
-            </Button>
-          </Tooltip>
-          <Tooltip content="Delete Canvas">
-            <Button
-              size="icon-only"
-              color="error"
-              variant="light"
-              onClick={openDeleteModal}
-              disabled={canvas_list.value.length <= 1}
-            >
-              <Trash2 size={14} />
-            </Button>
-          </Tooltip>
+          <Combobox
+            value={active_canvas_id.value}
+            options={canvas_list.value.map(canvas => ({
+              id: canvas.id,
+              label: canvas.name,
+            }))}
+            onChange={handleCanvasChange}
+            actions={canvasActions}
+            placeholder="Select canvas"
+            searchPlaceholder="Search canvases..."
+            emptyLabel="No canvases"
+          />
           <Tooltip content="Import">
             <Button size="icon-only" onClick={openImport}>
               <FileUp size={14} />

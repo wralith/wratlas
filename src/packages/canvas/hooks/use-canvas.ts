@@ -25,7 +25,7 @@ export const useCanvas = () => {
       selectionLineWidth: 1.5,
       preserveObjectStacking: true,
       enablePointerEvents: true,
-      fireRightClick: false,
+      fireRightClick: true,
       fireMiddleClick: true,
       stopContextMenu: true,
     })

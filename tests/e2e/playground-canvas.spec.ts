@@ -115,3 +115,41 @@ test("deleting the only canvas is disabled", async ({ page }) => {
   const deleteButton = page.getByRole("button", { name: "Delete Canvas" })
   await expect(deleteButton).toBeDisabled()
 })
+
+test("right click on image opens image context menu", async ({ page }) => {
+  const playground = new PlaygroundPage(page)
+
+  await playground.goto()
+  await playground.addImage(sampleImagePath)
+  await expect.poll(async () => playground.getActiveCanvasObjectCount()).toBe(1)
+
+  await playground.openContextMenuOnFirstObject()
+
+  const menu = page.getByRole("menu", { name: "Canvas menu" })
+  await expect(menu).toBeVisible()
+  await expect(page.getByRole("menuitem", { name: "Copy image" })).toBeVisible()
+  await expect(page.getByRole("menuitem", { name: "Delete image" })).toBeVisible()
+  await expect(page.getByRole("menuitem", { name: "Add image" })).not.toBeVisible()
+
+  await page.getByRole("menuitem", { name: "Delete image" }).click()
+  await expect.poll(async () => playground.getActiveCanvasObjectCount()).toBe(0)
+})
+
+test("right click on empty canvas opens canvas context menu", async ({ page }) => {
+  const playground = new PlaygroundPage(page)
+
+  await playground.goto()
+  await playground.openContextMenuOnEmptyCanvas()
+
+  const menu = page.getByRole("menu", { name: "Canvas menu" })
+  await expect(menu).toBeVisible()
+  await expect(page.getByRole("menuitem", { name: "Add image" })).toBeVisible()
+  await expect(page.getByRole("menuitem", { name: "Reset view" })).toBeVisible()
+  await expect(page.getByRole("menuitem", { name: "Reset view" })).toBeDisabled()
+
+  const fileChooserPromise = page.waitForEvent("filechooser")
+  await page.getByRole("menuitem", { name: "Add image" }).click()
+  const fileChooser = await fileChooserPromise
+  await fileChooser.setFiles(sampleImagePath)
+  await expect.poll(async () => playground.getActiveCanvasObjectCount()).toBe(1)
+})

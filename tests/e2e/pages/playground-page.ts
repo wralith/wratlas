@@ -63,14 +63,16 @@ export class PlaygroundPage {
   }
 
   addImage = async (filePath: string) => {
+    await this.openContextMenuOnEmptyCanvas()
+
     const fileChooserPromise = this.page.waitForEvent("filechooser")
-    await this.page.getByRole("button", { name: "Add image" }).click()
+    await this.page.getByRole("menuitem", { name: "Add image" }).click()
     const fileChooser = await fileChooserPromise
     await fileChooser.setFiles(filePath)
   }
 
   deleteSelectedObject = async () => {
-    await this.page.getByRole("button", { name: "Delete object" }).click()
+    await this.page.keyboard.press("Delete")
   }
 
   openCanvasMenu = async () => {
@@ -201,5 +203,34 @@ export class PlaygroundPage {
     await this.page.mouse.down()
     await this.page.mouse.move(startX + dx, startY + dy)
     await this.page.mouse.up()
+  }
+
+  openContextMenuOnFirstObject = async () => {
+    const point = await this.getFirstObjectPosition()
+    if (!point) {
+      throw new Error("First canvas object position is not available")
+    }
+
+    await this.openContextMenuAtCanvasPoint(point.left + 24, point.top + 24)
+  }
+
+  openContextMenuOnEmptyCanvas = async () => {
+    const box = await this.upperCanvas.boundingBox()
+    if (!box) {
+      throw new Error("Upper canvas bounding box is not available")
+    }
+
+    const x = Math.max(24, Math.floor(box.width / 2))
+    const y = Math.max(72, Math.floor(box.height / 2))
+    await this.openContextMenuAtCanvasPoint(x, y)
+  }
+
+  private openContextMenuAtCanvasPoint = async (x: number, y: number) => {
+    const box = await this.upperCanvas.boundingBox()
+    if (!box) {
+      throw new Error("Upper canvas bounding box is not available")
+    }
+
+    await this.page.mouse.click(box.x + x, box.y + y, { button: "right" })
   }
 }

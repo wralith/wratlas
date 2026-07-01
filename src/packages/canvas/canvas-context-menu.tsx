@@ -1,7 +1,7 @@
 import { useSignalEffect } from "@preact/signals"
 import type { Canvas as FabricCanvas, TPointerEvent, TPointerEventInfo } from "fabric"
 import { useMemo, useRef, useState } from "preact/hooks"
-import { sync_viewport_signals } from "./internal/controls"
+import { Menu, type MenuItem } from "@/ui/atoms/menu/menu"
 import {
   can_bring_active_object_forward,
   can_bring_active_object_to_front,
@@ -9,8 +9,8 @@ import {
   can_send_active_object_to_back,
   remove_active_object,
 } from "./actions"
+import { sync_viewport_signals } from "./internal/controls"
 import { canvas_controller, fabric_canvas } from "./state"
-import { Menu, type MenuItem } from "@/ui/atoms/menu/menu"
 
 type MenuTarget = "object" | "canvas" | null
 

@@ -1,5 +1,5 @@
 import { signal } from "@preact/signals"
-import { themeMap, type ThemeName } from "@/styles/themes.css.ts"
+import { type ThemeName, themeMap } from "@/styles/themes.css.ts"
 
 const stored = (typeof localStorage !== "undefined" ? localStorage.getItem("app-theme") : null) as ThemeName | null
 

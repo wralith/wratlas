@@ -2,13 +2,13 @@ import { signal } from "@preact/signals"
 import type { Canvas as FabricCanvas } from "fabric"
 import { FabricImage } from "fabric"
 import { createStore, del, get, keys, set } from "idb-keyval"
-import { clamp_zoom } from "../constants"
 import {
   bring_active_object_forward,
   bring_active_object_to_front,
   send_active_object_backward,
   send_active_object_to_back,
 } from "../actions"
+import { clamp_zoom } from "../constants"
 import { create_canvas_history } from "./history"
 import { create_canvas_snapshot_patch } from "./snapshot"
 import type { CanvasStore } from "./store"

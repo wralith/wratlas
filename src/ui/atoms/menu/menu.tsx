@@ -8,11 +8,11 @@ import {
   useHover,
   useInteractions,
 } from "@floating-ui/react"
+import { ChevronRight } from "lucide-preact"
 import type { JSX } from "preact"
 import { useEffect, useId, useState } from "preact/hooks"
 import { cn } from "@/lib/cn"
 import * as styles from "./menu.css.ts"
-import { ChevronRight } from "lucide-preact"
 
 export type MenuItem = {
   id: string

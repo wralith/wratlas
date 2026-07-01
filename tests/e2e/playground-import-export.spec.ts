@@ -1,5 +1,5 @@
-import path from "node:path"
 import { readFile } from "node:fs/promises"
+import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { expect, test } from "@playwright/test"
 import JSZip from "jszip"

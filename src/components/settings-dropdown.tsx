@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "preact/hooks"
-import { activeTheme, themeOptions } from "@/lib/theme"
 import * as styles from "@/components/settings-dropdown.css.ts"
+import { activeTheme, themeOptions } from "@/lib/theme"
 
 type Props = {
   onClose: () => void

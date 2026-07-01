@@ -4,10 +4,10 @@ import { Button } from "@/ui/atoms/button/button"
 import { Flex } from "@/ui/atoms/flex/flex"
 import { Tooltip } from "@/ui/atoms/tooltip/tooltip"
 import { useCanvasImportExport } from "./hooks/use-canvas-import-export"
-import { ToolbarCombobox } from "./toolbar-combobox"
-import * as styles from "./toolbar.css"
-import { CanvasToolbarShortcutsModal } from "./toolbar-shortcuts-modal"
 import { active_tool, rectangle_color } from "./state"
+import * as styles from "./toolbar.css"
+import { ToolbarCombobox } from "./toolbar-combobox"
+import { CanvasToolbarShortcutsModal } from "./toolbar-shortcuts-modal"
 
 const toggle_rectangle_tool = () => {
   active_tool.value = active_tool.value === "draw" ? "select" : "draw"

@@ -10,7 +10,7 @@
     "typecheck": "tsgo --build --noEmit",
     "format": "biome format --write .",
     "lint": "biome check --assist-enabled=true .",
-    "lint:fix": "biome lint --write .",
+    "lint:fix": "biome check --assist-enabled=true --write .",
     "check": "bun run format && bun run lint && bun run typecheck",
     "e2e": "playwright test",
     "e2e:headed": "playwright test --headed",

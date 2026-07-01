@@ -1,6 +1,7 @@
 import { useSignalEffect } from "@preact/signals"
 import type { Canvas as FabricCanvas, TPointerEvent, TPointerEventInfo } from "fabric"
 import { useMemo, useRef, useState } from "preact/hooks"
+import { asset_store } from "@/packages/assets/state"
 import { Menu, type MenuItem } from "@/ui/atoms/menu/menu"
 import {
   can_bring_active_object_forward,
@@ -26,6 +27,20 @@ const initial_state: MenuState = {
   x: 0,
   y: 0,
   target: null,
+}
+
+const save_active_object_to_assets = async (canvas: FabricCanvas) => {
+  const obj = canvas.getActiveObject()
+  if (obj?.type?.toLowerCase() !== "image") return
+
+  const blob = await new Promise<Blob | null>(resolve => {
+    obj.toCanvasElement().toBlob(resolve, "image/png")
+  })
+
+  if (!blob) return
+
+  const file = new File([blob], `canvas-image-${Date.now()}.png`, { type: "image/png" })
+  await asset_store.add_asset(file)
 }
 
 const is_default_view = (canvas: FabricCanvas) => {
@@ -90,6 +105,8 @@ export const CanvasContextMenu = () => {
     }
   })
 
+  const is_image_object = canvas?.getActiveObject()?.type?.toLowerCase() === "image"
+
   const items = useMemo<MenuItem[]>(() => {
     if (!canvas || !state.target) return []
 
@@ -122,6 +139,7 @@ export const CanvasContextMenu = () => {
           ],
         },
         { id: "copy-object", label: "Copy object" },
+        ...(is_image_object ? [{ id: "save-to-assets" as const, label: "Save to Assets" }] : []),
         { id: "delete-object", label: "Delete object", danger: true },
       ]
     }
@@ -161,6 +179,11 @@ export const CanvasContextMenu = () => {
 
     if (id === "send-backward") {
       void canvas_controller.order_active_object_backward()
+      return
+    }
+
+    if (id === "save-to-assets") {
+      void save_active_object_to_assets(canvas)
       return
     }
 

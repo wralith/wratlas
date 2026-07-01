@@ -1,9 +1,9 @@
 import { ImageUp, Search } from "lucide-preact"
-import { useEffect } from "preact/hooks"
 import { useAssetsPage } from "@/packages/assets/use-assets-page"
 import { Button } from "@/ui/atoms/button/button"
 import { Flex } from "@/ui/atoms/flex/flex"
 import { Input } from "@/ui/atoms/input/input"
+import { Menu } from "@/ui/atoms/menu/menu"
 import { Tag } from "@/ui/atoms/tag/tag"
 import { ImageCard } from "@/ui/molecules/image-card/image-card"
 import { PageLayout } from "@/ui/molecules/page-layout/page-layout"
@@ -19,10 +19,12 @@ const AssetsPage = () => {
     handle_file_change,
     toggle_tag,
     is_tag_selected,
-    cleanup,
+    menu,
+    menu_items,
+    open_context_menu,
+    close_menu,
+    handle_menu_select,
   } = useAssetsPage()
-
-  useEffect(() => cleanup, [])
 
   return (
     <PageLayout>
@@ -70,11 +72,20 @@ const AssetsPage = () => {
                 width={asset.width}
                 height={asset.height}
                 thumbnailUrl={asset_urls.value[asset.id] ?? ""}
+                onContextMenu={e => open_context_menu(asset.id, e)}
               />
             ))}
           </Flex>
         )}
       </Flex>
+
+      <Menu
+        open={menu.value.open}
+        position={menu.value.open ? { x: menu.value.x, y: menu.value.y } : null}
+        items={menu_items.value}
+        onSelect={handle_menu_select}
+        onClose={close_menu}
+      />
     </PageLayout>
   )
 }

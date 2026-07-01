@@ -1,3 +1,4 @@
+import type { JSX } from "preact"
 import { Card } from "@/ui/atoms/card/card"
 import { Flex } from "@/ui/atoms/flex/flex"
 import { Tag } from "@/ui/atoms/tag/tag"
@@ -9,13 +10,14 @@ export type ImageCardProps = {
   width: number
   height: number
   thumbnailUrl: string
+  onContextMenu?: (e: JSX.TargetedMouseEvent<HTMLDivElement>) => void
 }
 
 export const ImageCard = (props: ImageCardProps) => {
-  const { name: label, tags, width, height, thumbnailUrl } = props
+  const { name: label, tags, width, height, thumbnailUrl, onContextMenu } = props
 
   return (
-    <Card class={card}>
+    <Card class={card} onContextMenu={onContextMenu}>
       <img src={thumbnailUrl} alt={label} class={thumbnail} />
       <div class={content}>
         <div class={name}>{label}</div>

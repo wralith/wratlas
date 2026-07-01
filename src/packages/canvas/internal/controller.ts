@@ -244,8 +244,42 @@ export const create_canvas_controller = (store: CanvasStore) => {
     return true
   }
 
+  const add_image_to_canvas = async (target_canvas_id: string, file: File) => {
+    const snapshot = store.canvases.value.find(c => c.id === target_canvas_id)
+    if (!snapshot) return false
+
+    const last_index = snapshot.lastImageIndex ?? 0
+    const new_index = last_index + 1
+    const _image_id = `${target_canvas_id}-${new_index}`
+
+    await set(_image_id, file, image_store)
+
+    const src = URL.createObjectURL(file)
+    const img = await FabricImage.fromURL(src)
+    URL.revokeObjectURL(src)
+
+    img.set({
+      left: 100,
+      top: 100,
+      _image_id,
+    })
+    img.scaleToWidth(400)
+
+    const obj = img.toJSON() as Record<string, unknown>
+    delete obj.src
+
+    store.update_canvas(target_canvas_id, {
+      objects: [...snapshot.objects, obj as never],
+      lastImageIndex: new_index,
+      updatedAt: new Date().toISOString(),
+    })
+
+    return true
+  }
+
   const dispose = () => {
     history.dispose()
+    canvas = null
   }
 
   return {
@@ -256,6 +290,7 @@ export const create_canvas_controller = (store: CanvasStore) => {
     add_canvas,
     delete_canvas,
     add_image,
+    add_image_to_canvas,
     get_image_blob,
     set_image_blob,
     capture_history_snapshot: history.capture,

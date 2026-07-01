@@ -3,7 +3,7 @@ import HomePage from "@/pages/home"
 
 const NotFoundPage = lazy(() => import("@/pages/not-found.tsx"))
 const PlaygroundPage = lazy(() => import("@/pages/playground.tsx"))
-const LibraryPage = lazy(() => import("@/pages/library.tsx"))
+const AssetsPage = lazy(() => import("@/pages/assets.tsx"))
 const JourneyPage = lazy(() => import("@/pages/journey.tsx"))
 
 export function App() {
@@ -13,7 +13,7 @@ export function App() {
         <Router>
           <HomePage path="/" />
           <Route path="/playground" component={PlaygroundPage} />
-          <Route path="/library" component={LibraryPage} />
+          <Route path="/assets" component={AssetsPage} />
           <Route path="/journey" component={JourneyPage} />
           <NotFoundPage default />
         </Router>

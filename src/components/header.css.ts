@@ -4,12 +4,19 @@ import { vars } from "@/styles/vars.css.ts"
 export const container = style({
   margin: "1rem",
   marginBottom: "0.5rem",
+  position: "relative",
+  zIndex: vars.z.hud + 1,
 })
 
 export const brand = style({
   fontSize: vars.textSize.lg,
   color: vars.color.primary,
   fontWeight: 700,
+})
+
+export const settingsWrapper = style({
+  position: "relative",
+  zIndex: 2000,
 })
 
 export const header = style({

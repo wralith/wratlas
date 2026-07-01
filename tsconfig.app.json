@@ -5,6 +5,7 @@
     "module": "esnext",
     "lib": ["ES2023", "DOM"],
     "types": ["vite/client", "vitest/globals"],
+    "strict": true,
     "skipLibCheck": true,
     "paths": {
       "@/*": ["./src/*"],
@@ -27,5 +28,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.css.ts"]
 }

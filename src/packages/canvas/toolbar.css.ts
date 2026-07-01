@@ -37,32 +37,6 @@ export const rightSection = style({
   gap: vars.space.sm,
 })
 
-export const toolGroup = style({
-  display: "inline-flex",
-  alignItems: "center",
-  gap: vars.space.xs,
-  padding: `0 ${vars.space.xs}`,
-  borderLeft: `1px solid ${vars.color.border}`,
-})
-
-export const colorField = style({
-  display: "inline-flex",
-  alignItems: "center",
-  gap: vars.space.xs,
-  paddingLeft: vars.space.xs,
-  borderLeft: `1px solid ${vars.color.border}`,
-})
-
-export const colorInput = style({
-  width: 28,
-  height: 28,
-  padding: 0,
-  border: `1px solid ${vars.color.border}`,
-  borderRadius: vars.radius.xs,
-  background: "transparent",
-  cursor: "pointer",
-})
-
 export const select = style({
   height: 30,
   border: `1px solid ${vars.color.border}`,

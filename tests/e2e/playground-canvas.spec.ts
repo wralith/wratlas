@@ -127,11 +127,11 @@ test("right click on image opens image context menu", async ({ page }) => {
 
   const menu = page.getByRole("menu", { name: "Canvas menu" })
   await expect(menu).toBeVisible()
-  await expect(page.getByRole("menuitem", { name: "Copy image" })).toBeVisible()
-  await expect(page.getByRole("menuitem", { name: "Delete image" })).toBeVisible()
+  await expect(page.getByRole("menuitem", { name: "Copy object" })).toBeVisible()
+  await expect(page.getByRole("menuitem", { name: "Delete object" })).toBeVisible()
   await expect(page.getByRole("menuitem", { name: "Add image" })).not.toBeVisible()
 
-  await page.getByRole("menuitem", { name: "Delete image" }).click()
+  await page.getByRole("menuitem", { name: "Delete object" }).click()
   await expect.poll(async () => playground.getActiveCanvasObjectCount()).toBe(0)
 })
 

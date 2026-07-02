@@ -4,6 +4,12 @@ import { vars } from "@/styles/vars.css.ts"
 export const card = style({
   width: 220,
   overflow: "hidden",
+  cursor: "pointer",
+  selectors: {
+    "&:hover": {
+      borderColor: vars.color.primary,
+    },
+  },
 })
 
 export const thumbnail = style({

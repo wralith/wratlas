@@ -1,5 +1,6 @@
 import type { ComponentChildren } from "preact"
 import { useCallback, useEffect } from "preact/hooks"
+import { cn } from "@/lib/cn"
 import * as styles from "./modal.css.ts"
 
 export type ModalProps = {
@@ -8,10 +9,12 @@ export type ModalProps = {
   header?: ComponentChildren
   content?: ComponentChildren
   footer?: ComponentChildren
+  wide?: boolean
+  class?: string
 }
 
 export const Modal = (props: ModalProps) => {
-  const { open, onClose, header, content, footer } = props
+  const { open, onClose, header, content, footer, wide, class: className } = props
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -32,7 +35,7 @@ export const Modal = (props: ModalProps) => {
   return (
     <div class={styles.backdrop} onClick={onClose}>
       <div
-        class={styles.modal}
+        class={cn(styles.modal, wide && styles.modalWide, className)}
         onClick={e => e.stopPropagation()}
         onKeyDown={e => {
           if (e.key === "Escape") onClose()

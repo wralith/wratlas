@@ -27,3 +27,14 @@ export const input = style({
     },
   },
 })
+
+export const wrapper = style({
+  display: "flex",
+  flexDirection: "column",
+  gap: 4,
+})
+
+export const label = style({
+  fontSize: vars.textSize.xs,
+  color: vars.text.muted,
+})

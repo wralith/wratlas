@@ -11,13 +11,14 @@ export type ImageCardProps = {
   height: number
   thumbnailUrl: string
   onContextMenu?: (e: JSX.TargetedMouseEvent<HTMLDivElement>) => void
+  onClick?: (e: JSX.TargetedMouseEvent<HTMLDivElement>) => void
 }
 
 export const ImageCard = (props: ImageCardProps) => {
-  const { name: label, tags, width, height, thumbnailUrl, onContextMenu } = props
+  const { name: label, tags, width, height, thumbnailUrl, onContextMenu, onClick } = props
 
   return (
-    <Card class={card} onContextMenu={onContextMenu}>
+    <Card class={card} onContextMenu={onContextMenu} onClick={onClick}>
       <img src={thumbnailUrl} alt={label} class={thumbnail} />
       <div class={content}>
         <div class={name}>{label}</div>

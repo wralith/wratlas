@@ -1,4 +1,7 @@
 import { ImageUp, Search } from "lucide-preact"
+import { open_details, AssetDetailsModal } from "@/packages/assets/asset-details-modal"
+import { open_rename, AssetRenameModal } from "@/packages/assets/asset-rename-modal"
+import { asset_store } from "@/packages/assets/state"
 import { useAssetsPage } from "@/packages/assets/use-assets-page"
 import { Button } from "@/ui/atoms/button/button"
 import { Flex } from "@/ui/atoms/flex/flex"
@@ -10,21 +13,48 @@ import { PageLayout } from "@/ui/molecules/page-layout/page-layout"
 
 const AssetsPage = () => {
   const {
-    search_query,
-    filtered_assets,
-    all_tags,
     asset_urls,
     file_input_ref,
     handle_import,
     handle_file_change,
-    toggle_tag,
-    is_tag_selected,
     menu,
     menu_items,
     open_context_menu,
     close_menu,
-    handle_menu_select,
+    send_to_playground,
+    delete_asset,
+    download_asset,
   } = useAssetsPage()
+
+  const { search_query, filtered_assets, all_tags, selected_tags } = asset_store
+
+  const toggle_tag = (tag: string) => {
+    const current = selected_tags.value
+    selected_tags.value = current.includes(tag) ? current.filter(t => t !== tag) : [...current, tag]
+  }
+
+  const is_tag_selected = (tag: string) => selected_tags.value.includes(tag)
+
+  const handle_menu_select = (id: string) => {
+    if (id.startsWith("canvas-")) {
+      void send_to_playground(id.slice("canvas-".length))
+      return
+    }
+
+    const asset_id = menu.value.asset_id
+
+    switch (id) {
+      case "delete":
+        void delete_asset(asset_id)
+        break
+      case "download":
+        void download_asset(asset_id)
+        break
+      case "rename":
+        open_rename(asset_id)
+        break
+    }
+  }
 
   return (
     <PageLayout>
@@ -73,6 +103,7 @@ const AssetsPage = () => {
                 height={asset.height}
                 thumbnailUrl={asset_urls.value[asset.id] ?? ""}
                 onContextMenu={e => open_context_menu(asset.id, e)}
+                onClick={() => open_details(asset.id, asset_urls.value[asset.id] ?? "")}
               />
             ))}
           </Flex>
@@ -86,6 +117,9 @@ const AssetsPage = () => {
         onSelect={handle_menu_select}
         onClose={close_menu}
       />
+
+      <AssetRenameModal />
+      <AssetDetailsModal />
     </PageLayout>
   )
 }

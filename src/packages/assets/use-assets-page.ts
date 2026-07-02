@@ -23,8 +23,7 @@ export const useAssetsPage = () => {
   const file_input_ref = useRef<HTMLInputElement>(null)
   const menu = useSignal<MenuState>(initial_menu)
 
-  const { search_query, selected_tags, filtered_assets, all_tags, add_asset, remove_asset, get_asset_blob } =
-    asset_store
+  const { filtered_assets, assets, add_asset, remove_asset, get_asset_blob } = asset_store
 
   useSignalEffect(() => {
     const assets_arr = filtered_assets.value
@@ -83,13 +82,6 @@ export const useAssetsPage = () => {
     input.value = ""
   }
 
-  const toggle_tag = (tag: string) => {
-    const current = selected_tags.value
-    selected_tags.value = current.includes(tag) ? current.filter(t => t !== tag) : [...current, tag]
-  }
-
-  const is_tag_selected = (tag: string) => selected_tags.value.includes(tag)
-
   const menu_items = useComputed(() => [
     {
       id: "send-to-playground",
@@ -99,6 +91,8 @@ export const useAssetsPage = () => {
         label: c.name,
       })),
     },
+    { id: "download", label: "Download" },
+    { id: "rename", label: "Rename" },
     { id: "delete", label: "Delete", danger: true },
   ])
 
@@ -119,6 +113,19 @@ export const useAssetsPage = () => {
     await remove_asset(asset_id)
   }
 
+  const download_asset = async (asset_id: string) => {
+    const blob = await get_asset_blob(asset_id)
+    if (!blob) return
+    const asset = assets.value.find(a => a.id === asset_id)
+    const ext = blob.type.split("/")[1] || "png"
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `${asset?.name ?? "asset"}.${ext}`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const open_context_menu = (asset_id: string, e: MouseEvent) => {
     e.preventDefault()
     menu.value = {
@@ -133,34 +140,17 @@ export const useAssetsPage = () => {
     menu.value = initial_menu
   }
 
-  const handle_menu_select = (id: string) => {
-    if (id.startsWith("canvas-")) {
-      void send_to_playground(id.slice("canvas-".length))
-      return
-    }
-
-    if (id === "delete") {
-      void delete_asset(menu.value.asset_id)
-    }
-  }
-
   return {
-    search_query,
-    selected_tags,
-    filtered_assets,
-    all_tags,
     asset_urls,
     file_input_ref,
     handle_import,
     handle_file_change,
-    toggle_tag,
-    is_tag_selected,
-    send_to_playground,
-    delete_asset,
     menu,
     menu_items,
     open_context_menu,
     close_menu,
-    handle_menu_select,
+    send_to_playground,
+    delete_asset,
+    download_asset,
   }
 }

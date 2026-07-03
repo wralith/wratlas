@@ -27,7 +27,7 @@ export const Header = () => {
           </Flex>
         </Flex>
         <Flex align="center" gap="sm">
-          <Button color="secondary" left={<Paintbrush size={16} />}>
+          <Button variant="light" color="secondary" left={<Paintbrush size={16} />}>
             Draw Gesture!
           </Button>
           <div class={settingsWrapper}>

@@ -147,13 +147,15 @@ export const Menu = (props: MenuProps) => {
     if (!open) return
 
     const onPointerDown = (event: MouseEvent) => {
-      const target = event.target as HTMLElement
+      if (!(event.target instanceof Element)) return
+      const target = event.target as Element
       if (target.closest(`[data-menu-scope="${scopeId}"]`)) return
       onClose()
     }
 
     const onContextMenu = (event: MouseEvent) => {
-      const target = event.target as HTMLElement
+      if (!(event.target instanceof Element)) return
+      const target = event.target as Element
       if (!target.closest(`[data-menu-scope="${scopeId}"]`)) return
       event.preventDefault()
     }

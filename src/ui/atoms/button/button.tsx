@@ -12,10 +12,10 @@ export type ButtonProps = ButtonVariants & {
 } & ButtonHTMLAttributes<HTMLButtonElement>
 
 export const Button = (props: ButtonProps) => {
-  const { color, size, loading, left, right, children, ...rest } = props
+  const { color, variant, size, loading, left, right, children, ...rest } = props
 
   return (
-    <button {...rest} disabled={rest.disabled || loading} class={cn(button({ color, size }), rest.class)}>
+    <button {...rest} disabled={rest.disabled || loading} class={cn(button({ color, variant, size }), rest.class)}>
       {loading && <span class={spinner} />}
       {!loading && left && <>{left}</>}
       {!loading && children && <span class={cn(label, size === "icon-only" && labelIconOnly)}>{children}</span>}

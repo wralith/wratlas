@@ -1,5 +1,10 @@
-import { style } from "@vanilla-extract/css"
+import { keyframes, style } from "@vanilla-extract/css"
 import { vars } from "@/styles/vars.css.ts"
+
+const fadeIn = keyframes({
+  from: { opacity: 0 },
+  to: { opacity: 1 },
+})
 
 export const backdrop = style({
   position: "fixed",
@@ -14,7 +19,7 @@ export const backdrop = style({
   margin: 0,
   padding: 0,
   cursor: "pointer",
-  animation: "fadeIn 0.2s ease-in-out",
+  animation: `${fadeIn} 0.2s ease-in-out`,
 })
 
 export const modal = style({

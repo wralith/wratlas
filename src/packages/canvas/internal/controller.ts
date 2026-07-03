@@ -279,6 +279,8 @@ export const create_canvas_controller = (store: CanvasStore) => {
 
   const dispose = () => {
     history.dispose()
+    active_blob_urls.forEach(URL.revokeObjectURL)
+    active_blob_urls = []
     canvas = null
   }
 

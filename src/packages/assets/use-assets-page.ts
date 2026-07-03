@@ -28,11 +28,13 @@ export const useAssetsPage = () => {
   useSignalEffect(() => {
     const assets_arr = filtered_assets.value
     const current_ids = new Set(assets_arr.map(a => a.id))
+    let cancelled = false
 
     const load = async () => {
       const next: Record<string, string> = {}
 
       for (const asset of assets_arr) {
+        if (cancelled) return
         const cached = urls_cache.current[asset.id]
         if (cached) {
           next[asset.id] = cached
@@ -43,6 +45,8 @@ export const useAssetsPage = () => {
           next[asset.id] = URL.createObjectURL(blob)
         }
       }
+
+      if (cancelled) return
 
       for (const id of Object.keys(urls_cache.current)) {
         if (!current_ids.has(id)) {
@@ -55,6 +59,10 @@ export const useAssetsPage = () => {
     }
 
     load()
+
+    return () => {
+      cancelled = true
+    }
   })
 
   useSignalEffect(() => {

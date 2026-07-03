@@ -1,4 +1,5 @@
 import { useSignalEffect } from "@preact/signals"
+import { is_editable_target } from "../internal/controls"
 import { canvas_controller, fabric_canvas } from "../state"
 
 const MAX_IMAGE_SIZE = 50 * 1024 * 1024
@@ -38,6 +39,7 @@ export const useDragDrop = () => {
     }
 
     const handlePaste = async (e: ClipboardEvent) => {
+      if (is_editable_target(e.target)) return
       e.preventDefault()
       const items = e.clipboardData?.items
       if (!items) return

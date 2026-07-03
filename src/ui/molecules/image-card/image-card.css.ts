@@ -3,8 +3,11 @@ import { vars } from "@/styles/vars.css.ts"
 
 export const card = style({
   width: 220,
+  height: "100%",
   overflow: "hidden",
   cursor: "pointer",
+  display: "flex",
+  flexDirection: "column",
   selectors: {
     "&:hover": {
       borderColor: vars.color.primary,
@@ -23,6 +26,7 @@ export const thumbnail = style({
 
 export const content = style({
   marginTop: vars.space.sm,
+  flex: 1,
 })
 
 export const name = style({

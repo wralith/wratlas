@@ -1,6 +1,8 @@
+import { useSignalEffect } from "@preact/signals"
 import { ImageUp, Search } from "lucide-preact"
-import { open_details, AssetDetailsModal } from "@/packages/assets/asset-details-modal"
-import { open_rename, AssetRenameModal } from "@/packages/assets/asset-rename-modal"
+import { AssetDetailsModal, open_details } from "@/packages/assets/asset-details-modal"
+import { AssetRenameModal, open_rename } from "@/packages/assets/asset-rename-modal"
+import { SortableAssetCard } from "@/packages/assets/sortable-asset-card"
 import { asset_store } from "@/packages/assets/state"
 import { useAssetsPage } from "@/packages/assets/use-assets-page"
 import { Button } from "@/ui/atoms/button/button"
@@ -8,8 +10,60 @@ import { Flex } from "@/ui/atoms/flex/flex"
 import { Input } from "@/ui/atoms/input/input"
 import { Menu } from "@/ui/atoms/menu/menu"
 import { Tag } from "@/ui/atoms/tag/tag"
-import { ImageCard } from "@/ui/molecules/image-card/image-card"
 import { PageLayout } from "@/ui/molecules/page-layout/page-layout"
+
+const read_order = (): string[] => {
+  const cards = document.querySelectorAll<HTMLElement>("[data-asset-id]")
+  return [...cards].map(el => el.getAttribute("data-asset-id")).filter((x): x is string => x !== null)
+}
+
+const SortableGrid = ({
+  asset_urls,
+  open_context_menu,
+}: {
+  asset_urls: Record<string, string>
+  open_context_menu: (id: string, e: MouseEvent) => void
+}) => {
+  const { filtered_assets, reorder_asset } = asset_store
+
+  useSignalEffect(() => {
+    const handler = () => {
+      const order = read_order()
+      for (let i = 0; i < order.length - 1; i++) {
+        const current_id = order[i]
+        const next_id = order[i + 1]
+        const assets = asset_store.assets.value
+        const current_idx = assets.findIndex(a => a.id === current_id)
+        const next_idx = assets.findIndex(a => a.id === next_id)
+        if (current_idx > next_idx) {
+          reorder_asset(current_id, next_id)
+          return
+        }
+      }
+    }
+    window.addEventListener("drag-finished", handler)
+    return () => window.removeEventListener("drag-finished", handler)
+  })
+
+  return (
+    <Flex gap="md" wrap data-dnd-grid>
+      {filtered_assets.value.map((asset, idx) => (
+        <SortableAssetCard
+          key={asset.id}
+          id={asset.id}
+          index={idx}
+          name={asset.name}
+          tags={asset.tags}
+          width={asset.width}
+          height={asset.height}
+          thumbnailUrl={asset_urls[asset.id] ?? ""}
+          onContextMenu={e => open_context_menu(asset.id, e)}
+          onClick={() => open_details(asset.id, asset_urls[asset.id] ?? "")}
+        />
+      ))}
+    </Flex>
+  )
+}
 
 const AssetsPage = () => {
   const {
@@ -55,7 +109,6 @@ const AssetsPage = () => {
         break
     }
   }
-
   return (
     <PageLayout>
       <Flex direction="column" gap="lg">
@@ -93,20 +146,7 @@ const AssetsPage = () => {
             <p>No assets found. Import some images to get started.</p>
           </Flex>
         ) : (
-          <Flex gap="md" wrap>
-            {filtered_assets.value.map(asset => (
-              <ImageCard
-                key={asset.id}
-                name={asset.name}
-                tags={asset.tags}
-                width={asset.width}
-                height={asset.height}
-                thumbnailUrl={asset_urls.value[asset.id] ?? ""}
-                onContextMenu={e => open_context_menu(asset.id, e)}
-                onClick={() => open_details(asset.id, asset_urls.value[asset.id] ?? "")}
-              />
-            ))}
-          </Flex>
+          <SortableGrid asset_urls={asset_urls.value} open_context_menu={open_context_menu} />
         )}
       </Flex>
 

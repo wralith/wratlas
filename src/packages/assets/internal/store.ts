@@ -5,6 +5,14 @@ import { debounce } from "@/lib/debounce"
 import { safe_parse_json } from "@/lib/safe-parse-json"
 import type { AssetMeta, AssetStorage } from "./types"
 
+const write_to_ls = (data: AssetStorage) => {
+  try {
+    localStorage.setItem(INDEX_KEY, JSON.stringify(data))
+  } catch (e) {
+    console.error("Failed to save asset store:", e)
+  }
+}
+
 const INDEX_KEY = "wratlas.assets.v1.index"
 const image_blob_store = createStore("wratlas-assets-db", "images")
 
@@ -70,15 +78,15 @@ export const create_asset_store = () => {
   })
 
   const debounced_save = debounce((data: AssetStorage) => {
-    try {
-      localStorage.setItem(INDEX_KEY, JSON.stringify(data))
-    } catch (e) {
-      console.error("Failed to save asset store:", e)
-    }
+    write_to_ls(data)
   }, 200)
 
   effect(() => {
     debounced_save(storage.value)
+  })
+
+  addEventListener("beforeunload", () => {
+    write_to_ls(storage.value)
   })
 
   const get_asset_blob = (id: string) => get<Blob>(id, image_blob_store)
@@ -125,6 +133,24 @@ export const create_asset_store = () => {
     }
   }
 
+  const save_now = () => {
+    write_to_ls(storage.value)
+  }
+
+  const reorder_asset = (activeId: string, overId: string) => {
+    const current = [...storage.value.assets]
+    const activeIndex = current.findIndex(a => a.id === activeId)
+    const overIndex = current.findIndex(a => a.id === overId)
+    if (activeIndex === -1 || overIndex === -1) return
+
+    const [moved] = current.splice(activeIndex, 1)
+    const targetIndex = current.findIndex(a => a.id === overId)
+    current.splice(targetIndex, 0, moved)
+
+    storage.value = { assets: current }
+    save_now()
+  }
+
   return {
     storage,
     assets,
@@ -137,6 +163,7 @@ export const create_asset_store = () => {
     add_asset,
     remove_asset,
     update_asset,
+    reorder_asset,
     get_asset_blob,
   }
 }

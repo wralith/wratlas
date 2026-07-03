@@ -28,6 +28,7 @@ type Point = {
 }
 
 const CANVAS_INDEX_KEY = "wratlas.canvas.v1.index"
+const ASSETS_INDEX_KEY = "wratlas.assets.v1.index"
 const IMAGE_DB_NAME = "wratlas-canvas-images-db"
 
 export class PlaygroundPage {
@@ -225,12 +226,36 @@ export class PlaygroundPage {
     await this.openContextMenuAtCanvasPoint(x, y)
   }
 
-  private openContextMenuAtCanvasPoint = async (x: number, y: number) => {
+  openContextMenuAtCanvasPoint = async (x: number, y: number) => {
     const box = await this.upperCanvas.boundingBox()
     if (!box) {
       throw new Error("Upper canvas bounding box is not available")
     }
 
     await this.page.mouse.click(box.x + x, box.y + y, { button: "right" })
+  }
+
+  switchCanvas = async (name: string) => {
+    await this.openCanvasMenu()
+    await this.page.getByRole("button", { name, exact: true }).click()
+  }
+
+  getZoomPercentValue = () => this.page.locator('[aria-label="Zoom percent"]').inputValue()
+
+  hasAssetsStorage = async () => {
+    return this.page.evaluate(key => !!localStorage.getItem(key), ASSETS_INDEX_KEY)
+  }
+
+  resetAssetsStorage = async () => {
+    await this.page.goto("/")
+    await this.page.evaluate(async key => {
+      localStorage.removeItem(key)
+      await new Promise<void>(resolve => {
+        const request = indexedDB.deleteDatabase("wratlas-assets-db")
+        request.onsuccess = () => resolve()
+        request.onerror = () => resolve()
+        request.onblocked = () => resolve()
+      })
+    }, ASSETS_INDEX_KEY)
   }
 }

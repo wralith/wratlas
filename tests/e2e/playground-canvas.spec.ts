@@ -101,7 +101,6 @@ test("copy shortcut does not duplicate object", async ({ page }) => {
   await expect.poll(async () => playground.getActiveCanvasObjectCount()).toBe(1)
 
   await page.keyboard.press(`${MOD_KEY}+c`)
-  await page.waitForTimeout(300)
 
   await expect.poll(async () => playground.getActiveCanvasObjectCount()).toBe(1)
 })

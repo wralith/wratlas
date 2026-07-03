@@ -43,17 +43,10 @@ export const themeItem = recipe({
     active: {
       true: {
         color: vars.color.secondary,
-      },
-    },
-  },
-  compoundVariants: [
-    {
-      variants: { active: true },
-      style: {
         fontWeight: 600,
       },
     },
-  ],
+  },
 })
 
 export const swatch = recipe({

@@ -35,11 +35,6 @@ export const modalWide = style({
   minWidth: 520,
   maxHeight: "80vh",
   overflowY: "auto",
-  selectors: {
-    "&:has(.wide-content)": {
-      minWidth: 520,
-    },
-  },
 })
 
 export const header = style({

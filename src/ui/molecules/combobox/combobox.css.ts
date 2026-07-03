@@ -73,14 +73,19 @@ export const optionButton = style({
   cursor: "pointer",
   selectors: {
     "&:hover": {
-      backgroundColor: "color-mix(in srgb, #313244 80%, transparent)",
+      backgroundColor: `color-mix(in srgb, ${vars.color.border} 80%, transparent)`,
     },
   },
 })
 
 export const optionButtonSelected = style({
-  backgroundColor: "color-mix(in srgb, #f9e2af 20%, transparent)",
+  backgroundColor: `color-mix(in srgb, ${vars.color.primary} 20%, transparent)`,
   color: vars.color.primary,
+  selectors: {
+    "&:hover": {
+      backgroundColor: `color-mix(in srgb, ${vars.color.primary} 20%, transparent)`,
+    },
+  },
 })
 
 export const empty = style({
@@ -114,7 +119,7 @@ export const actionButton = style({
   cursor: "pointer",
   selectors: {
     "&:hover:not(:disabled)": {
-      backgroundColor: "color-mix(in srgb, #313244 80%, transparent)",
+      backgroundColor: `color-mix(in srgb, ${vars.color.border} 80%, transparent)`,
     },
     "&:disabled": {
       opacity: 0.5,

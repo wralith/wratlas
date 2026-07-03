@@ -134,7 +134,7 @@ export const ToolbarCombobox = () => {
             <Button size="small" onClick={() => setDeleteModalOpen(false)}>
               Cancel
             </Button>
-            <Button size="small" color="error" onClick={handleDeleteCanvas}>
+            <Button size="small" color="danger" onClick={handleDeleteCanvas}>
               Delete
             </Button>
           </>

@@ -5,7 +5,7 @@ import { Input } from "@/ui/atoms/input/input"
 import { Slider } from "@/ui/atoms/slider/slider"
 import * as styles from "./canvas-zoom-control.css"
 import { clamp_zoom, MAX_ZOOM, MIN_ZOOM } from "./constants"
-import { sync_viewport_signals } from "./internal/controls"
+import { clamp_viewport, sync_viewport_signals } from "./internal/controls"
 import { fabric_canvas, zoom_level } from "./state"
 
 const to_percent = (zoom: number) => Math.round(zoom * 100)
@@ -26,6 +26,7 @@ export const CanvasZoomControl = () => {
     const center = canvas.getCenterPoint()
 
     canvas.zoomToPoint(new Point(center.x, center.y), clamped)
+    clamp_viewport(canvas)
     canvas.requestRenderAll()
     sync_viewport_signals(canvas)
   }

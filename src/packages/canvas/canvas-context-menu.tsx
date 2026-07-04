@@ -1,5 +1,6 @@
 import { useSignal, useSignalEffect } from "@preact/signals"
 import type { Canvas as FabricCanvas, TPointerEvent, TPointerEventInfo } from "fabric"
+import { util } from "fabric"
 import { useMemo, useRef } from "preact/hooks"
 import { asset_store } from "@/packages/assets/state"
 import { Menu, type MenuItem } from "@/ui/atoms/menu/menu"
@@ -190,11 +191,29 @@ export const CanvasContextMenu = () => {
       case "arrange":
         canvas_controller.arrange_images()
         break
-      case "reset-view":
-        canvas.setViewportTransform([1, 0, 0, 1, 0, 0])
-        canvas.requestRenderAll()
-        sync_viewport_signals(canvas)
+      case "reset-view": {
+        const vpt = canvas.viewportTransform
+        if (!vpt) break
+        const fromZoom = vpt[0]
+        const fromX = vpt[4]
+        const fromY = vpt[5]
+        if (fromZoom === 1 && fromX === 0 && fromY === 0) break
+
+        util.animate({
+          startValue: [fromZoom, fromX, fromY],
+          endValue: [1, 0, 0],
+          duration: 300,
+          easing: util.ease.easeOutCubic,
+          onChange: ([zoom, x, y]) => {
+            canvas.setViewportTransform([zoom, 0, 0, zoom, x, y])
+            canvas.renderAll()
+          },
+          onComplete: () => {
+            sync_viewport_signals(canvas)
+          },
+        })
         break
+      }
     }
   }
 

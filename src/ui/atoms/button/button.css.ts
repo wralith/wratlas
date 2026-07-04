@@ -56,6 +56,14 @@ const compoundVariants = (Object.keys(colorTokens) as ColorKey[]).flatMap(color 
         color: token,
       },
     },
+    {
+      variants: { color, variant: "ghost" as const },
+      style: {
+        backgroundColor: "transparent",
+        borderColor: "transparent",
+        color: vars.text.muted,
+      },
+    },
   ]
 })
 
@@ -101,6 +109,7 @@ export const button = recipe({
       default: {},
       outline: { backgroundColor: "transparent" },
       light: {},
+      ghost: { backgroundColor: "transparent", borderColor: "transparent" },
     },
     size: {
       small: {

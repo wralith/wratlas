@@ -2,7 +2,7 @@ import { useSignalEffect } from "@preact/signals"
 import type { TPointerEvent, TPointerEventInfo } from "fabric"
 import { Point } from "fabric"
 import { clamp_zoom } from "../constants"
-import { is_mod_key, sync_viewport_signals } from "../internal/controls"
+import { clamp_viewport, is_mod_key, sync_viewport_signals } from "../internal/controls"
 import { fabric_canvas } from "../state"
 
 export const usePanZoom = () => {
@@ -14,7 +14,7 @@ export const usePanZoom = () => {
       const vpt = canvas.viewportTransform
       if (!vpt) return
 
-      canvas.setViewportTransform([...vpt])
+      clamp_viewport(canvas)
       canvas.requestRenderAll()
       sync_viewport_signals(canvas)
     }

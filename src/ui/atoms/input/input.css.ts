@@ -34,6 +34,13 @@ export const input = style({
       cursor: "not-allowed",
       pointerEvents: "none",
     },
+    "&:focus": {
+      borderColor: vars.color.primary,
+      outline: "none",
+    },
+    "&:focus-visible": {
+      outline: "none",
+    },
   },
 })
 
@@ -68,7 +75,7 @@ export const wrapper = style({
   display: "flex",
   flexDirection: "column",
   gap: 4,
-  alignItems: "flex-start",
+  width: "100%",
 })
 
 export const label = style({

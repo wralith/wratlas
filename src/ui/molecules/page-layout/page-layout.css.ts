@@ -12,7 +12,8 @@ export const content = style({
   overflowY: "auto",
   margin: "0 1rem 1rem",
   padding: vars.space.md,
-  background: vars.bg.surface,
+  backgroundImage: `radial-gradient(circle, ${vars.color.border} 1px, transparent 1px)`,
+  backgroundSize: "24px 24px",
   border: `1px solid ${vars.color.border}`,
   borderRadius: vars.radius.md,
 })

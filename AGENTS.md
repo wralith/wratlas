@@ -52,6 +52,7 @@ EVERYTHING IN CODE SHOULD BE SUPER SIMPLE AND READABLE.
 
 ### Styling Rules
 
+- **TUI aesthetic** — sharp corners (no border-radius), monospace-driven, terminal-like appearance. No rounded borders or soft UI elements.
 - Use **vanilla-extract** for component styles and import named exports from `*.css.ts` files.
 - Use tokens from `src/styles/vars.css.ts` through typed `vars` only.
 - Use recipes for visual variants and infer variant props using:

@@ -9,6 +9,15 @@ export const inputBase = style({
   fontSize: vars.textSize.sm,
   borderRadius: vars.radius.xs,
   outline: "none",
+  selectors: {
+    "&:focus": {
+      borderColor: vars.color.primary,
+      outline: "none",
+    },
+    "&:focus-visible": {
+      outline: "none",
+    },
+  },
 })
 
 export const inputError = style({

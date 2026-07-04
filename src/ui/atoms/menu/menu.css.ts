@@ -5,7 +5,6 @@ export const menu = style({
   position: "fixed",
   minWidth: 180,
   padding: vars.space.xs,
-  borderRadius: vars.radius.sm,
   border: `1px solid ${vars.color.border}`,
   backgroundColor: vars.bg.surface,
   boxShadow: vars.shadow.float,
@@ -23,7 +22,6 @@ export const list = style({
 export const item = style({
   width: "100%",
   border: "none",
-  borderRadius: vars.radius.xs,
   background: "transparent",
   color: vars.text.primary,
   fontFamily: vars.font.ui,

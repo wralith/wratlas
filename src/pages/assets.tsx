@@ -16,7 +16,7 @@ import { PageLayout } from "@/ui/molecules/page-layout/page-layout"
 
 const read_order = (): string[] => {
   const cards = document.querySelectorAll<HTMLElement>("[data-asset-id]")
-  return [...cards].map(el => el.getAttribute("data-asset-id")).filter((x): x is string => x !== null)
+  return [...Array.from(cards)].map(el => el.getAttribute("data-asset-id")).filter((x): x is string => x !== null)
 }
 
 const SortableGrid = ({

@@ -27,7 +27,7 @@ export const modal = style({
   maxWidth: "90vw",
   background: vars.bg.surface,
   border: `1px solid ${vars.color.border}`,
-  borderRadius: vars.radius.md,
+  borderRadius: vars.radius.sm,
   boxShadow: vars.shadow.float,
 })
 

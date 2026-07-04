@@ -7,6 +7,7 @@ export const card = style({
   overflow: "hidden",
   cursor: "pointer",
   display: "flex",
+  backgroundColor: vars.bg.base,
   flexDirection: "column",
   selectors: {
     "&:hover": {

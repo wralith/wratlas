@@ -1,20 +1,22 @@
-import { Check } from "lucide-preact"
 import type { JSX } from "preact"
-import { cn } from "@/lib/cn"
 import { Card } from "@/ui/atoms/card/card"
+import { Checkbox } from "@/ui/atoms/checkbox/checkbox"
 import { Flex } from "@/ui/atoms/flex/flex"
 import { Tag } from "@/ui/atoms/tag/tag"
+import { Tooltip } from "@/ui/atoms/tooltip/tooltip"
 import {
   card,
-  checkbox,
-  checkboxChecked,
+  checkboxWrap,
   content,
   dimensions,
-  footer,
+  moreTag,
   name,
+  tagsRow,
   thumbnail,
   thumbnailWrap,
 } from "./image-card.css.ts"
+
+const MAX_VISIBLE_TAGS = 3
 
 export type ImageCardProps = {
   name: string
@@ -31,29 +33,47 @@ export type ImageCardProps = {
 export const ImageCard = (props: ImageCardProps) => {
   const { name: label, tags, width, height, thumbnailUrl, selected, onToggle, onContextMenu, onClick } = props
 
+  const visibleTags = tags.slice(0, MAX_VISIBLE_TAGS)
+  const overflowCount = tags.length - MAX_VISIBLE_TAGS
+
   return (
     <Card class={card} onContextMenu={onContextMenu} onClick={onClick}>
       <div class={thumbnailWrap}>
         <img src={thumbnailUrl} alt={label} class={thumbnail} />
-        <label class={cn(checkbox, selected && checkboxChecked)} onClick={e => e.stopPropagation()}>
-          <input type="checkbox" checked={!!selected} onChange={() => onToggle?.()} style="display:none" />
-          {selected && <Check size={12} />}
-        </label>
       </div>
       <div class={content}>
         <div class={name}>{label}</div>
         <div class={dimensions}>
           {width} &times; {height}
         </div>
-        {tags.length > 0 && (
-          <div class={footer}>
-            <Flex gap="xs" wrap>
-              {tags.map(t => (
+
+        <Flex align="center" gap="xs" justify="between">
+          <div class={checkboxWrap} onClick={e => e.stopPropagation()}>
+            <Checkbox checked={!!selected} onChange={() => onToggle?.()} />
+          </div>
+          {tags.length > 0 && (
+            <Flex gap="xs" class={tagsRow}>
+              {visibleTags.map(t => (
                 <Tag key={t}>{t}</Tag>
               ))}
+              {overflowCount > 0 && (
+                <Tooltip
+                  content={
+                    <Flex gap="xs">
+                      {tags.map(t => (
+                        <Tag key={t}>{t}</Tag>
+                      ))}
+                    </Flex>
+                  }
+                  placement="bottom"
+                  portal={false}
+                >
+                  <span class={moreTag}>+{overflowCount} more</span>
+                </Tooltip>
+              )}
             </Flex>
-          </div>
-        )}
+          )}
+        </Flex>
       </div>
     </Card>
   )

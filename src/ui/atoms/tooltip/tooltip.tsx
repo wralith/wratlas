@@ -16,7 +16,7 @@ import { useState } from "preact/hooks"
 import * as styles from "./tooltip.css.ts"
 
 export type TooltipProps = {
-  content: string
+  content: ComponentChildren
   placement?: Placement
   offset?: number
   /** @default: true */
@@ -69,7 +69,7 @@ const TooltipContent = (props: {
   refs: ReturnType<typeof useFloating>["refs"]
   floatingStyles: ReturnType<typeof useFloating>["floatingStyles"]
   floatingProps: Record<string, unknown>
-  content: string
+  content: ComponentChildren
 }) => {
   const { refs, floatingStyles, floatingProps, content } = props
   return (

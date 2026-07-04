@@ -16,6 +16,9 @@ export const spinner = style({
 })
 
 export const label = style({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
   lineHeight: 1,
 })
 

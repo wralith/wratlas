@@ -2,7 +2,7 @@ import { style } from "@vanilla-extract/css"
 import { vars } from "@/styles/vars.css.ts"
 
 export const card = style({
-  width: 220,
+  width: 280,
   height: "100%",
   overflow: "hidden",
   cursor: "pointer",
@@ -31,41 +31,12 @@ export const thumbnail = style({
   background: vars.bg.overlay,
 })
 
-export const checkbox = style({
-  position: "absolute",
-  top: 6,
-  left: 6,
-  width: 20,
-  height: 20,
-  border: `2px solid ${vars.color.border}`,
-  borderRadius: 3,
-  backgroundColor: "rgba(0,0,0,0.35)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  cursor: "pointer",
-  color: "#fff",
-  zIndex: 1,
-  selectors: {
-    "&:hover": {
-      backgroundColor: "rgba(0,0,0,0.55)",
-    },
-  },
-})
-
-export const checkboxChecked = style({
-  backgroundColor: vars.color.primary,
-  borderColor: vars.color.primary,
-  selectors: {
-    "&:hover": {
-      backgroundColor: vars.color.primary,
-    },
-  },
-})
-
 export const content = style({
-  marginTop: vars.space.sm,
+  marginTop: vars.space.md,
   flex: 1,
+  display: "flex",
+  flexDirection: "column",
+  gap: vars.space.sm,
 })
 
 export const name = style({
@@ -80,9 +51,25 @@ export const name = style({
 export const dimensions = style({
   fontSize: vars.textSize.xs,
   color: vars.text.muted,
-  marginTop: vars.space.xs,
 })
 
-export const footer = style({
-  marginTop: vars.space.sm,
+export const tagsRow = style({
+  overflow: "hidden",
+  minWidth: 0,
+})
+
+export const checkboxWrap = style({
+  flexShrink: 0,
+})
+
+export const moreTag = style({
+  fontSize: vars.textSize.xs,
+  color: vars.text.muted,
+  cursor: "pointer",
+  whiteSpace: "nowrap",
+  selectors: {
+    "&:hover": {
+      color: vars.color.primary,
+    },
+  },
 })

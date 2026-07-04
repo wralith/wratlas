@@ -3,25 +3,18 @@ import { Check, Plus, Trash2, X } from "lucide-preact"
 import { useEffect, useMemo, useRef } from "preact/hooks"
 import { useLocation } from "preact-iso"
 import { cn } from "@/lib/cn"
-import { useFloatingList } from "@/lib/use-floating-list"
 import { create_canvas } from "@/packages/canvas/internal/store"
 import { canvas_controller, canvas_store } from "@/packages/canvas/state"
 import { Button } from "@/ui/atoms/button/button"
+import { Checkbox } from "@/ui/atoms/checkbox/checkbox"
 import { Flex } from "@/ui/atoms/flex/flex"
+import { Input } from "@/ui/atoms/input/input"
+import { Popover } from "@/ui/atoms/popover/popover"
 import {
-  batchActionBtn,
-  batchActionBtnActive,
-  batchActionBtnDanger,
-  batchActions,
   batchBar,
   batchBarBody,
   batchCount,
-  inlineInput,
-  popover,
-  popoverContainer,
-  selectAllCheckbox,
   selectAllFloat,
-  selectAllFloatBtn,
   suggestionHighlight,
   suggestionItem,
   suggestions,
@@ -34,27 +27,18 @@ export const SelectAllFloating = () => {
 
   return (
     <div class={selectAllFloat}>
-      <button type="button" class={selectAllFloatBtn} onClick={select_all}>
+      <Button size="small" onClick={select_all}>
         <Check size={14} />
         Select All ({filtered_assets.value.length})
-      </button>
+      </Button>
     </div>
   )
 }
 
-const TagPopover = ({ onClose }: { onClose: () => void }) => {
+const TagPopoverContent = ({ onClose }: { onClose: () => void }) => {
   const { selected_ids } = asset_store
   const tagDraft = useSignal("")
   const inputRef = useRef<HTMLInputElement>(null)
-  const rootRef = useRef<HTMLDivElement>(null)
-  const open = useSignal(true)
-
-  useFloatingList(rootRef, {
-    value: open.value,
-    set: v => {
-      if (!v) onClose()
-    },
-  })
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -73,10 +57,9 @@ const TagPopover = ({ onClose }: { onClose: () => void }) => {
   }
 
   return (
-    <div class={popover} ref={rootRef} onClick={e => e.stopPropagation()}>
-      <input
+    <>
+      <Input
         ref={inputRef}
-        class={inlineInput}
         type="text"
         placeholder="Enter tag name..."
         value={tagDraft.value}
@@ -87,6 +70,7 @@ const TagPopover = ({ onClose }: { onClose: () => void }) => {
           if (e.key === "Enter") handleApply()
           if (e.key === "Escape") onClose()
         }}
+        style="box-sizing:border-box"
       />
       <div style="margin-top:6px;display:flex;gap:6px;justify-content:flex-end">
         <Button size="small" onClick={onClose}>
@@ -96,24 +80,15 @@ const TagPopover = ({ onClose }: { onClose: () => void }) => {
           Apply
         </Button>
       </div>
-    </div>
+    </>
   )
 }
 
-const CanvasPopover = ({ onClose }: { onClose: () => void }) => {
+const CanvasPopoverContent = ({ onClose }: { onClose: () => void }) => {
   const { selected_ids } = asset_store
   const { route } = useLocation()
   const canvasDraft = useSignal("")
   const inputRef = useRef<HTMLInputElement>(null)
-  const rootRef = useRef<HTMLDivElement>(null)
-  const open = useSignal(true)
-
-  useFloatingList(rootRef, {
-    value: open.value,
-    set: v => {
-      if (!v) onClose()
-    },
-  })
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -149,10 +124,9 @@ const CanvasPopover = ({ onClose }: { onClose: () => void }) => {
   }
 
   return (
-    <div class={popover} ref={rootRef} onClick={e => e.stopPropagation()}>
-      <input
+    <>
+      <Input
         ref={inputRef}
-        class={inlineInput}
         type="text"
         placeholder="Search or create canvas..."
         value={canvasDraft.value}
@@ -164,6 +138,7 @@ const CanvasPopover = ({ onClose }: { onClose: () => void }) => {
           if (e.key === "Enter" && filteredCanvases.length > 0) void handleSendToCanvas(filteredCanvases[0].id)
           if (e.key === "Enter" && showCreateCanvas) void handleCreateCanvas(canvasDraft.value.trim())
         }}
+        style="box-sizing:border-box"
       />
       {(filteredCanvases.length > 0 || showCreateCanvas) && (
         <div class={suggestions}>
@@ -191,7 +166,7 @@ const CanvasPopover = ({ onClose }: { onClose: () => void }) => {
           )}
         </div>
       )}
-    </div>
+    </>
   )
 }
 
@@ -202,72 +177,77 @@ export const BatchActionBar = ({ onDeleteRequest }: { onDeleteRequest: () => voi
   const count = selected_ids.value.length
   if (count === 0) return null
 
-  const togglePopover = (name: "tag" | "canvas") => {
-    activePopover.value = activePopover.value === name ? null : name
-  }
-
   return (
     <div class={batchBar}>
       <div class={batchBarBody}>
         <Flex align="center" gap="md">
-          <label class={selectAllCheckbox}>
-            <input
-              type="checkbox"
-              checked={all_filtered_selected.value}
-              onChange={() => (all_filtered_selected.value ? asset_store.clear_selection() : asset_store.select_all())}
-              style="display:none"
-            />
-            {all_filtered_selected.value && <Check size={12} />}
-          </label>
+          <Checkbox
+            checked={all_filtered_selected.value}
+            onChange={v => (v ? asset_store.select_all() : asset_store.clear_selection())}
+          />
           <span class={batchCount}>{count} selected</span>
 
-          <div class={batchActions} style="margin-left:auto">
-            <div class={popoverContainer}>
-              <button
-                type="button"
-                class={cn(batchActionBtn, activePopover.value === "tag" && batchActionBtnActive)}
-                onClick={() => togglePopover("tag")}
-              >
-                <Plus size={14} />
-                Add Tag
-              </button>
-              {activePopover.value === "tag" && (
-                <TagPopover
-                  onClose={() => {
-                    activePopover.value = null
+          <Flex gap="sm" style="margin-left:auto">
+            <Popover
+              open={activePopover.value === "tag"}
+              onClose={() => {
+                activePopover.value = null
+              }}
+              trigger={
+                <Button
+                  size="small"
+                  variant="outline"
+                  onClick={() => {
+                    activePopover.value = activePopover.value === "tag" ? null : "tag"
                   }}
-                />
-              )}
-            </div>
+                >
+                  <Plus size={14} />
+                  Add Tag
+                </Button>
+              }
+            >
+              <TagPopoverContent
+                onClose={() => {
+                  activePopover.value = null
+                }}
+              />
+            </Popover>
 
-            <div class={popoverContainer}>
-              <button
-                type="button"
-                class={cn(batchActionBtn, activePopover.value === "canvas" && batchActionBtnActive)}
-                onClick={() => togglePopover("canvas")}
-              >
-                <Plus size={14} />
-                Send to Canvas
-              </button>
-              {activePopover.value === "canvas" && (
-                <CanvasPopover
-                  onClose={() => {
-                    activePopover.value = null
+            <Popover
+              open={activePopover.value === "canvas"}
+              onClose={() => {
+                activePopover.value = null
+              }}
+              trigger={
+                <Button
+                  size="small"
+                  variant="outline"
+                  onClick={() => {
+                    activePopover.value = activePopover.value === "canvas" ? null : "canvas"
                   }}
-                />
-              )}
-            </div>
+                >
+                  <Plus size={14} />
+                  Send to Canvas
+                </Button>
+              }
+            >
+              <CanvasPopoverContent
+                onClose={() => {
+                  activePopover.value = null
+                }}
+              />
+            </Popover>
 
-            <button type="button" class={cn(batchActionBtn, batchActionBtnDanger)} onClick={() => onDeleteRequest()}>
+            <Button size="small" variant="outline" color="danger" onClick={() => onDeleteRequest()}>
               <Trash2 size={14} />
               Delete
-            </button>
+            </Button>
 
-            <button type="button" class={batchActionBtn} onClick={() => clear_selection()}>
+            <Button size="small" variant="outline" onClick={() => clear_selection()}>
               <X size={14} />
               Deselect
-            </button>
-          </div>
+            </Button>
+          </Flex>
         </Flex>
       </div>
     </div>

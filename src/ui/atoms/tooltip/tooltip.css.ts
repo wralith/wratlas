@@ -3,6 +3,7 @@ import { vars } from "@/styles/vars.css.ts"
 
 export const reference = style({
   display: "inline-flex",
+  alignItems: "center",
 })
 
 export const tooltip = style({

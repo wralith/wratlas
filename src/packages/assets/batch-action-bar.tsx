@@ -113,7 +113,7 @@ const CanvasPopoverContent = ({ onClose }: { onClose: () => void }) => {
     }
     canvas_controller.pendingArrange.value = true
     onClose()
-    route("/playground")
+    route("/")
   }
 
   const handleCreateCanvas = async (name: string) => {

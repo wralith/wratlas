@@ -1,20 +1,16 @@
 import { ErrorBoundary, LocationProvider, lazy, Route, Router } from "preact-iso"
-import HomePage from "@/pages/home"
 
-const NotFoundPage = lazy(() => import("@/pages/not-found.tsx"))
-const PlaygroundPage = lazy(() => import("@/pages/playground.tsx"))
+const CanvasPage = lazy(() => import("@/pages/canvas.tsx"))
 const AssetsPage = lazy(() => import("@/pages/assets.tsx"))
-const JourneyPage = lazy(() => import("@/pages/journey.tsx"))
+const NotFoundPage = lazy(() => import("@/pages/not-found.tsx"))
 
 export function App() {
   return (
     <LocationProvider>
       <ErrorBoundary>
         <Router>
-          <HomePage path="/" />
-          <Route path="/playground" component={PlaygroundPage} />
+          <Route path="/" component={CanvasPage} />
           <Route path="/assets" component={AssetsPage} />
-          <Route path="/journey" component={JourneyPage} />
           <NotFoundPage default />
         </Router>
       </ErrorBoundary>

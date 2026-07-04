@@ -1,7 +1,7 @@
 import { Canvas } from "@/packages/canvas/canvas"
 import { PageLayout } from "@/ui/molecules/page-layout/page-layout"
 
-const PlaygroundPage = () => {
+const CanvasPage = () => {
   return (
     <PageLayout>
       <Canvas />
@@ -9,4 +9,4 @@ const PlaygroundPage = () => {
   )
 }
 
-export default PlaygroundPage
+export default CanvasPage

@@ -56,6 +56,16 @@ export const pill = style({
   whiteSpace: "nowrap",
 })
 
+export const pillMore = style({
+  display: "inline-flex",
+  alignItems: "center",
+  padding: `${vars.space.xs} ${vars.space.xs}`,
+  fontSize: vars.textSize.xs,
+  color: vars.text.muted,
+  lineHeight: 1,
+  whiteSpace: "nowrap",
+})
+
 export const pillRemove = style({
   display: "inline-flex",
   alignItems: "center",
@@ -79,6 +89,11 @@ export const pillRemove = style({
 export const chevron = style({
   flexShrink: 0,
   color: vars.text.muted,
+})
+
+export const search = style({
+  padding: vars.space.sm,
+  borderBottom: `1px solid ${vars.color.border}`,
 })
 
 export const panel = style({

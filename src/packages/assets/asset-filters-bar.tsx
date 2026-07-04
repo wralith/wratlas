@@ -38,8 +38,11 @@ export const AssetFiltersBar = ({
             }}
             options={all_tags.value}
             placeholder="Filter by tags"
+            searchPlaceholder="Search tags..."
             maxWidth={400}
             height={200}
+            hideSearch={false}
+            visibleCount={3}
           />
         </Flex>
         <Flex gap="sm">

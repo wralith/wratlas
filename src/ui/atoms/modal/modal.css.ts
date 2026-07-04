@@ -25,16 +25,12 @@ export const backdrop = style({
 export const modal = style({
   minWidth: 360,
   maxWidth: "90vw",
+  maxHeight: "80vh",
+  overflowY: "auto",
   background: vars.bg.surface,
   border: `1px solid ${vars.color.border}`,
   borderRadius: vars.radius.sm,
   boxShadow: vars.shadow.float,
-})
-
-export const modalWide = style({
-  minWidth: 520,
-  maxHeight: "80vh",
-  overflowY: "auto",
 })
 
 export const header = style({

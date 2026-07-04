@@ -28,6 +28,7 @@ type ComboboxProps = {
   placeholder?: string
   searchPlaceholder?: string
   emptyLabel?: string
+  height?: string | number
 }
 
 export const Combobox = (props: ComboboxProps) => {
@@ -39,6 +40,7 @@ export const Combobox = (props: ComboboxProps) => {
     placeholder = "Select",
     searchPlaceholder = "Search...",
     emptyLabel = "No results",
+    height,
   } = props
 
   const rootRef = useRef<HTMLDivElement>(null)
@@ -110,7 +112,10 @@ export const Combobox = (props: ComboboxProps) => {
             />
           </div>
 
-          <ul class={styles.list}>
+          <ul
+            class={styles.list}
+            style={height ? `max-height:${typeof height === "number" ? `${height}px` : height}` : undefined}
+          >
             {filteredOptions.length === 0 && <li class={styles.empty}>{emptyLabel}</li>}
             {filteredOptions.map(option => (
               <li key={option.id}>

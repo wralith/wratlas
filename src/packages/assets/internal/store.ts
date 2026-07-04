@@ -53,14 +53,6 @@ export const create_asset_store = () => {
     return [...tags].sort()
   })
 
-  const all_groups = computed(() => {
-    const groups = new Set<string>()
-    for (const asset of assets.value) {
-      if (asset.group) groups.add(asset.group)
-    }
-    return [...groups].sort()
-  })
-
   const filtered_assets = computed(() => {
     let result = assets.value
     const query = search_query.value.trim().toLowerCase()
@@ -91,7 +83,7 @@ export const create_asset_store = () => {
 
   const get_asset_blob = (id: string) => get<Blob>(id, image_blob_store)
 
-  const add_asset = async (file: File, input?: { name?: string; tags?: string[]; group?: string }) => {
+  const add_asset = async (file: File, input?: { name?: string; tags?: string[] }) => {
     const id = nanoid(8)
     const { width, height } = await get_image_size(file)
 
@@ -100,7 +92,6 @@ export const create_asset_store = () => {
       name: input?.name ?? file.name,
       type: "image",
       tags: input?.tags ?? [],
-      group: input?.group ?? null,
       notes: "",
       width,
       height,
@@ -157,7 +148,6 @@ export const create_asset_store = () => {
     search_query,
     selected_tags,
     all_tags,
-    all_groups,
     filtered_assets,
 
     add_asset,

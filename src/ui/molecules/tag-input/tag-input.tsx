@@ -12,10 +12,11 @@ export type TagInputProps = {
   suggestions?: string[]
   label?: string
   placeholder?: string
+  height?: string | number
 }
 
 export const TagInput = (props: TagInputProps) => {
-  const { value, onChange, suggestions = [], label, placeholder = "Add tag..." } = props
+  const { value, onChange, suggestions = [], label, placeholder = "Add tag...", height } = props
 
   const rootRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -172,7 +173,10 @@ export const TagInput = (props: TagInputProps) => {
         </div>
 
         {open.value && filtered.length > 0 && (
-          <div class={styles.suggestionsPanel}>
+          <div
+            class={styles.suggestionsPanel}
+            style={height ? `max-height:${typeof height === "number" ? `${height}px` : height}` : undefined}
+          >
             {filtered.map((suggestion, idx) => (
               <button
                 key={suggestion}

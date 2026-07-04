@@ -5,7 +5,6 @@ export type AssetMeta = {
   name: string
   type: "image"
   tags: string[]
-  group: string | null
   notes: string
   width: number
   height: number

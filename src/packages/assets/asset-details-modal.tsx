@@ -12,7 +12,6 @@ type DetailsFormState = {
   asset_id: string
   name: string
   tags: string[]
-  group: string
   notes: string
   thumbnail_url: string
 }
@@ -22,7 +21,6 @@ const empty_details_state: DetailsFormState = {
   asset_id: "",
   name: "",
   tags: [],
-  group: "",
   notes: "",
   thumbnail_url: "",
 }
@@ -34,7 +32,6 @@ const debounced_save = debounce((state: DetailsFormState) => {
   void asset_store.update_asset(state.asset_id, {
     name: state.name.trim(),
     tags: state.tags,
-    group: state.group.trim() || null,
     notes: state.notes.trim(),
   })
 }, 300)
@@ -52,7 +49,6 @@ export const open_details = (asset_id: string, thumbnail_url: string) => {
     asset_id,
     name: asset.name,
     tags: [...asset.tags],
-    group: asset.group ?? "",
     notes: asset.notes,
     thumbnail_url,
   }
@@ -71,7 +67,7 @@ type TargetedInputEvent = Event & {
   currentTarget: HTMLInputElement | HTMLTextAreaElement
 }
 
-const bind_field = (key: keyof Pick<DetailsFormState, "name" | "group" | "notes">) => (e: TargetedInputEvent) => {
+const bind_field = (key: keyof Pick<DetailsFormState, "name" | "notes">) => (e: TargetedInputEvent) => {
   set_field(key, e.currentTarget.value)
 }
 
@@ -80,14 +76,15 @@ export const AssetDetailsModal = () => (
     open={details_state.value.open}
     onClose={close_details}
     header="Asset Details"
-    wide
+    width="650px"
+    height="60%"
     content={
       <Flex direction="column" gap="md">
         {details_state.value.thumbnail_url && (
           <img
             src={details_state.value.thumbnail_url}
             alt={details_state.value.name}
-            style="width:100%;max-height:180px;object-fit:contain;border-radius:4px;background:var(--bg-overlay)"
+            style="width:100%;max-height:280px;object-fit:contain;border-radius:4px;background:var(--bg-overlay)"
           />
         )}
         <Input label="Name" value={details_state.value.name} onInput={bind_field("name")} />
@@ -96,8 +93,8 @@ export const AssetDetailsModal = () => (
           value={details_state.value.tags}
           onChange={tags => set_field("tags", tags)}
           suggestions={asset_store.all_tags.value}
+          height="140px"
         />
-        <Input label="Group" value={details_state.value.group} onInput={bind_field("group")} />
         <TextArea label="Notes" value={details_state.value.notes} onInput={bind_field("notes")} />
       </Flex>
     }

@@ -10,12 +10,13 @@ export type ModalProps = {
   header?: ComponentChildren
   content?: ComponentChildren
   footer?: ComponentChildren
-  wide?: boolean
+  width?: string
+  height?: string
   class?: string
 }
 
 export const Modal = (props: ModalProps) => {
-  const { open, onClose, header, content, footer, wide, class: className } = props
+  const { open, onClose, header, content, footer, width, height, class: className } = props
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -37,7 +38,8 @@ export const Modal = (props: ModalProps) => {
     <FloatingPortal>
       <div class={styles.backdrop} onClick={onClose}>
         <div
-          class={cn(styles.modal, wide && styles.modalWide, className)}
+          class={cn(styles.modal, className)}
+          style={{ width, height }}
           onClick={e => e.stopPropagation()}
           onKeyDown={e => {
             if (e.key === "Escape") onClose()

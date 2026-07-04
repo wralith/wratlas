@@ -94,6 +94,25 @@ export const create_canvas_store = () => {
     }
   }
 
+  const move_canvas = (id: string, direction: "up" | "down") => {
+    const current = storage.value.canvases
+    const index = current.findIndex(c => c.id === id)
+    if (index < 0) return false
+
+    const targetIndex = direction === "up" ? index - 1 : index + 1
+    if (targetIndex < 0 || targetIndex >= current.length) return false
+
+    const next = [...current]
+    ;[next[index], next[targetIndex]] = [next[targetIndex], next[index]]
+
+    storage.value = {
+      ...storage.value,
+      canvases: next,
+    }
+
+    return true
+  }
+
   const delete_canvas = (id: string) => {
     const current = storage.value.canvases
     if (current.length <= 1) return false
@@ -130,6 +149,7 @@ export const create_canvas_store = () => {
     update_canvas,
     update_active_canvas,
     rename_canvas,
+    move_canvas,
     delete_canvas,
   }
 }

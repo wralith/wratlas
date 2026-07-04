@@ -18,6 +18,7 @@ export type ComboboxAction = {
   icon?: ComponentType<{ size?: number | string }>
   tone?: "default" | "danger"
   disabled?: boolean
+  keepOpen?: boolean
   onSelect: () => void | Promise<void>
 }
 
@@ -151,8 +152,10 @@ export const Combobox = (props: ComboboxProps) => {
                     disabled={action.disabled}
                     onClick={() => {
                       void action.onSelect()
-                      setOpen(false)
-                      query.value = ""
+                      if (!action.keepOpen) {
+                        setOpen(false)
+                        query.value = ""
+                      }
                     }}
                   >
                     {Icon && <Icon size={14} />}

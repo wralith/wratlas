@@ -127,6 +127,10 @@ export const create_canvas_controller = (store: CanvasStore) => {
     await load_active_canvas()
   }
 
+  const move_canvas = (id: string, direction: "up" | "down") => {
+    return store.move_canvas(id, direction)
+  }
+
   const delete_canvas = async (id: string) => {
     await save_state()
     const deleted = store.delete_canvas(id)
@@ -339,6 +343,7 @@ export const create_canvas_controller = (store: CanvasStore) => {
     save_state,
     switch_canvas,
     add_canvas,
+    move_canvas,
     delete_canvas,
     add_image,
     add_image_to_canvas,

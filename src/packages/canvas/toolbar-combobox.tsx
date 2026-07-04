@@ -1,5 +1,5 @@
-import { useSignal } from "@preact/signals"
-import { Pencil, Plus, Trash2 } from "lucide-preact"
+import { useComputed, useSignal } from "@preact/signals"
+import { ArrowDown, ArrowUp, Pencil, Plus, Trash2 } from "lucide-preact"
 import { useEffect } from "preact/hooks"
 import { Button } from "@/ui/atoms/button/button"
 import { Input } from "@/ui/atoms/input/input"
@@ -22,6 +22,9 @@ export const ToolbarCombobox = () => {
 
   const currentCanvasId = active_canvas_id.value
   const currentCanvasName = active_canvas_name.value
+  const canvasIndex = useComputed(() => canvas_list.value.findIndex(c => c.id === currentCanvasId))
+  const canMoveUp = useComputed(() => canvasIndex.value > 0)
+  const canMoveDown = useComputed(() => canvasIndex.value < canvas_list.value.length - 1)
 
   const openAddModal = () => {
     draftName.value = ""
@@ -74,6 +77,26 @@ export const ToolbarCombobox = () => {
       icon: Pencil,
       onSelect: openRenameModal,
       disabled: !currentCanvasId,
+    },
+    {
+      id: "move-up",
+      label: "Move Up",
+      icon: ArrowUp,
+      keepOpen: true,
+      onSelect: () => {
+        if (currentCanvasId) canvas_controller.move_canvas(currentCanvasId, "up")
+      },
+      disabled: !canMoveUp.value,
+    },
+    {
+      id: "move-down",
+      label: "Move Down",
+      icon: ArrowDown,
+      keepOpen: true,
+      onSelect: () => {
+        if (currentCanvasId) canvas_controller.move_canvas(currentCanvasId, "down")
+      },
+      disabled: !canMoveDown.value,
     },
     {
       id: "delete",

@@ -146,23 +146,12 @@ export const CanvasMinimap = () => {
     const canvas = fabric_canvas.value
     if (!canvas) return
 
-    const request_draw = () => draw()
+    draw()
 
-    zoom_level.value
-    pan_x.value
-    pan_y.value
-    request_draw()
-
-    const disposers = [
-      canvas.on("object:added", request_draw),
-      canvas.on("object:modified", request_draw),
-      canvas.on("object:removed", request_draw),
-    ]
+    const dispose = canvas.on("after:render", draw)
 
     return () => {
-      for (const dispose of disposers) {
-        dispose()
-      }
+      dispose()
     }
   })
 

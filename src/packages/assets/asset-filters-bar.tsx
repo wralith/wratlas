@@ -1,11 +1,11 @@
 import { ImageUp } from "lucide-preact"
 import { asset_store } from "@/packages/assets/state"
+import { Box } from "@/ui/atoms/box/box"
 import { Button } from "@/ui/atoms/button/button"
 import { Flex } from "@/ui/atoms/flex/flex"
 import { Input } from "@/ui/atoms/input/input"
 import { MultiSelect } from "@/ui/molecules/multi-select/multi-select"
 import { Toolbar } from "@/ui/molecules/toolbar/toolbar"
-import { toolbarWrap } from "./asset-filters-bar.css.ts"
 
 export const AssetFiltersBar = ({
   file_input_ref,
@@ -19,17 +19,18 @@ export const AssetFiltersBar = ({
   const { search_query, all_tags, selected_tags } = asset_store
 
   return (
-    <div class={toolbarWrap}>
+    <Box mx="1.5rem">
       <Toolbar>
-        <Flex align="center" gap="md" style="flex:1;min-width:0">
-          <Input
-            placeholder="Search assets..."
-            value={search_query.value}
-            onInput={e => {
-              search_query.value = (e.target as HTMLInputElement).value
-            }}
-            style="flex:1;max-width:320px"
-          />
+        <Flex align="center" gap="md" flex="1" minW={0}>
+          <Box flex="1" maxW={320}>
+            <Input
+              placeholder="Search assets..."
+              value={search_query.value}
+              onInput={e => {
+                search_query.value = (e.target as HTMLInputElement).value
+              }}
+            />
+          </Box>
           <MultiSelect
             value={selected_tags.value}
             onChange={v => {
@@ -41,13 +42,13 @@ export const AssetFiltersBar = ({
             height={200}
           />
         </Flex>
-        <Flex gap="sm" style="flex-shrink:0">
+        <Flex gap="sm">
           <Button left={<ImageUp size={16} />} onClick={handle_import}>
             Import
           </Button>
           <input ref={file_input_ref} type="file" accept="image/*" multiple hidden onChange={handle_file_change} />
         </Flex>
       </Toolbar>
-    </div>
+    </Box>
   )
 }

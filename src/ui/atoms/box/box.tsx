@@ -4,7 +4,28 @@ import { cn } from "@/lib/cn"
 const resolve = (v: string | number | undefined): string | undefined =>
   v !== undefined ? (typeof v === "number" ? `${v}px` : v) : undefined
 
-export const boxKeys = ["w", "h", "p", "px", "py", "pt", "pb", "m", "mx", "my", "mt", "mb", "bg", "bd", "bdr"] as const
+export const boxKeys = [
+  "w",
+  "h",
+  "minW",
+  "maxW",
+  "flex",
+  "p",
+  "px",
+  "py",
+  "pt",
+  "pb",
+  "m",
+  "mx",
+  "my",
+  "mt",
+  "mb",
+  "ml",
+  "mr",
+  "bg",
+  "bd",
+  "bdr",
+] as const
 
 type BoxStyleProps = {
   [K in (typeof boxKeys)[number]]?: string | number
@@ -19,6 +40,9 @@ export function getBoxStyle(props: BoxStyleProps): Record<string, string> {
   const s: Record<string, string> = {}
   if (props.w !== undefined) s.width = resolve(props.w) as string
   if (props.h !== undefined) s.height = resolve(props.h) as string
+  if (props.minW !== undefined) s.minWidth = resolve(props.minW) as string
+  if (props.maxW !== undefined) s.maxWidth = resolve(props.maxW) as string
+  if (props.flex !== undefined) s.flex = typeof props.flex === "number" ? String(props.flex) : props.flex
   if (props.p !== undefined) s.padding = resolve(props.p) as string
   if (props.px !== undefined) s.paddingInline = resolve(props.px) as string
   if (props.py !== undefined) s.paddingBlock = resolve(props.py) as string
@@ -29,6 +53,8 @@ export function getBoxStyle(props: BoxStyleProps): Record<string, string> {
   if (props.my !== undefined) s.marginBlock = resolve(props.my) as string
   if (props.mt !== undefined) s.marginTop = resolve(props.mt) as string
   if (props.mb !== undefined) s.marginBottom = resolve(props.mb) as string
+  if (props.ml !== undefined) s.marginLeft = resolve(props.ml) as string
+  if (props.mr !== undefined) s.marginRight = resolve(props.mr) as string
   if (props.bg !== undefined) s.background = String(props.bg)
   if (props.bd !== undefined) s.border = String(props.bd)
   if (props.bdr !== undefined) s.borderRadius = resolve(props.bdr) as string

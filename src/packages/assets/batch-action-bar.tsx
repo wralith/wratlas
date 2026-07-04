@@ -70,16 +70,15 @@ const TagPopoverContent = ({ onClose }: { onClose: () => void }) => {
           if (e.key === "Enter") handleApply()
           if (e.key === "Escape") onClose()
         }}
-        style="box-sizing:border-box"
       />
-      <div style="margin-top:6px;display:flex;gap:6px;justify-content:flex-end">
+      <Flex mt={6} gap="xs" justify="end">
         <Button size="small" onClick={onClose}>
           Cancel
         </Button>
         <Button size="small" color="primary" onClick={handleApply} disabled={!tagDraft.value.trim()}>
           Apply
         </Button>
-      </div>
+      </Flex>
     </>
   )
 }
@@ -138,7 +137,6 @@ const CanvasPopoverContent = ({ onClose }: { onClose: () => void }) => {
           if (e.key === "Enter" && filteredCanvases.length > 0) void handleSendToCanvas(filteredCanvases[0].id)
           if (e.key === "Enter" && showCreateCanvas) void handleCreateCanvas(canvasDraft.value.trim())
         }}
-        style="box-sizing:border-box"
       />
       {(filteredCanvases.length > 0 || showCreateCanvas) && (
         <div class={suggestions}>
@@ -187,7 +185,7 @@ export const BatchActionBar = ({ onDeleteRequest }: { onDeleteRequest: () => voi
           />
           <span class={batchCount}>{count} selected</span>
 
-          <Flex gap="sm" style="margin-left:auto">
+          <Flex gap="sm" ml="auto">
             <Popover
               open={activePopover.value === "tag"}
               onClose={() => {

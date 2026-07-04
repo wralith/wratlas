@@ -5,6 +5,7 @@ import { AssetResults } from "@/packages/assets/asset-results"
 import { BatchActionBar, SelectAllFloating } from "@/packages/assets/batch-action-bar"
 import { asset_store } from "@/packages/assets/state"
 import { useAssetsPage } from "@/packages/assets/use-assets-page"
+import { Box } from "@/ui/atoms/box/box"
 import { Button } from "@/ui/atoms/button/button"
 import { Menu } from "@/ui/atoms/menu/menu"
 import { Modal } from "@/ui/atoms/modal/modal"
@@ -65,9 +66,9 @@ const AssetsPage = () => {
         handle_import={handle_import}
         handle_file_change={handle_file_change}
       />
-      <div style="padding:1rem;flex:1;padding-bottom:80px">
+      <Box p="1rem" flex={1} pb={80}>
         <AssetResults asset_urls={asset_urls} open_context_menu={open_context_menu} />
-      </div>
+      </Box>
 
       <SelectAllFloating />
       <BatchActionBar onDeleteRequest={handleBatchDeleteRequest} />

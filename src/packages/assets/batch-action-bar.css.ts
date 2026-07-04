@@ -58,3 +58,7 @@ export const selectAllFloat = style({
   left: 12,
   zIndex: vars.z.overlayTop,
 })
+
+export const dragging = style({
+  opacity: 0.4,
+})

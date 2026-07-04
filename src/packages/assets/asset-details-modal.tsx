@@ -6,6 +6,7 @@ import { Input } from "@/ui/atoms/input/input"
 import { Modal } from "@/ui/atoms/modal/modal"
 import { TextArea } from "@/ui/atoms/text-area/text-area"
 import { TagInput } from "@/ui/molecules/tag-input/tag-input"
+import { thumbnail } from "./asset-details-modal.css.ts"
 
 type DetailsFormState = {
   open: boolean
@@ -81,11 +82,7 @@ export const AssetDetailsModal = () => (
     content={
       <Flex direction="column" gap="md">
         {details_state.value.thumbnail_url && (
-          <img
-            src={details_state.value.thumbnail_url}
-            alt={details_state.value.name}
-            style="width:100%;max-height:280px;object-fit:contain;border-radius:4px;background:var(--bg-overlay)"
-          />
+          <img src={details_state.value.thumbnail_url} alt={details_state.value.name} class={thumbnail} />
         )}
         <Input label="Name" value={details_state.value.name} onInput={bind_field("name")} />
         <TagInput

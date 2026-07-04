@@ -15,7 +15,7 @@ export const AssetResults = ({
 
   if (filtered_assets.value.length === 0) {
     return (
-      <Flex direction="column" align="center" gap="sm" style="padding:64px 0;color:var(--text-muted)">
+      <Flex direction="column" align="center" gap="sm" py="64px" style="color:var(--text-muted)">
         <Search size={32} />
         <p>No assets found. Import some images to get started.</p>
       </Flex>

@@ -16,6 +16,7 @@ export const input = style({
   padding: "0 8px",
   borderRadius: vars.radius.xs,
   outline: "none",
+  boxSizing: "border-box",
   selectors: {
     '&[type="number"]': {
       MozAppearance: "textfield",

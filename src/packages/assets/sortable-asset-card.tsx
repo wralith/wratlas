@@ -2,6 +2,7 @@ import { useSortable } from "@dnd-kit/react/sortable"
 import type { JSX } from "preact"
 import { useEffect, useRef } from "preact/hooks"
 import { ImageCard } from "@/ui/molecules/image-card/image-card"
+import { dragging } from "./batch-action-bar.css.ts"
 
 export type SortableAssetCardProps = {
   id: string
@@ -39,7 +40,7 @@ export const SortableAssetCard = (props: SortableAssetCardProps) => {
   }, [isDragSource])
 
   return (
-    <div ref={ref} data-asset-id={id} style={{ opacity: isDragSource ? 0.4 : undefined }}>
+    <div ref={ref} data-asset-id={id} class={isDragSource ? dragging : undefined}>
       <ImageCard
         name={name}
         tags={tags}

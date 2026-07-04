@@ -7,9 +7,9 @@ export type ImageOptions = {
 }
 
 export const remove_active_object = (canvas: FabricCanvas) => {
-  const activeObj = canvas.getActiveObject()
-  if (!activeObj) return
-  canvas.remove(activeObj)
+  const objects = canvas.getActiveObjects()
+  if (objects.length === 0) return
+  canvas.remove(...objects)
   canvas.discardActiveObject()
   canvas.requestRenderAll()
 }

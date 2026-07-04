@@ -1,9 +1,9 @@
 import { useSignal } from "@preact/signals"
 import { X } from "lucide-preact"
 import type { JSX } from "preact"
-import { useEffect, useMemo, useRef } from "preact/hooks"
-import { cn } from "@/lib/cn"
+import { useMemo, useRef } from "preact/hooks"
 import { KeyboardKey } from "@/ui/atoms/keyboard-key/keyboard-key"
+import { Combobox } from "@/ui/molecules/combobox/combobox"
 import * as styles from "./tag-input.css.ts"
 
 export type TagInputProps = {
@@ -18,7 +18,6 @@ export type TagInputProps = {
 export const TagInput = (props: TagInputProps) => {
   const { value, onChange, suggestions = [], label, placeholder = "Add tag...", height } = props
 
-  const rootRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const draft = useSignal("")
   const open = useSignal(false)
@@ -39,31 +38,7 @@ export const TagInput = (props: TagInputProps) => {
 
   const showNewTag = hasNoExactMatch && draft.value.trim().length > 0
 
-  useEffect(() => {
-    if (!open.value) return
-
-    const handlePointerDown = (e: MouseEvent) => {
-      if (!rootRef.current?.contains(e.target as Node)) {
-        open.value = false
-        activeIndex.value = -1
-      }
-    }
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        open.value = false
-        activeIndex.value = -1
-      }
-    }
-
-    document.addEventListener("mousedown", handlePointerDown)
-    document.addEventListener("keydown", handleKeyDown)
-
-    return () => {
-      document.removeEventListener("mousedown", handlePointerDown)
-      document.removeEventListener("keydown", handleKeyDown)
-    }
-  }, [open.value])
+  const options = useMemo(() => filtered.map(s => ({ id: s, label: s })), [filtered])
 
   const addTag = (raw: string) => {
     const tag = raw.trim()
@@ -126,6 +101,8 @@ export const TagInput = (props: TagInputProps) => {
 
   const inputId = label ? label.toLowerCase().replace(/\s+/g, "-") : undefined
 
+  const comboboxValue = activeIndex.value >= 0 && activeIndex.value < filtered.length ? filtered[activeIndex.value] : ""
+
   return (
     <div class={styles.wrapper}>
       {label && (
@@ -133,71 +110,60 @@ export const TagInput = (props: TagInputProps) => {
           {label}
         </label>
       )}
-      <div class={styles.dropdownWrapper} ref={rootRef}>
-        <div class={styles.field} onClick={focusInput}>
-          {value.map(tag => (
-            <span key={tag} class={styles.tagPill}>
-              {tag}
-              <button
-                type="button"
-                class={styles.tagRemove}
-                onClick={e => {
-                  e.stopPropagation()
-                  removeTag(tag)
-                }}
-                aria-label={`Remove ${tag}`}
-              >
-                <X size={10} />
-              </button>
-            </span>
-          ))}
-          <input
-            ref={inputRef}
-            id={inputId}
-            class={styles.inlineInput}
-            value={draft.value}
-            placeholder={value.length === 0 ? placeholder : ""}
-            onInput={handleInput}
-            onKeyDown={handleKeyDown}
-            onBlur={handleBlur}
-            onFocus={() => {
-              if (filtered.length > 0) open.value = true
-            }}
-          />
-          {showNewTag && (
-            <span class={styles.newTagHint}>
-              New Tag
-              <KeyboardKey>Enter</KeyboardKey>
-            </span>
-          )}
-        </div>
-
-        {open.value && filtered.length > 0 && (
-          <div
-            class={styles.suggestionsPanel}
-            style={height ? `max-height:${typeof height === "number" ? `${height}px` : height}` : undefined}
-          >
-            {filtered.map((suggestion, idx) => (
-              <button
-                key={suggestion}
-                type="button"
-                class={cn(styles.suggestionItem, idx === activeIndex.value && styles.suggestionHighlight)}
-                onMouseDown={e => {
-                  e.preventDefault()
-                  addTag(suggestion)
-                  open.value = false
-                  activeIndex.value = -1
-                }}
-                onMouseEnter={() => {
-                  activeIndex.value = idx
-                }}
-              >
-                {suggestion}
-              </button>
+      <Combobox
+        value={comboboxValue}
+        options={options}
+        onChange={id => {
+          addTag(id)
+          open.value = false
+          activeIndex.value = -1
+        }}
+        hideSearch
+        open={open.value}
+        onOpenChange={v => {
+          open.value = v
+        }}
+        height={height}
+        trigger={
+          <div class={styles.field} onClick={focusInput}>
+            {value.map(tag => (
+              <span key={tag} class={styles.tagPill}>
+                {tag}
+                <button
+                  type="button"
+                  class={styles.tagRemove}
+                  onClick={e => {
+                    e.stopPropagation()
+                    removeTag(tag)
+                  }}
+                  aria-label={`Remove ${tag}`}
+                >
+                  <X size={10} />
+                </button>
+              </span>
             ))}
+            <input
+              ref={inputRef}
+              id={inputId}
+              class={styles.inlineInput}
+              value={draft.value}
+              placeholder={value.length === 0 ? placeholder : ""}
+              onInput={handleInput}
+              onKeyDown={handleKeyDown}
+              onBlur={handleBlur}
+              onFocus={() => {
+                if (filtered.length > 0) open.value = true
+              }}
+            />
+            {showNewTag && (
+              <span class={styles.newTagHint}>
+                New Tag
+                <KeyboardKey>Enter</KeyboardKey>
+              </span>
+            )}
           </div>
-        )}
-      </div>
+        }
+      />
     </div>
   )
 }

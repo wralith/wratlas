@@ -78,48 +78,6 @@ export const inlineInput = style({
   outline: "none",
 })
 
-export const suggestionsPanel = style({
-  position: "absolute",
-  top: "calc(100% + 4px)",
-  left: 0,
-  width: "100%",
-  border: `1px solid ${vars.color.border}`,
-  borderRadius: vars.radius.sm,
-  backgroundColor: vars.bg.surface,
-  boxShadow: vars.shadow.float,
-  zIndex: vars.z.overlayTop,
-  overflow: "hidden",
-  maxHeight: 180,
-  overflowY: "auto",
-})
-
-export const suggestionItem = style({
-  width: "100%",
-  border: "none",
-  background: "transparent",
-  color: vars.text.primary,
-  fontFamily: vars.font.ui,
-  fontSize: vars.textSize.sm,
-  textAlign: "left",
-  padding: `${vars.space.xs} ${vars.space.sm}`,
-  cursor: "pointer",
-  selectors: {
-    "&:hover": {
-      backgroundColor: `color-mix(in srgb, ${vars.color.border} 80%, transparent)`,
-    },
-  },
-})
-
-export const suggestionHighlight = style({
-  backgroundColor: `color-mix(in srgb, ${vars.color.primary} 20%, transparent)`,
-  color: vars.color.primary,
-})
-
-export const dropdownWrapper = style({
-  position: "relative",
-  width: "100%",
-})
-
 export const newTagHint = style({
   display: "inline-flex",
   alignItems: "center",

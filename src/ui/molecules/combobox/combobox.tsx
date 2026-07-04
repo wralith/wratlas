@@ -1,8 +1,9 @@
 import { useSignal } from "@preact/signals"
 import { Check, ChevronDown } from "lucide-preact"
-import type { ComponentType } from "preact"
-import { useEffect, useMemo, useRef } from "preact/hooks"
+import type { ComponentChildren, ComponentType } from "preact"
+import { useMemo, useRef } from "preact/hooks"
 import { cn } from "@/lib/cn"
+import { useFloatingList } from "@/lib/use-floating-list"
 import { Input } from "@/ui/atoms/input/input"
 import * as styles from "./combobox.css.ts"
 
@@ -29,6 +30,10 @@ type ComboboxProps = {
   searchPlaceholder?: string
   emptyLabel?: string
   height?: string | number
+  trigger?: ComponentChildren
+  hideSearch?: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
 export const Combobox = (props: ComboboxProps) => {
@@ -41,76 +46,78 @@ export const Combobox = (props: ComboboxProps) => {
     searchPlaceholder = "Search...",
     emptyLabel = "No results",
     height,
+    trigger,
+    hideSearch = false,
+    open: controlledOpen,
+    onOpenChange,
   } = props
 
   const rootRef = useRef<HTMLDivElement>(null)
-  const open = useSignal(false)
+  const internalOpen = useSignal(false)
   const query = useSignal("")
 
-  useEffect(() => {
-    if (!open.value) return
+  const isControlled = controlledOpen !== undefined
+  const openValue = isControlled ? controlledOpen : internalOpen.value
 
-    const handlePointerDown = (e: MouseEvent) => {
-      if (!rootRef.current?.contains(e.target as Node)) {
-        open.value = false
-      }
+  const setOpen = (v: boolean) => {
+    if (isControlled) {
+      onOpenChange?.(v)
+    } else {
+      internalOpen.value = v
     }
+  }
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") open.value = false
-    }
-
-    document.addEventListener("mousedown", handlePointerDown)
-    document.addEventListener("keydown", handleKeyDown)
-
-    return () => {
-      document.removeEventListener("mousedown", handlePointerDown)
-      document.removeEventListener("keydown", handleKeyDown)
-    }
-  }, [open.value])
+  useFloatingList(rootRef, { value: openValue, set: setOpen })
 
   const selectedOption = options.find(option => option.id === value)
 
   const filteredOptions = useMemo(() => {
+    if (hideSearch) return options
     const normalizedQuery = query.value.trim().toLowerCase()
     if (!normalizedQuery) return options
     return options.filter(option => option.label.toLowerCase().includes(normalizedQuery))
-  }, [options, query.value])
+  }, [options, query.value, hideSearch])
 
   const handleSelect = async (id: string) => {
     await onChange(id)
-    open.value = false
+    setOpen(false)
     query.value = ""
   }
 
   return (
     <div class={styles.root} ref={rootRef}>
-      <button
-        type="button"
-        class={styles.trigger}
-        onClick={() => {
-          open.value = !open.value
-        }}
-        aria-haspopup="listbox"
-        aria-expanded={open.value}
-        aria-label={placeholder}
-      >
-        <span class={styles.triggerLabel}>{selectedOption?.label || placeholder}</span>
-        <ChevronDown size={14} />
-      </button>
+      {trigger ? (
+        trigger
+      ) : (
+        <button
+          type="button"
+          class={styles.trigger}
+          onClick={() => {
+            setOpen(!openValue)
+          }}
+          aria-haspopup="listbox"
+          aria-expanded={openValue}
+          aria-label={placeholder}
+        >
+          <span class={styles.triggerLabel}>{selectedOption?.label || placeholder}</span>
+          <ChevronDown size={14} />
+        </button>
+      )}
 
-      {open.value && (
+      {openValue && (
         <div class={styles.panel}>
-          <div class={styles.search}>
-            <Input
-              type="text"
-              value={query.value}
-              onInput={e => {
-                query.value = (e.target as HTMLInputElement).value
-              }}
-              placeholder={searchPlaceholder}
-            />
-          </div>
+          {!hideSearch && (
+            <div class={styles.search}>
+              <Input
+                type="text"
+                value={query.value}
+                onInput={e => {
+                  query.value = (e.target as HTMLInputElement).value
+                }}
+                placeholder={searchPlaceholder}
+              />
+            </div>
+          )}
 
           <ul
             class={styles.list}
@@ -122,6 +129,7 @@ export const Combobox = (props: ComboboxProps) => {
                 <button
                   type="button"
                   class={cn(styles.optionButton, option.id === value && styles.optionButtonSelected)}
+                  onMouseDown={e => e.preventDefault()}
                   onClick={() => void handleSelect(option.id)}
                 >
                   <Check size={14} opacity={option.id === value ? 1 : 0} />
@@ -143,7 +151,7 @@ export const Combobox = (props: ComboboxProps) => {
                     disabled={action.disabled}
                     onClick={() => {
                       void action.onSelect()
-                      open.value = false
+                      setOpen(false)
                       query.value = ""
                     }}
                   >

@@ -10,33 +10,6 @@ export const container = style({
   zIndex: vars.z.roadmapLines,
 })
 
-export const toolbar = style({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  height: vars.hudHeight,
-  padding: `0 ${vars.space.md}`,
-  border: `1px solid ${vars.color.border}`,
-  borderTop: "none",
-  backgroundColor: vars.bg.surface,
-  flexShrink: 0,
-  borderRadius: `0 0 ${vars.radius.md} ${vars.radius.md}`,
-  gap: vars.space.md,
-})
-
-export const leftSection = style({
-  display: "flex",
-  alignItems: "center",
-  gap: vars.space.sm,
-  minWidth: 0,
-})
-
-export const rightSection = style({
-  display: "flex",
-  alignItems: "center",
-  gap: vars.space.sm,
-})
-
 export const label = style({
   fontSize: vars.textSize.sm,
   color: vars.text.muted,

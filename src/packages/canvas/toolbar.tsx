@@ -3,6 +3,7 @@ import { Download, FileUp, Keyboard } from "lucide-preact"
 import { Button } from "@/ui/atoms/button/button"
 import { Flex } from "@/ui/atoms/flex/flex"
 import { Tooltip } from "@/ui/atoms/tooltip/tooltip"
+import { Toolbar } from "@/ui/molecules/toolbar/toolbar"
 import { useCanvasImportExport } from "./hooks/use-canvas-import-export"
 import * as styles from "./toolbar.css"
 import { ToolbarCombobox } from "./toolbar-combobox"
@@ -14,22 +15,20 @@ export const CanvasToolbar = () => {
 
   return (
     <div class={styles.container}>
-      <div class={styles.toolbar}>
-        <div class={styles.leftSection}>
+      <Toolbar>
+        <Flex align="center" gap="sm">
           <ToolbarCombobox />
-          <Flex align="start" gap="sm" class={styles.rightSection}>
-            <Tooltip content="Import">
-              <Button size="icon-only" onClick={openImport} aria-label="Import canvas">
-                <FileUp size={14} />
-              </Button>
-            </Tooltip>
-            <Tooltip content="Export">
-              <Button size="icon-only" onClick={handleExport} aria-label="Export canvas">
-                <Download size={14} />
-              </Button>
-            </Tooltip>
-          </Flex>
-        </div>
+          <Tooltip content="Import">
+            <Button size="icon-only" onClick={openImport} aria-label="Import canvas">
+              <FileUp size={14} />
+            </Button>
+          </Tooltip>
+          <Tooltip content="Export">
+            <Button size="icon-only" onClick={handleExport} aria-label="Export canvas">
+              <Download size={14} />
+            </Button>
+          </Tooltip>
+        </Flex>
 
         <Flex align="center" gap="sm">
           <Tooltip content="Shortcuts">
@@ -51,7 +50,7 @@ export const CanvasToolbar = () => {
             hidden
           />
         </Flex>
-      </div>
+      </Toolbar>
 
       <CanvasToolbarShortcutsModal
         open={shortcutsOpen.value}

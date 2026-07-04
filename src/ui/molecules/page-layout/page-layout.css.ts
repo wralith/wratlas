@@ -9,22 +9,17 @@ export const layout = style({
 
 export const content = style({
   flex: 1,
-  overflowY: "auto",
-  margin: "0 1rem 1rem",
-  padding: vars.space.md,
-  backgroundImage: `radial-gradient(circle, ${vars.color.border} 1px, transparent 1px)`,
-  backgroundSize: "24px 24px",
-  border: `1px solid ${vars.color.border}`,
-  borderRadius: vars.radius.md,
-})
-
-export const contentFull = style({
   margin: 0,
   padding: 0,
-  background: "none",
-  border: "none",
+  background: vars.bg.base,
+  backgroundImage: `radial-gradient(circle, ${vars.color.border} 1px, transparent 1px)`,
+  backgroundSize: "24px 24px",
+  borderTop: `1px solid ${vars.color.border}`,
+  borderBottom: "none",
+  borderLeft: "none",
+  borderRight: "none",
   borderRadius: 0,
   display: "flex",
   flexDirection: "column",
-  overflow: "hidden",
+  overflowY: "auto",
 })

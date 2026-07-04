@@ -12,6 +12,8 @@ import { Input } from "@/ui/atoms/input/input"
 import { Menu } from "@/ui/atoms/menu/menu"
 import { Tag } from "@/ui/atoms/tag/tag"
 import { PageLayout } from "@/ui/molecules/page-layout/page-layout"
+import { Toolbar } from "@/ui/molecules/toolbar/toolbar"
+import { toolbarWrap } from "./assets.css.ts"
 
 const read_order = (): string[] => {
   const cards = document.querySelectorAll<HTMLElement>("[data-asset-id]")
@@ -80,40 +82,42 @@ const AssetFiltersBar = ({
   const selected_set = useComputed(() => new Set(selected_tags.value))
 
   return (
-    <Flex justify="between" align="center">
-      <Flex align="center" gap="md" style="flex:1">
-        <Input
-          placeholder="Search assets..."
-          value={search_query.value}
-          onInput={e => {
-            search_query.value = (e.target as HTMLInputElement).value
-          }}
-          style="flex:1;max-width:320px"
-        />
-      </Flex>
-      <Flex gap="sm">
-        {all_tags.value.length > 0 && (
-          <Flex gap="xs" wrap>
-            {all_tags.value.map(tag => (
-              <Tag
-                key={tag}
-                active={selected_set.value.has(tag)}
-                onClick={() => {
-                  const current = selected_tags.value
-                  selected_tags.value = current.includes(tag) ? current.filter(t => t !== tag) : [...current, tag]
-                }}
-              >
-                {tag}
-              </Tag>
-            ))}
-          </Flex>
-        )}
-        <Button left={<ImageUp size={16} />} onClick={handle_import}>
-          Import
-        </Button>
-        <input ref={file_input_ref} type="file" accept="image/*" multiple hidden onChange={handle_file_change} />
-      </Flex>
-    </Flex>
+    <div class={toolbarWrap}>
+      <Toolbar>
+        <Flex align="center" gap="md" style="flex:1">
+          <Input
+            placeholder="Search assets..."
+            value={search_query.value}
+            onInput={e => {
+              search_query.value = (e.target as HTMLInputElement).value
+            }}
+            style="flex:1;max-width:320px"
+          />
+        </Flex>
+        <Flex gap="sm">
+          {all_tags.value.length > 0 && (
+            <Flex gap="xs" wrap>
+              {all_tags.value.map(tag => (
+                <Tag
+                  key={tag}
+                  active={selected_set.value.has(tag)}
+                  onClick={() => {
+                    const current = selected_tags.value
+                    selected_tags.value = current.includes(tag) ? current.filter(t => t !== tag) : [...current, tag]
+                  }}
+                >
+                  {tag}
+                </Tag>
+              ))}
+            </Flex>
+          )}
+          <Button left={<ImageUp size={16} />} onClick={handle_import}>
+            Import
+          </Button>
+          <input ref={file_input_ref} type="file" accept="image/*" multiple hidden onChange={handle_file_change} />
+        </Flex>
+      </Toolbar>
+    </div>
   )
 }
 
@@ -173,14 +177,14 @@ const AssetsPage = () => {
 
   return (
     <PageLayout>
-      <Flex direction="column" gap="lg">
-        <AssetFiltersBar
-          file_input_ref={file_input_ref}
-          handle_import={handle_import}
-          handle_file_change={handle_file_change}
-        />
+      <AssetFiltersBar
+        file_input_ref={file_input_ref}
+        handle_import={handle_import}
+        handle_file_change={handle_file_change}
+      />
+      <div style="padding:1rem;flex:1">
         <AssetResults asset_urls={asset_urls} open_context_menu={open_context_menu} />
-      </Flex>
+      </div>
 
       <Menu
         open={menu.value.open}

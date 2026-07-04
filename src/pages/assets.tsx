@@ -1,5 +1,4 @@
 import type { Signal } from "@preact/signals"
-import { useComputed } from "@preact/signals"
 import { ImageUp, Search } from "lucide-preact"
 import { useEffect } from "preact/hooks"
 import { AssetDetailsModal, open_details } from "@/packages/assets/asset-details-modal"
@@ -10,7 +9,7 @@ import { Button } from "@/ui/atoms/button/button"
 import { Flex } from "@/ui/atoms/flex/flex"
 import { Input } from "@/ui/atoms/input/input"
 import { Menu } from "@/ui/atoms/menu/menu"
-import { Tag } from "@/ui/atoms/tag/tag"
+import { MultiSelect } from "@/ui/molecules/multi-select/multi-select"
 import { PageLayout } from "@/ui/molecules/page-layout/page-layout"
 import { Toolbar } from "@/ui/molecules/toolbar/toolbar"
 import { toolbarWrap } from "./assets.css.ts"
@@ -79,12 +78,11 @@ const AssetFiltersBar = ({
   handle_file_change: (e: Event) => void
 }) => {
   const { search_query, all_tags, selected_tags } = asset_store
-  const selected_set = useComputed(() => new Set(selected_tags.value))
 
   return (
     <div class={toolbarWrap}>
       <Toolbar>
-        <Flex align="center" gap="md" style="flex:1">
+        <Flex align="center" gap="md" style="flex:1;min-width:0">
           <Input
             placeholder="Search assets..."
             value={search_query.value}
@@ -93,24 +91,18 @@ const AssetFiltersBar = ({
             }}
             style="flex:1;max-width:320px"
           />
+          <MultiSelect
+            value={selected_tags.value}
+            onChange={v => {
+              selected_tags.value = v
+            }}
+            options={all_tags.value}
+            placeholder="Filter by tags"
+            maxWidth={400}
+            height={200}
+          />
         </Flex>
-        <Flex gap="sm">
-          {all_tags.value.length > 0 && (
-            <Flex gap="xs" wrap>
-              {all_tags.value.map(tag => (
-                <Tag
-                  key={tag}
-                  active={selected_set.value.has(tag)}
-                  onClick={() => {
-                    const current = selected_tags.value
-                    selected_tags.value = current.includes(tag) ? current.filter(t => t !== tag) : [...current, tag]
-                  }}
-                >
-                  {tag}
-                </Tag>
-              ))}
-            </Flex>
-          )}
+        <Flex gap="sm" style="flex-shrink:0">
           <Button left={<ImageUp size={16} />} onClick={handle_import}>
             Import
           </Button>

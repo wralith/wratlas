@@ -191,9 +191,9 @@ export const create_canvas_controller = (store: CanvasStore) => {
     const viewport_width = canvas.width / zoom
     const viewport_height = canvas.height / zoom
     const padding = 20
-    const header_offset = 100 / zoom
+    const header_offset = 70 / zoom
 
-    const start_x = -vpt[4] / zoom + padding
+    const start_x = -vpt[4] / zoom + padding + 40
     const start_y = -vpt[5] / zoom + header_offset
 
     const results = arrange_images_layout({

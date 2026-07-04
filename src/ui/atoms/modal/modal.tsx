@@ -1,3 +1,4 @@
+import { FloatingPortal } from "@floating-ui/react"
 import type { ComponentChildren } from "preact"
 import { useCallback, useEffect } from "preact/hooks"
 import { cn } from "@/lib/cn"
@@ -33,26 +34,28 @@ export const Modal = (props: ModalProps) => {
   if (!open) return null
 
   return (
-    <div class={styles.backdrop} onClick={onClose}>
-      <div
-        class={cn(styles.modal, wide && styles.modalWide, className)}
-        onClick={e => e.stopPropagation()}
-        onKeyDown={e => {
-          if (e.key === "Escape") onClose()
-          e.stopPropagation()
-        }}
-        onKeyUp={e => e.stopPropagation()}
-        role="dialog"
-        aria-modal="true"
-      >
-        {header && (
-          <div class={styles.header}>
-            {typeof header === "string" ? <h2 class={styles.title}>{header}</h2> : header}
-          </div>
-        )}
-        {content && <div class={styles.content}>{content}</div>}
-        {footer && <div class={styles.footer}>{footer}</div>}
+    <FloatingPortal>
+      <div class={styles.backdrop} onClick={onClose}>
+        <div
+          class={cn(styles.modal, wide && styles.modalWide, className)}
+          onClick={e => e.stopPropagation()}
+          onKeyDown={e => {
+            if (e.key === "Escape") onClose()
+            e.stopPropagation()
+          }}
+          onKeyUp={e => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+        >
+          {header && (
+            <div class={styles.header}>
+              {typeof header === "string" ? <h2 class={styles.title}>{header}</h2> : header}
+            </div>
+          )}
+          {content && <div class={styles.content}>{content}</div>}
+          {footer && <div class={styles.footer}>{footer}</div>}
+        </div>
       </div>
-    </div>
+    </FloatingPortal>
   )
 }

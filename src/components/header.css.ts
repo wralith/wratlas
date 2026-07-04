@@ -5,7 +5,7 @@ export const container = style({
   margin: "1rem",
   marginBottom: "0.5rem",
   position: "relative",
-  zIndex: vars.z.hud + 1,
+  zIndex: `calc(${vars.z.hud} + 1)`,
 })
 
 export const brand = style({

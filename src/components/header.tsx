@@ -1,5 +1,5 @@
+import { useSignal } from "@preact/signals"
 import { Paintbrush, Settings } from "lucide-preact"
-import { useState } from "preact/hooks"
 import { useLocation } from "preact-iso"
 import { brand, container, header, link, linkActive, settingsWrapper } from "@/components/header.css.ts"
 import { SettingsDropdown } from "@/components/settings-dropdown"
@@ -11,7 +11,7 @@ import { Flex } from "@/ui/atoms/flex/flex"
 
 export const Header = () => {
   const { url } = useLocation()
-  const [settingsOpen, setSettingsOpen] = useState(false)
+  const settingsOpen = useSignal(false)
 
   return (
     <div class={container}>
@@ -31,10 +31,22 @@ export const Header = () => {
             Draw Gesture!
           </Button>
           <div class={settingsWrapper}>
-            <Button color="primary" size="icon-only" onClick={() => setSettingsOpen(v => !v)}>
+            <Button
+              color="primary"
+              size="icon-only"
+              onClick={() => {
+                settingsOpen.value = !settingsOpen.value
+              }}
+            >
               <Settings size={18} />
             </Button>
-            {settingsOpen && <SettingsDropdown onClose={() => setSettingsOpen(false)} />}
+            {settingsOpen.value && (
+              <SettingsDropdown
+                onClose={() => {
+                  settingsOpen.value = false
+                }}
+              />
+            )}
           </div>
         </Flex>
       </header>

@@ -1,3 +1,4 @@
+import { batch } from "@preact/signals"
 import { Canvas as FabricCanvas, FabricObject } from "fabric"
 import { useEffect, useRef } from "preact/hooks"
 import { canvas_controller, canvas_ready, fabric_canvas } from "../state"
@@ -42,12 +43,13 @@ export const useCanvas = () => {
     canvas_controller.init(canvas)
 
     fabricRef.current = canvas
-    fabric_canvas.value = canvas
-    canvas_ready.value = true
+    batch(() => {
+      fabric_canvas.value = canvas
+      canvas_ready.value = true
+    })
 
     const update_uniform_scaling = () => {
       const active = canvas.getActiveObject()
-      console.log(active)
       canvas.uniformScaling = active?.type !== "rect"
     }
 
@@ -81,8 +83,10 @@ export const useCanvas = () => {
       canvas_controller.dispose()
       canvas.dispose()
       fabricRef.current = null
-      fabric_canvas.value = null
-      canvas_ready.value = false
+      batch(() => {
+        fabric_canvas.value = null
+        canvas_ready.value = false
+      })
     }
   }, [])
 

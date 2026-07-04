@@ -1,5 +1,5 @@
+import { useSignal } from "@preact/signals"
 import { Download, FileUp, Keyboard } from "lucide-preact"
-import { useState } from "preact/hooks"
 import { Button } from "@/ui/atoms/button/button"
 import { Flex } from "@/ui/atoms/flex/flex"
 import { Tooltip } from "@/ui/atoms/tooltip/tooltip"
@@ -10,7 +10,7 @@ import { CanvasToolbarShortcutsModal } from "./toolbar-shortcuts-modal"
 
 export const CanvasToolbar = () => {
   const { importRef, openImport, handleImport, handleExport } = useCanvasImportExport()
-  const [shortcutsOpen, setShortcutsOpen] = useState(false)
+  const shortcutsOpen = useSignal(false)
 
   return (
     <div class={styles.container}>
@@ -33,7 +33,13 @@ export const CanvasToolbar = () => {
 
         <Flex align="center" gap="sm">
           <Tooltip content="Shortcuts">
-            <Button size="icon-only" onClick={() => setShortcutsOpen(true)} aria-label="Keyboard shortcuts">
+            <Button
+              size="icon-only"
+              onClick={() => {
+                shortcutsOpen.value = true
+              }}
+              aria-label="Keyboard shortcuts"
+            >
               <Keyboard size={14} />
             </Button>
           </Tooltip>
@@ -47,7 +53,12 @@ export const CanvasToolbar = () => {
         </Flex>
       </div>
 
-      <CanvasToolbarShortcutsModal open={shortcutsOpen} onClose={() => setShortcutsOpen(false)} />
+      <CanvasToolbarShortcutsModal
+        open={shortcutsOpen.value}
+        onClose={() => {
+          shortcutsOpen.value = false
+        }}
+      />
     </div>
   )
 }

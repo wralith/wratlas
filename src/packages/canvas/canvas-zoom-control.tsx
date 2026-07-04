@@ -1,5 +1,6 @@
+import { useSignal } from "@preact/signals"
 import { Point } from "fabric"
-import { useEffect, useState } from "preact/hooks"
+import { useEffect } from "preact/hooks"
 import { Input } from "@/ui/atoms/input/input"
 import { Slider } from "@/ui/atoms/slider/slider"
 import * as styles from "./canvas-zoom-control.css"
@@ -12,10 +13,10 @@ const to_percent = (zoom: number) => Math.round(zoom * 100)
 export const CanvasZoomControl = () => {
   const canvas = fabric_canvas.value
   const zoom = zoom_level.value
-  const [draftValue, setDraftValue] = useState(String(to_percent(zoom)))
+  const draftValue = useSignal(String(to_percent(zoom)))
 
   useEffect(() => {
-    setDraftValue(String(to_percent(zoom)))
+    draftValue.value = String(to_percent(zoom))
   }, [zoom])
 
   const applyZoom = (nextZoom: number) => {
@@ -32,20 +33,20 @@ export const CanvasZoomControl = () => {
   const handleSliderInput = (event: Event) => {
     const value = Number((event.target as HTMLInputElement).value)
     const ratio = value / 100
-    setDraftValue(String(value))
+    draftValue.value = String(value)
     applyZoom(ratio)
   }
 
   const commitNumberInput = () => {
-    const parsed = Number(draftValue)
+    const parsed = Number(draftValue.value)
     if (Number.isNaN(parsed)) {
-      setDraftValue(String(to_percent(zoom)))
+      draftValue.value = String(to_percent(zoom))
       return
     }
 
     const clampedPercent = Math.min(Math.max(parsed, MIN_ZOOM * 100), MAX_ZOOM * 100)
     const nextZoom = clampedPercent / 100
-    setDraftValue(String(Math.round(clampedPercent)))
+    draftValue.value = String(Math.round(clampedPercent))
     applyZoom(nextZoom)
   }
 
@@ -63,8 +64,10 @@ export const CanvasZoomControl = () => {
             min={MIN_ZOOM * 100}
             max={MAX_ZOOM * 100}
             step={1}
-            value={draftValue}
-            onInput={event => setDraftValue((event.target as HTMLInputElement).value)}
+            value={draftValue.value}
+            onInput={event => {
+              draftValue.value = (event.target as HTMLInputElement).value
+            }}
             onBlur={commitNumberInput}
             onKeyDown={event => {
               if (event.key === "Enter") {

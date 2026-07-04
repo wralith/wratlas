@@ -1,5 +1,7 @@
-import { useSignalEffect } from "@preact/signals"
+import type { Signal } from "@preact/signals"
+import { useComputed } from "@preact/signals"
 import { ImageUp, Search } from "lucide-preact"
+import { useEffect } from "preact/hooks"
 import { AssetDetailsModal, open_details } from "@/packages/assets/asset-details-modal"
 import { AssetRenameModal, open_rename } from "@/packages/assets/asset-rename-modal"
 import { SortableAssetCard } from "@/packages/assets/sortable-asset-card"
@@ -21,12 +23,13 @@ const SortableGrid = ({
   asset_urls,
   open_context_menu,
 }: {
-  asset_urls: Record<string, string>
+  asset_urls: Signal<Record<string, string>>
   open_context_menu: (id: string, e: MouseEvent) => void
 }) => {
+  const urls = asset_urls.value
   const { filtered_assets, reorder_asset } = asset_store
 
-  useSignalEffect(() => {
+  useEffect(() => {
     const handler = () => {
       const order = read_order()
       for (let i = 0; i < order.length - 1; i++) {
@@ -43,7 +46,7 @@ const SortableGrid = ({
     }
     window.addEventListener("drag-finished", handler)
     return () => window.removeEventListener("drag-finished", handler)
-  })
+  }, [])
 
   return (
     <Flex gap="md" wrap data-dnd-grid>
@@ -56,13 +59,84 @@ const SortableGrid = ({
           tags={asset.tags}
           width={asset.width}
           height={asset.height}
-          thumbnailUrl={asset_urls[asset.id] ?? ""}
+          thumbnailUrl={urls[asset.id] ?? ""}
           onContextMenu={e => open_context_menu(asset.id, e)}
-          onClick={() => open_details(asset.id, asset_urls[asset.id] ?? "")}
+          onClick={() => open_details(asset.id, urls[asset.id] ?? "")}
         />
       ))}
     </Flex>
   )
+}
+
+const AssetFiltersBar = ({
+  file_input_ref,
+  handle_import,
+  handle_file_change,
+}: {
+  file_input_ref: { current: HTMLInputElement | null }
+  handle_import: () => void
+  handle_file_change: (e: Event) => void
+}) => {
+  const { search_query, all_tags, selected_tags } = asset_store
+  const selected_set = useComputed(() => new Set(selected_tags.value))
+
+  return (
+    <Flex justify="between" align="center">
+      <Flex align="center" gap="md" style="flex:1">
+        <Input
+          placeholder="Search assets..."
+          value={search_query.value}
+          onInput={e => {
+            search_query.value = (e.target as HTMLInputElement).value
+          }}
+          style="flex:1;max-width:320px"
+        />
+      </Flex>
+      <Flex gap="sm">
+        {all_tags.value.length > 0 && (
+          <Flex gap="xs" wrap>
+            {all_tags.value.map(tag => (
+              <Tag
+                key={tag}
+                active={selected_set.value.has(tag)}
+                onClick={() => {
+                  const current = selected_tags.value
+                  selected_tags.value = current.includes(tag) ? current.filter(t => t !== tag) : [...current, tag]
+                }}
+              >
+                {tag}
+              </Tag>
+            ))}
+          </Flex>
+        )}
+        <Button left={<ImageUp size={16} />} onClick={handle_import}>
+          Import
+        </Button>
+        <input ref={file_input_ref} type="file" accept="image/*" multiple hidden onChange={handle_file_change} />
+      </Flex>
+    </Flex>
+  )
+}
+
+const AssetResults = ({
+  asset_urls,
+  open_context_menu,
+}: {
+  asset_urls: Signal<Record<string, string>>
+  open_context_menu: (id: string, e: MouseEvent) => void
+}) => {
+  const { filtered_assets } = asset_store
+
+  if (filtered_assets.value.length === 0) {
+    return (
+      <Flex direction="column" align="center" gap="sm" style="padding:64px 0;color:var(--text-muted)">
+        <Search size={32} />
+        <p>No assets found. Import some images to get started.</p>
+      </Flex>
+    )
+  }
+
+  return <SortableGrid asset_urls={asset_urls} open_context_menu={open_context_menu} />
 }
 
 const AssetsPage = () => {
@@ -79,15 +153,6 @@ const AssetsPage = () => {
     delete_asset,
     download_asset,
   } = useAssetsPage()
-
-  const { search_query, filtered_assets, all_tags, selected_tags } = asset_store
-
-  const toggle_tag = (tag: string) => {
-    const current = selected_tags.value
-    selected_tags.value = current.includes(tag) ? current.filter(t => t !== tag) : [...current, tag]
-  }
-
-  const is_tag_selected = (tag: string) => selected_tags.value.includes(tag)
 
   const handle_menu_select = (id: string) => {
     if (id.startsWith("canvas-")) {
@@ -109,45 +174,16 @@ const AssetsPage = () => {
         break
     }
   }
+
   return (
     <PageLayout>
       <Flex direction="column" gap="lg">
-        <Flex justify="between" align="center">
-          <Flex align="center" gap="md" style="flex:1">
-            <Input
-              placeholder="Search assets..."
-              value={search_query.value}
-              onInput={e => {
-                search_query.value = (e.target as HTMLInputElement).value
-              }}
-              style="flex:1;max-width:320px"
-            />
-          </Flex>
-          <Flex gap="sm">
-            {all_tags.value.length > 0 && (
-              <Flex gap="xs" wrap>
-                {all_tags.value.map(tag => (
-                  <Tag key={tag} active={is_tag_selected(tag)} onClick={() => toggle_tag(tag)}>
-                    {tag}
-                  </Tag>
-                ))}
-              </Flex>
-            )}
-            <Button left={<ImageUp size={16} />} onClick={handle_import}>
-              Import
-            </Button>
-            <input ref={file_input_ref} type="file" accept="image/*" multiple hidden onChange={handle_file_change} />
-          </Flex>
-        </Flex>
-
-        {filtered_assets.value.length === 0 ? (
-          <Flex direction="column" align="center" gap="sm" style="padding:64px 0;color:var(--text-muted)">
-            <Search size={32} />
-            <p>No assets found. Import some images to get started.</p>
-          </Flex>
-        ) : (
-          <SortableGrid asset_urls={asset_urls.value} open_context_menu={open_context_menu} />
-        )}
+        <AssetFiltersBar
+          file_input_ref={file_input_ref}
+          handle_import={handle_import}
+          handle_file_change={handle_file_change}
+        />
+        <AssetResults asset_urls={asset_urls} open_context_menu={open_context_menu} />
       </Flex>
 
       <Menu

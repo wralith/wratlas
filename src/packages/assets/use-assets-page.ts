@@ -1,5 +1,5 @@
 import { useComputed, useSignal, useSignalEffect } from "@preact/signals"
-import { useRef } from "preact/hooks"
+import { useEffect, useRef } from "preact/hooks"
 import { canvas_controller, canvas_store } from "@/packages/canvas/state"
 import { asset_store } from "./state"
 
@@ -65,7 +65,7 @@ export const useAssetsPage = () => {
     }
   })
 
-  useSignalEffect(() => {
+  useEffect(() => {
     return () => {
       for (const url of Object.values(urls_cache.current)) {
         URL.revokeObjectURL(url)
@@ -73,7 +73,7 @@ export const useAssetsPage = () => {
       urls_cache.current = {}
       asset_urls.value = {}
     }
-  })
+  }, [])
 
   const handle_import = () => {
     file_input_ref.current?.click()

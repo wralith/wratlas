@@ -1,5 +1,6 @@
+import { useSignal } from "@preact/signals"
 import { Pencil, Plus, Trash2 } from "lucide-preact"
-import { useEffect, useState } from "preact/hooks"
+import { useEffect } from "preact/hooks"
 import { Button } from "@/ui/atoms/button/button"
 import { Input } from "@/ui/atoms/input/input"
 import { Modal } from "@/ui/atoms/modal/modal"
@@ -8,40 +9,40 @@ import { create_canvas } from "./internal/store"
 import { active_canvas_id, active_canvas_name, canvas_controller, canvas_list, canvas_store } from "./state"
 
 export const ToolbarCombobox = () => {
-  const [draftName, setDraftName] = useState("")
-  const [modalOpen, setModalOpen] = useState(false)
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
-  const [modalMode, setModalMode] = useState<"add" | "rename">("add")
+  const draftName = useSignal("")
+  const modalOpen = useSignal(false)
+  const deleteModalOpen = useSignal(false)
+  const modalMode = useSignal<"add" | "rename">("add")
 
   useEffect(() => {
-    if (modalOpen) {
+    if (modalOpen.value) {
       document.getElementById("canvas-name")?.focus()
     }
-  }, [modalOpen])
+  }, [modalOpen.value])
 
   const currentCanvasId = active_canvas_id.value
   const currentCanvasName = active_canvas_name.value
 
   const openAddModal = () => {
-    setDraftName("")
-    setModalMode("add")
-    setModalOpen(true)
+    draftName.value = ""
+    modalMode.value = "add"
+    modalOpen.value = true
   }
 
   const openRenameModal = () => {
-    setDraftName(currentCanvasName || "")
-    setModalMode("rename")
-    setModalOpen(true)
+    draftName.value = currentCanvasName || ""
+    modalMode.value = "rename"
+    modalOpen.value = true
   }
 
   const handleModalSubmit = () => {
-    if (modalMode === "add") {
-      void canvas_controller.add_canvas(create_canvas(draftName || "Untitled Canvas"))
+    if (modalMode.value === "add") {
+      void canvas_controller.add_canvas(create_canvas(draftName.value || "Untitled Canvas"))
     } else {
       if (!currentCanvasId) return
-      canvas_store.rename_canvas(currentCanvasId, draftName)
+      canvas_store.rename_canvas(currentCanvasId, draftName.value)
     }
-    setModalOpen(false)
+    modalOpen.value = false
   }
 
   const handleCanvasChange = async (id: string) => {
@@ -51,13 +52,13 @@ export const ToolbarCombobox = () => {
   const openDeleteModal = () => {
     if (!currentCanvasId) return
     if (canvas_list.value.length <= 1) return
-    setDeleteModalOpen(true)
+    deleteModalOpen.value = true
   }
 
   const handleDeleteCanvas = async () => {
     if (!currentCanvasId) return
     await canvas_controller.delete_canvas(currentCanvasId)
-    setDeleteModalOpen(false)
+    deleteModalOpen.value = false
   }
 
   const canvasActions: ComboboxAction[] = [
@@ -97,41 +98,57 @@ export const ToolbarCombobox = () => {
       />
 
       <Modal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        header={modalMode === "add" ? "Add Canvas" : "Rename Canvas"}
+        open={modalOpen.value}
+        onClose={() => {
+          modalOpen.value = false
+        }}
+        header={modalMode.value === "add" ? "Add Canvas" : "Rename Canvas"}
         content={
           <Input
             type="text"
             id="canvas-name"
             placeholder="Canvas name"
-            value={draftName}
-            onInput={e => setDraftName((e.target as HTMLInputElement).value)}
+            value={draftName.value}
+            onInput={e => {
+              draftName.value = (e.target as HTMLInputElement).value
+            }}
             onKeyDown={e => {
-              if (e.key === "Enter" && draftName.trim()) handleModalSubmit()
+              if (e.key === "Enter" && draftName.value.trim()) handleModalSubmit()
             }}
           />
         }
         footer={
           <>
-            <Button size="small" onClick={() => setModalOpen(false)}>
+            <Button
+              size="small"
+              onClick={() => {
+                modalOpen.value = false
+              }}
+            >
               Cancel
             </Button>
-            <Button size="small" color="primary" onClick={handleModalSubmit} disabled={!draftName.trim()}>
-              {modalMode === "add" ? "Add" : "Rename"}
+            <Button size="small" color="primary" onClick={handleModalSubmit} disabled={!draftName.value.trim()}>
+              {modalMode.value === "add" ? "Add" : "Rename"}
             </Button>
           </>
         }
       />
 
       <Modal
-        open={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
+        open={deleteModalOpen.value}
+        onClose={() => {
+          deleteModalOpen.value = false
+        }}
         header="Delete Canvas"
         content={`Are you sure you want to delete "${currentCanvasName}"?`}
         footer={
           <>
-            <Button size="small" onClick={() => setDeleteModalOpen(false)}>
+            <Button
+              size="small"
+              onClick={() => {
+                deleteModalOpen.value = false
+              }}
+            >
               Cancel
             </Button>
             <Button size="small" color="danger" onClick={handleDeleteCanvas}>

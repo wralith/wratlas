@@ -1,6 +1,7 @@
+import { useSignal } from "@preact/signals"
 import { Check, ChevronDown } from "lucide-preact"
 import type { ComponentType } from "preact"
-import { useEffect, useMemo, useRef, useState } from "preact/hooks"
+import { useEffect, useMemo, useRef } from "preact/hooks"
 import { cn } from "@/lib/cn"
 import { Input } from "@/ui/atoms/input/input"
 import * as styles from "./combobox.css.ts"
@@ -41,20 +42,20 @@ export const Combobox = (props: ComboboxProps) => {
   } = props
 
   const rootRef = useRef<HTMLDivElement>(null)
-  const [open, setOpen] = useState(false)
-  const [query, setQuery] = useState("")
+  const open = useSignal(false)
+  const query = useSignal("")
 
   useEffect(() => {
-    if (!open) return
+    if (!open.value) return
 
     const handlePointerDown = (e: MouseEvent) => {
       if (!rootRef.current?.contains(e.target as Node)) {
-        setOpen(false)
+        open.value = false
       }
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false)
+      if (e.key === "Escape") open.value = false
     }
 
     document.addEventListener("mousedown", handlePointerDown)
@@ -64,20 +65,20 @@ export const Combobox = (props: ComboboxProps) => {
       document.removeEventListener("mousedown", handlePointerDown)
       document.removeEventListener("keydown", handleKeyDown)
     }
-  }, [open])
+  }, [open.value])
 
   const selectedOption = options.find(option => option.id === value)
 
   const filteredOptions = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase()
+    const normalizedQuery = query.value.trim().toLowerCase()
     if (!normalizedQuery) return options
     return options.filter(option => option.label.toLowerCase().includes(normalizedQuery))
-  }, [options, query])
+  }, [options, query.value])
 
   const handleSelect = async (id: string) => {
     await onChange(id)
-    setOpen(false)
-    setQuery("")
+    open.value = false
+    query.value = ""
   }
 
   return (
@@ -85,22 +86,26 @@ export const Combobox = (props: ComboboxProps) => {
       <button
         type="button"
         class={styles.trigger}
-        onClick={() => setOpen(prev => !prev)}
+        onClick={() => {
+          open.value = !open.value
+        }}
         aria-haspopup="listbox"
-        aria-expanded={open}
+        aria-expanded={open.value}
         aria-label={placeholder}
       >
         <span class={styles.triggerLabel}>{selectedOption?.label || placeholder}</span>
         <ChevronDown size={14} />
       </button>
 
-      {open && (
+      {open.value && (
         <div class={styles.panel}>
           <div class={styles.search}>
             <Input
               type="text"
-              value={query}
-              onInput={e => setQuery((e.target as HTMLInputElement).value)}
+              value={query.value}
+              onInput={e => {
+                query.value = (e.target as HTMLInputElement).value
+              }}
               placeholder={searchPlaceholder}
             />
           </div>
@@ -133,8 +138,8 @@ export const Combobox = (props: ComboboxProps) => {
                     disabled={action.disabled}
                     onClick={() => {
                       void action.onSelect()
-                      setOpen(false)
-                      setQuery("")
+                      open.value = false
+                      query.value = ""
                     }}
                   >
                     {Icon && <Icon size={14} />}

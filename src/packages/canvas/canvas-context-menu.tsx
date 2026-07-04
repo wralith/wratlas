@@ -1,6 +1,6 @@
-import { useSignalEffect } from "@preact/signals"
+import { useSignal, useSignalEffect } from "@preact/signals"
 import type { Canvas as FabricCanvas, TPointerEvent, TPointerEventInfo } from "fabric"
-import { useMemo, useRef, useState } from "preact/hooks"
+import { useMemo, useRef } from "preact/hooks"
 import { asset_store } from "@/packages/assets/state"
 import { Menu, type MenuItem } from "@/ui/atoms/menu/menu"
 import {
@@ -52,7 +52,7 @@ const is_default_view = (canvas: FabricCanvas) => {
 export const CanvasContextMenu = () => {
   const canvas = fabric_canvas.value
   const inputRef = useRef<HTMLInputElement>(null)
-  const [state, setState] = useState<MenuState>(initial_state)
+  const state = useSignal<MenuState>(initial_state)
 
   useSignalEffect(() => {
     const activeCanvas = fabric_canvas.value
@@ -67,7 +67,7 @@ export const CanvasContextMenu = () => {
       if (!(native instanceof MouseEvent)) return
 
       if (native.button !== 2) {
-        setState(initial_state)
+        state.value = initial_state
         return
       }
 
@@ -76,24 +76,24 @@ export const CanvasContextMenu = () => {
       if (event.target) {
         activeCanvas.setActiveObject(event.target)
         activeCanvas.requestRenderAll()
-        setState({
+        state.value = {
           open: true,
           x: native.clientX,
           y: native.clientY,
           target: "object",
-        })
+        }
         return
       }
 
       activeCanvas.discardActiveObject()
       activeCanvas.requestRenderAll()
 
-      setState({
+      state.value = {
         open: true,
         x: native.clientX,
         y: native.clientY,
         target: "canvas",
-      })
+      }
     }
 
     activeCanvas.upperCanvasEl.addEventListener("contextmenu", handleNativeContextMenu)
@@ -108,9 +108,9 @@ export const CanvasContextMenu = () => {
   const is_image_object = canvas?.getActiveObject()?.type?.toLowerCase() === "image"
 
   const items = useMemo<MenuItem[]>(() => {
-    if (!canvas || !state.target) return []
+    if (!canvas || !state.value.target) return []
 
-    if (state.target === "object") {
+    if (state.value.target === "object") {
       return [
         {
           id: "order",
@@ -152,55 +152,41 @@ export const CanvasContextMenu = () => {
         disabled: is_default_view(canvas),
       },
     ]
-  }, [canvas, state.target])
+  }, [canvas, state.value.target])
 
   const handleSelect = (id: string) => {
     if (!canvas) return
 
-    if (id === "copy-object") {
-      void canvas_controller.copy_image_to_clipboard()
-      return
-    }
-
-    if (id === "bring-to-front") {
-      void canvas_controller.order_active_object_to_front()
-      return
-    }
-
-    if (id === "bring-forward") {
-      void canvas_controller.order_active_object_forward()
-      return
-    }
-
-    if (id === "send-to-back") {
-      void canvas_controller.order_active_object_to_back()
-      return
-    }
-
-    if (id === "send-backward") {
-      void canvas_controller.order_active_object_backward()
-      return
-    }
-
-    if (id === "save-to-assets") {
-      void save_active_object_to_assets(canvas)
-      return
-    }
-
-    if (id === "delete-object") {
-      remove_active_object(canvas)
-      return
-    }
-
-    if (id === "add-image") {
-      inputRef.current?.click()
-      return
-    }
-
-    if (id === "reset-view") {
-      canvas.setViewportTransform([1, 0, 0, 1, 0, 0])
-      canvas.requestRenderAll()
-      sync_viewport_signals(canvas)
+    switch (id) {
+      case "copy-object":
+        void canvas_controller.copy_image_to_clipboard()
+        break
+      case "bring-to-front":
+        void canvas_controller.order_active_object_to_front()
+        break
+      case "bring-forward":
+        void canvas_controller.order_active_object_forward()
+        break
+      case "send-to-back":
+        void canvas_controller.order_active_object_to_back()
+        break
+      case "send-backward":
+        void canvas_controller.order_active_object_backward()
+        break
+      case "save-to-assets":
+        void save_active_object_to_assets(canvas)
+        break
+      case "delete-object":
+        remove_active_object(canvas)
+        break
+      case "add-image":
+        inputRef.current?.click()
+        break
+      case "reset-view":
+        canvas.setViewportTransform([1, 0, 0, 1, 0, 0])
+        canvas.requestRenderAll()
+        sync_viewport_signals(canvas)
+        break
     }
   }
 
@@ -218,11 +204,13 @@ export const CanvasContextMenu = () => {
   return (
     <>
       <Menu
-        open={state.open}
-        position={state.open ? { x: state.x, y: state.y } : null}
+        open={state.value.open}
+        position={state.value.open ? { x: state.value.x, y: state.value.y } : null}
         items={items}
         onSelect={handleSelect}
-        onClose={() => setState(initial_state)}
+        onClose={() => {
+          state.value = initial_state
+        }}
       />
       <input ref={inputRef} type="file" accept="image/*" multiple onChange={handleFileChange} hidden />
     </>

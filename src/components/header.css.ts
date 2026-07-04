@@ -45,3 +45,18 @@ export const linkActive = style({
     backgroundColor: vars.color.secondary,
   },
 })
+
+export const colorPicker = style({
+  vars: {
+    "--cp-size": "2.25rem",
+    "--cp-border-radius-sm": "0",
+    "--cp-border-radius-lg": "0",
+    "--cp-body-bg": vars.bg.surface,
+    "--cp-body-color": vars.text.primary,
+    "--cp-border-color": vars.color.border,
+    "--cp-hover-color": vars.text.secondary,
+    "--cp-button-color": vars.color.secondary,
+    "--cp-box-shadow": "none",
+    "--cp-box-shadow-sm": "none",
+  },
+})

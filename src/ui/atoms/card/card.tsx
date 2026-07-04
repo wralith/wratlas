@@ -1,17 +1,17 @@
-import type { JSX } from "preact"
 import { cn } from "@/lib/cn"
+import { Box, type BoxProps } from "@/ui/atoms/box/box"
 import { borderless, card } from "@/ui/atoms/card/card.css.ts"
 
-export type CardProps = {
+export type CardProps = BoxProps & {
   border?: boolean
-} & JSX.IntrinsicElements["div"]
+}
 
 export const Card = (props: CardProps) => {
-  const { border = true, children, ...rest } = props
+  const { border = true, children, class: className, ...rest } = props
 
   return (
-    <div {...rest} class={cn(card, !border && borderless, rest.class)}>
+    <Box {...rest} class={cn(card, !border && borderless, className)}>
       {children}
-    </div>
+    </Box>
   )
 }

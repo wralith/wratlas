@@ -2,6 +2,7 @@ import { FloatingPortal } from "@floating-ui/react"
 import type { ComponentChildren } from "preact"
 import { useCallback, useEffect } from "preact/hooks"
 import { cn } from "@/lib/cn"
+import { Box } from "@/ui/atoms/box/box"
 import * as styles from "./modal.css.ts"
 
 export type ModalProps = {
@@ -37,9 +38,10 @@ export const Modal = (props: ModalProps) => {
   return (
     <FloatingPortal>
       <div class={styles.backdrop} onClick={onClose}>
-        <div
+        <Box
+          w={width}
+          h={height}
           class={cn(styles.modal, className)}
-          style={{ width, height }}
           onClick={e => e.stopPropagation()}
           onKeyDown={e => {
             if (e.key === "Escape") onClose()
@@ -56,7 +58,7 @@ export const Modal = (props: ModalProps) => {
           )}
           {content && <div class={styles.content}>{content}</div>}
           {footer && <div class={styles.footer}>{footer}</div>}
-        </div>
+        </Box>
       </div>
     </FloatingPortal>
   )

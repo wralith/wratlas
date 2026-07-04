@@ -75,15 +75,6 @@ export class AssetsPage {
     await this.page.locator("[data-asset-id]").first().click({ button: "right" })
   }
 
-  renameAsset = async (newName: string) => {
-    await this.openContextMenuOnFirstAsset()
-    await this.page.getByRole("menuitem", { name: "Rename" }).click()
-    await expect(this.page.getByText("Rename Asset")).toBeVisible()
-    const input = this.page.getByRole("dialog").getByRole("textbox")
-    await input.fill(newName)
-    await this.page.getByRole("button", { name: "Rename" }).click()
-  }
-
   deleteAsset = async () => {
     await this.openContextMenuOnFirstAsset()
     await this.page.getByRole("menuitem", { name: "Delete" }).click()

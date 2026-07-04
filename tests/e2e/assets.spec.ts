@@ -44,22 +44,6 @@ test("imported asset card displays name and dimensions", async ({ page }) => {
   await expect(card).toContainText("100")
 })
 
-test("rename asset via context menu", async ({ page }) => {
-  const assets = new AssetsPage(page)
-  await assets.goto()
-
-  await assets.importAsset(sampleImagePath)
-  await expect.poll(async () => assets.getAssetCount()).toBe(1)
-
-  await assets.renameAsset("My Renamed Asset")
-  await expect
-    .poll(async () => {
-      const names = await assets.getAssetNames()
-      return names[0]
-    })
-    .toBe("My Renamed Asset")
-})
-
 test("delete asset via context menu", async ({ page }) => {
   const assets = new AssetsPage(page)
   await assets.goto()

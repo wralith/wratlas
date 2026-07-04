@@ -3,7 +3,6 @@ import { useComputed } from "@preact/signals"
 import { ImageUp, Search } from "lucide-preact"
 import { useEffect } from "preact/hooks"
 import { AssetDetailsModal, open_details } from "@/packages/assets/asset-details-modal"
-import { AssetRenameModal, open_rename } from "@/packages/assets/asset-rename-modal"
 import { SortableAssetCard } from "@/packages/assets/sortable-asset-card"
 import { asset_store } from "@/packages/assets/state"
 import { useAssetsPage } from "@/packages/assets/use-assets-page"
@@ -169,9 +168,6 @@ const AssetsPage = () => {
       case "download":
         void download_asset(asset_id)
         break
-      case "rename":
-        open_rename(asset_id)
-        break
     }
   }
 
@@ -194,7 +190,6 @@ const AssetsPage = () => {
         onClose={close_menu}
       />
 
-      <AssetRenameModal />
       <AssetDetailsModal />
     </PageLayout>
   )

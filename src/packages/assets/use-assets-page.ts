@@ -100,7 +100,6 @@ export const useAssetsPage = () => {
       })),
     },
     { id: "download", label: "Download" },
-    { id: "rename", label: "Rename" },
     { id: "delete", label: "Delete", danger: true },
   ])
 

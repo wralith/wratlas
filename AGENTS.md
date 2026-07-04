@@ -46,7 +46,7 @@ EVERYTHING IN CODE SHOULD BE SUPER SIMPLE AND READABLE.
 - **No comments in code** unless absolutely necessary.
 - **No default exports** except page components (lazy needs them).
 - **Arrow functions** for components and helpers.
-- **No wrapper divs** unless needed for layout.
+- **No wrapper divs** unless using Box for its style shorthands. Prefer `<Box>` over a plain `<div>` with inline styles or wrapper classes when you need width, height, padding, margin, background, border, or border-radius.
 - **Keep files under ~300 lines.** Do not split aggressively if colocation keeps things clear.
 - **No external state libraries** beyond signals.
 
@@ -57,6 +57,15 @@ EVERYTHING IN CODE SHOULD BE SUPER SIMPLE AND READABLE.
 - Use tokens from `src/styles/vars.css.ts` through typed `vars` only.
 - Use recipes for visual variants and infer variant props using:
   - `RecipeVariants<typeof recipe>`
+
+### Design System
+
+- **`src/ui/` IS the design system.** Packages must use UI components from `src/ui/` for all layout, styling, and interaction primitives.
+- **Before adding custom CSS** in a package, check if an existing UI component or prop covers the need. If not:
+  1. **Update an existing UI component** to support the new requirement (e.g. add an `error` state to `TextArea` rather than wrapping it).
+  2. **Only then, add a new component** to `src/ui/` — keeping it focused, composable, and consistent with existing patterns.
+- **Avoid custom `*.css.ts` files in packages.** Layout spacing (padding, margin, width, height, gap) should use `Box`/`Flex` props instead of custom CSS. Only add a CSS file when the design system genuinely cannot cover the need (e.g. structural positioning, z-index, animations).
+- **Don't reach for Box unnecessarily.** If you just need a plain wrapper, use `<div>`. Box is for when you need its style shorthands (`w`, `h`, `p`, `m`, `bg`, `bd`, `bdr`, etc.).
 
 ### Architecture Rules
 

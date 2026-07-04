@@ -30,6 +30,7 @@
     "jszip": "^3.10.1",
     "lucide-preact": "^1.21.0",
     "nanoid": "^5.1.16",
+    "potpack": "^2.1.0",
     "preact": "^10.29.2",
     "preact-iso": "^2.12.0"
   },

@@ -147,6 +147,11 @@ export const CanvasContextMenu = () => {
     return [
       { id: "add-image", label: "Add image" },
       {
+        id: "arrange",
+        label: "Arrange",
+        disabled: canvas.getObjects().filter(o => o.type?.toLowerCase() === "image").length === 0,
+      },
+      {
         id: "reset-view",
         label: "Reset view",
         disabled: is_default_view(canvas),
@@ -181,6 +186,9 @@ export const CanvasContextMenu = () => {
         break
       case "add-image":
         inputRef.current?.click()
+        break
+      case "arrange":
+        canvas_controller.arrange_images()
         break
       case "reset-view":
         canvas.setViewportTransform([1, 0, 0, 1, 0, 0])

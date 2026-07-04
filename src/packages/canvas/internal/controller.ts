@@ -9,6 +9,7 @@ import {
   send_active_object_to_back,
 } from "../actions"
 import { clamp_zoom } from "../constants"
+import { arrange_images as arrange_images_layout } from "./arrange"
 import { create_canvas_history } from "./history"
 import { create_canvas_snapshot_patch } from "./snapshot"
 import type { CanvasStore } from "./store"
@@ -175,6 +176,48 @@ export const create_canvas_controller = (store: CanvasStore) => {
     await set(image_id, blob, image_store)
   }
 
+  const arrange_images = () => {
+    if (!canvas) return
+
+    const images = canvas.getObjects().filter(obj => obj.type?.toLowerCase() === "image")
+    if (images.length === 0) return
+
+    history.capture()
+
+    const vpt = canvas.viewportTransform
+    if (!vpt) return
+
+    const zoom = vpt[0]
+    const viewport_width = canvas.width / zoom
+    const viewport_height = canvas.height / zoom
+    const padding = 20
+    const header_offset = 100 / zoom
+
+    const start_x = -vpt[4] / zoom + padding
+    const start_y = -vpt[5] / zoom + header_offset
+
+    const results = arrange_images_layout({
+      images,
+      viewport_width,
+      viewport_height,
+      padding,
+      header_offset,
+    })
+
+    for (const { x, y, img } of results) {
+      img.set({
+        left: start_x + x,
+        top: start_y + y,
+        originX: "left",
+        originY: "top",
+      })
+      img.setCoords()
+    }
+
+    canvas.requestRenderAll()
+    void save_state()
+  }
+
   const copy_image_to_clipboard = async () => {
     if (!canvas || !navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
       return false
@@ -298,6 +341,7 @@ export const create_canvas_controller = (store: CanvasStore) => {
     capture_history_snapshot: history.capture,
     undo: history.undo,
     redo: history.redo,
+    arrange_images,
     copy_image_to_clipboard,
     order_active_object_backward,
     order_active_object_to_back,

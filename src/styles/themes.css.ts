@@ -97,35 +97,6 @@ export const catppuccinLatte = createTheme(vars, {
   },
 })
 
-export const poimandres = createTheme(vars, {
-  ...base,
-  color: {
-    primary: "#a6e22e",
-    secondary: "#66d9ef",
-    tertiary: "#e6db74",
-    success: "#a6e22e",
-    warning: "#fd971f",
-    danger: "#f92672",
-    dark: "#1b1e2b",
-    border: "#303348",
-  },
-  bg: {
-    base: "#1b1e28",
-    surface: "#1f2233",
-    overlay: "#252a3a",
-  },
-  text: {
-    primary: "#e4e4e4",
-    secondary: "#a6accd",
-    muted: "#767b9e",
-    primaryInverted: "#1b1e28",
-    secondaryInverted: "#1f2233",
-  },
-  shadow: {
-    float: "0 10px 30px -10px rgba(0, 0, 0, 0.4)",
-  },
-})
-
 export const rosePine = createTheme(vars, {
   ...base,
   color: {
@@ -181,35 +152,6 @@ export const everforest = createTheme(vars, {
   },
   shadow: {
     float: "0 10px 30px -10px rgba(39, 46, 51, 0.6)",
-  },
-})
-
-export const everforestLight = createTheme(vars, {
-  ...base,
-  color: {
-    primary: "#8da101",
-    secondary: "#3a94c5",
-    tertiary: "#f57d26",
-    success: "#8da101",
-    warning: "#dfa000",
-    danger: "#f85552",
-    dark: "#ede3cc",
-    border: "#d8caae",
-  },
-  bg: {
-    base: "#fdf6e3",
-    surface: "#f0e8cf",
-    overlay: "#e6d9bb",
-  },
-  text: {
-    primary: "#5c6a72",
-    secondary: "#84928b",
-    muted: "#9aa49d",
-    primaryInverted: "#fdf6e3",
-    secondaryInverted: "#f0e8cf",
-  },
-  shadow: {
-    float: "0 10px 30px -10px rgba(92, 106, 114, 0.15)",
   },
 })
 
@@ -301,15 +243,13 @@ export const dracula = createTheme(vars, {
 })
 
 export const themeMap = {
+  dracula,
   "catppuccin-mocha": catppuccinMocha,
   "catppuccin-latte": catppuccinLatte,
-  poimandres,
   "rose-pine": rosePine,
   everforest,
-  "everforest-light": everforestLight,
   kanagawa,
   "kanagawa-lotus": kanagawaLotus,
-  dracula,
 } as const
 
 export type ThemeName = keyof typeof themeMap

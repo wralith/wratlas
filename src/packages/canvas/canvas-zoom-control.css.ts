@@ -5,7 +5,7 @@ export const container = style({
   position: "absolute",
   right: vars.space.lg,
   bottom: vars.space.lg,
-  zIndex: vars.z.overlayTop,
+  zIndex: vars.z.roadmapLines,
   width: 200,
   display: "grid",
   gap: vars.space.xs,

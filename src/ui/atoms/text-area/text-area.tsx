@@ -1,5 +1,6 @@
 import type { JSX, Ref } from "preact"
 import { cn } from "@/lib/cn"
+import { BaseInput } from "@/ui/atoms/base-input/base-input"
 import { label as labelStyle, wrapper } from "@/ui/atoms/input/input.css.ts"
 import { textarea } from "./text-area.css.ts"
 
@@ -18,10 +19,10 @@ export const TextArea = (props: TextAreaProps) => {
         <label for={inputId} class={labelStyle}>
           {label}
         </label>
-        <textarea ref={ref} id={inputId} {...rest} class={cn(textarea, rest.class)} />
+        <BaseInput as="textarea" ref={ref} id={inputId} {...rest} class={cn(textarea, rest.class)} />
       </div>
     )
   }
 
-  return <textarea ref={ref} id={id} {...rest} class={cn(textarea, rest.class)} />
+  return <BaseInput as="textarea" ref={ref} id={id} {...rest} class={cn(textarea, rest.class)} />
 }

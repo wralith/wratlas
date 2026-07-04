@@ -9,7 +9,7 @@ const fadeIn = keyframes({
 export const backdrop = style({
   position: "fixed",
   inset: 0,
-  zIndex: vars.z.overlay,
+  zIndex: vars.z.overlayTop,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",

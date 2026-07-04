@@ -16,7 +16,7 @@ export const brand = style({
 
 export const settingsWrapper = style({
   position: "relative",
-  zIndex: 2000,
+  zIndex: vars.z.hud,
 })
 
 export const header = style({

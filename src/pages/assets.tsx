@@ -1,138 +1,14 @@
-import type { Signal } from "@preact/signals"
-import { ImageUp, Search } from "lucide-preact"
-import { useEffect } from "preact/hooks"
-import { AssetDetailsModal, open_details } from "@/packages/assets/asset-details-modal"
-import { SortableAssetCard } from "@/packages/assets/sortable-asset-card"
+import { useSignal } from "@preact/signals"
+import { AssetDetailsModal } from "@/packages/assets/asset-details-modal"
+import { AssetFiltersBar } from "@/packages/assets/asset-filters-bar"
+import { AssetResults } from "@/packages/assets/asset-results"
+import { BatchActionBar, SelectAllFloating } from "@/packages/assets/batch-action-bar"
 import { asset_store } from "@/packages/assets/state"
 import { useAssetsPage } from "@/packages/assets/use-assets-page"
 import { Button } from "@/ui/atoms/button/button"
-import { Flex } from "@/ui/atoms/flex/flex"
-import { Input } from "@/ui/atoms/input/input"
 import { Menu } from "@/ui/atoms/menu/menu"
-import { MultiSelect } from "@/ui/molecules/multi-select/multi-select"
+import { Modal } from "@/ui/atoms/modal/modal"
 import { PageLayout } from "@/ui/molecules/page-layout/page-layout"
-import { Toolbar } from "@/ui/molecules/toolbar/toolbar"
-import { toolbarWrap } from "./assets.css.ts"
-
-const read_order = (): string[] => {
-  const cards = document.querySelectorAll<HTMLElement>("[data-asset-id]")
-  return [...Array.from(cards)].map(el => el.getAttribute("data-asset-id")).filter((x): x is string => x !== null)
-}
-
-const SortableGrid = ({
-  asset_urls,
-  open_context_menu,
-}: {
-  asset_urls: Signal<Record<string, string>>
-  open_context_menu: (id: string, e: MouseEvent) => void
-}) => {
-  const urls = asset_urls.value
-  const { filtered_assets, reorder_asset } = asset_store
-
-  useEffect(() => {
-    const handler = () => {
-      const order = read_order()
-      for (let i = 0; i < order.length - 1; i++) {
-        const current_id = order[i]
-        const next_id = order[i + 1]
-        const assets = asset_store.assets.value
-        const current_idx = assets.findIndex(a => a.id === current_id)
-        const next_idx = assets.findIndex(a => a.id === next_id)
-        if (current_idx > next_idx) {
-          reorder_asset(current_id, next_id)
-          return
-        }
-      }
-    }
-    window.addEventListener("drag-finished", handler)
-    return () => window.removeEventListener("drag-finished", handler)
-  }, [])
-
-  return (
-    <Flex gap="md" wrap data-dnd-grid>
-      {filtered_assets.value.map((asset, idx) => (
-        <SortableAssetCard
-          key={asset.id}
-          id={asset.id}
-          index={idx}
-          name={asset.name}
-          tags={asset.tags}
-          width={asset.width}
-          height={asset.height}
-          thumbnailUrl={urls[asset.id] ?? ""}
-          onContextMenu={e => open_context_menu(asset.id, e)}
-          onClick={() => open_details(asset.id, urls[asset.id] ?? "")}
-        />
-      ))}
-    </Flex>
-  )
-}
-
-const AssetFiltersBar = ({
-  file_input_ref,
-  handle_import,
-  handle_file_change,
-}: {
-  file_input_ref: { current: HTMLInputElement | null }
-  handle_import: () => void
-  handle_file_change: (e: Event) => void
-}) => {
-  const { search_query, all_tags, selected_tags } = asset_store
-
-  return (
-    <div class={toolbarWrap}>
-      <Toolbar>
-        <Flex align="center" gap="md" style="flex:1;min-width:0">
-          <Input
-            placeholder="Search assets..."
-            value={search_query.value}
-            onInput={e => {
-              search_query.value = (e.target as HTMLInputElement).value
-            }}
-            style="flex:1;max-width:320px"
-          />
-          <MultiSelect
-            value={selected_tags.value}
-            onChange={v => {
-              selected_tags.value = v
-            }}
-            options={all_tags.value}
-            placeholder="Filter by tags"
-            maxWidth={400}
-            height={200}
-          />
-        </Flex>
-        <Flex gap="sm" style="flex-shrink:0">
-          <Button left={<ImageUp size={16} />} onClick={handle_import}>
-            Import
-          </Button>
-          <input ref={file_input_ref} type="file" accept="image/*" multiple hidden onChange={handle_file_change} />
-        </Flex>
-      </Toolbar>
-    </div>
-  )
-}
-
-const AssetResults = ({
-  asset_urls,
-  open_context_menu,
-}: {
-  asset_urls: Signal<Record<string, string>>
-  open_context_menu: (id: string, e: MouseEvent) => void
-}) => {
-  const { filtered_assets } = asset_store
-
-  if (filtered_assets.value.length === 0) {
-    return (
-      <Flex direction="column" align="center" gap="sm" style="padding:64px 0;color:var(--text-muted)">
-        <Search size={32} />
-        <p>No assets found. Import some images to get started.</p>
-      </Flex>
-    )
-  }
-
-  return <SortableGrid asset_urls={asset_urls} open_context_menu={open_context_menu} />
-}
 
 const AssetsPage = () => {
   const {
@@ -148,6 +24,8 @@ const AssetsPage = () => {
     delete_asset,
     download_asset,
   } = useAssetsPage()
+
+  const deleteModalOpen = useSignal(false)
 
   const handle_menu_select = (id: string) => {
     if (id.startsWith("canvas-")) {
@@ -167,6 +45,19 @@ const AssetsPage = () => {
     }
   }
 
+  const handleBatchDeleteRequest = () => {
+    deleteModalOpen.value = true
+  }
+
+  const handleBatchDeleteConfirm = async () => {
+    const ids = [...asset_store.selected_ids.value]
+    for (const id of ids) {
+      await delete_asset(id)
+    }
+    asset_store.clear_selection()
+    deleteModalOpen.value = false
+  }
+
   return (
     <PageLayout>
       <AssetFiltersBar
@@ -174,9 +65,12 @@ const AssetsPage = () => {
         handle_import={handle_import}
         handle_file_change={handle_file_change}
       />
-      <div style="padding:1rem;flex:1">
+      <div style="padding:1rem;flex:1;padding-bottom:80px">
         <AssetResults asset_urls={asset_urls} open_context_menu={open_context_menu} />
       </div>
+
+      <SelectAllFloating />
+      <BatchActionBar onDeleteRequest={handleBatchDeleteRequest} />
 
       <Menu
         open={menu.value.open}
@@ -184,6 +78,30 @@ const AssetsPage = () => {
         items={menu_items.value}
         onSelect={handle_menu_select}
         onClose={close_menu}
+      />
+
+      <Modal
+        open={deleteModalOpen.value}
+        onClose={() => {
+          deleteModalOpen.value = false
+        }}
+        header="Delete Assets"
+        content={`Are you sure you want to delete ${asset_store.selected_ids.value.length} selected assets?`}
+        footer={
+          <>
+            <Button
+              size="small"
+              onClick={() => {
+                deleteModalOpen.value = false
+              }}
+            >
+              Cancel
+            </Button>
+            <Button size="small" color="danger" onClick={handleBatchDeleteConfirm}>
+              Delete
+            </Button>
+          </>
+        }
       />
 
       <AssetDetailsModal />

@@ -11,6 +11,8 @@ export type SortableAssetCardProps = {
   width: number
   height: number
   thumbnailUrl: string
+  selected?: boolean
+  onToggle?: () => void
   onContextMenu?: (e: JSX.TargetedMouseEvent<HTMLDivElement>) => void
   onClick?: (e: JSX.TargetedMouseEvent<HTMLDivElement>) => void
 }
@@ -20,7 +22,7 @@ let drag_in_progress = false
 export const is_dragging = () => drag_in_progress
 
 export const SortableAssetCard = (props: SortableAssetCardProps) => {
-  const { id, index, name, tags, width, height, thumbnailUrl, onContextMenu, onClick } = props
+  const { id, index, name, tags, width, height, thumbnailUrl, selected, onToggle, onContextMenu, onClick } = props
   const prev_source = useRef(false)
 
   const { ref, isDragSource } = useSortable({ id, index, group: "assets" })
@@ -44,6 +46,8 @@ export const SortableAssetCard = (props: SortableAssetCardProps) => {
         width={width}
         height={height}
         thumbnailUrl={thumbnailUrl}
+        selected={selected}
+        onToggle={onToggle}
         onContextMenu={onContextMenu}
         onClick={onClick}
       />

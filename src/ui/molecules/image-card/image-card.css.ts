@@ -16,13 +16,51 @@ export const card = style({
   },
 })
 
-export const thumbnail = style({
+export const thumbnailWrap = style({
+  position: "relative",
   width: "100%",
   height: 160,
+})
+
+export const thumbnail = style({
+  width: "100%",
+  height: "100%",
   objectFit: "cover",
   borderRadius: vars.radius.sm,
   display: "block",
   background: vars.bg.overlay,
+})
+
+export const checkbox = style({
+  position: "absolute",
+  top: 6,
+  left: 6,
+  width: 20,
+  height: 20,
+  border: `2px solid ${vars.color.border}`,
+  borderRadius: 3,
+  backgroundColor: "rgba(0,0,0,0.35)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: "pointer",
+  color: "#fff",
+  zIndex: 1,
+  selectors: {
+    "&:hover": {
+      backgroundColor: "rgba(0,0,0,0.55)",
+    },
+  },
+})
+
+export const checkboxChecked = style({
+  backgroundColor: vars.color.primary,
+  borderColor: vars.color.primary,
+  selectors: {
+    "&:hover": {
+      backgroundColor: vars.color.primary,
+    },
+  },
 })
 
 export const content = style({

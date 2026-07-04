@@ -24,6 +24,7 @@ export const create_canvas_controller = (store: CanvasStore) => {
   let canvas: FabricCanvas | null = null
   let active_blob_urls: string[] = []
   const is_hydrating = signal(false)
+  const pendingArrange = signal(false)
 
   const history = create_canvas_history({
     get_canvas: () => canvas,
@@ -57,6 +58,10 @@ export const create_canvas_controller = (store: CanvasStore) => {
     canvas = fabricCanvas
     void load_active_canvas().then(async () => {
       await collect_orphan_images()
+      if (pendingArrange.value) {
+        arrange_images()
+        pendingArrange.value = false
+      }
     })
   }
 
@@ -192,8 +197,9 @@ export const create_canvas_controller = (store: CanvasStore) => {
     const viewport_height = canvas.height / zoom
     const padding = 20
     const header_offset = 70 / zoom
+    const left_offset = 40 / zoom
 
-    const start_x = -vpt[4] / zoom + padding + 40
+    const start_x = -vpt[4] / zoom + left_offset
     const start_y = -vpt[5] / zoom + header_offset
 
     const results = arrange_images_layout({
@@ -349,6 +355,7 @@ export const create_canvas_controller = (store: CanvasStore) => {
     order_active_object_to_front,
     dispose,
     is_hydrating,
+    pendingArrange,
     is_restoring_history: history.is_restoring,
   }
 }

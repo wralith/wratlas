@@ -53,6 +53,27 @@ export const create_asset_store = () => {
     return [...tags].sort()
   })
 
+  const selected_ids = signal<string[]>([])
+
+  const all_filtered_selected = computed(() => {
+    const filtered = filtered_assets.value
+    if (filtered.length === 0) return false
+    return filtered.every(a => selected_ids.value.includes(a.id))
+  })
+
+  const toggle_selection = (id: string) => {
+    const current = selected_ids.value
+    selected_ids.value = current.includes(id) ? current.filter(i => i !== id) : [...current, id]
+  }
+
+  const select_all = () => {
+    selected_ids.value = filtered_assets.value.map(a => a.id)
+  }
+
+  const clear_selection = () => {
+    selected_ids.value = []
+  }
+
   const filtered_assets = computed(() => {
     let result = assets.value
     const query = search_query.value.trim().toLowerCase()
@@ -148,7 +169,13 @@ export const create_asset_store = () => {
     search_query,
     selected_tags,
     all_tags,
+    selected_ids,
+    all_filtered_selected,
     filtered_assets,
+
+    toggle_selection,
+    select_all,
+    clear_selection,
 
     add_asset,
     remove_asset,

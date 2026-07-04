@@ -1,5 +1,5 @@
 import { useSignal } from "@preact/signals"
-import { Paintbrush, Settings } from "lucide-preact"
+import { Settings } from "lucide-preact"
 import { useEffect, useRef } from "preact/hooks"
 import { useLocation } from "preact-iso"
 import { brand, colorPicker, container, header, link, linkActive, settingsWrapper } from "@/components/header.css.ts"
@@ -59,12 +59,9 @@ export const Header = () => {
         </Flex>
         <Flex align="center" gap="sm">
           <button ref={pickerRef} type="button" class={colorPicker} />
-          <Button variant="light" color="secondary" left={<Paintbrush size={16} />}>
-            Draw Gesture!
-          </Button>
           <div class={settingsWrapper}>
             <Button
-              color="primary"
+              color="neutral"
               size="icon-only"
               onClick={() => {
                 settingsOpen.value = !settingsOpen.value

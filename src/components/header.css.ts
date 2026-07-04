@@ -48,7 +48,7 @@ export const linkActive = style({
 
 export const colorPicker = style({
   vars: {
-    "--cp-size": "2.25rem",
+    "--cp-size": "30px",
     "--cp-border-radius-sm": "0",
     "--cp-border-radius-lg": "0",
     "--cp-body-bg": vars.bg.surface,

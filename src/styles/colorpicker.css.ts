@@ -12,7 +12,6 @@ globalStyle(".cp_dialog", {
     "--cp-tertiary-color": vars.text.muted,
     "--cp-box-shadow": vars.shadow.float,
     "--cp-box-shadow-sm": "none",
-    "--cp-size": "2.25rem",
     "--cp-border-radius-sm": "0",
     "--cp-border-radius-lg": "0",
     "--cp-delay": "0s",
@@ -22,7 +21,8 @@ globalStyle(".cp_dialog", {
 })
 
 globalStyle(".color-picker", {
-  borderRadius: 0,
+  backgroundColor: `${vars.bg.base} !important`,
+  borderRadius: vars.radius.xs,
 })
 
 globalStyle(".cp_dialog input, .cp_dialog button", {

@@ -1,5 +1,6 @@
 import JSZip from "jszip"
 import { useRef } from "preact/hooks"
+import { download_blob } from "@/lib/download"
 import { add_notification } from "@/lib/notifications"
 import { create_canvas } from "../internal/store"
 import type { CanvasSnapshot } from "../internal/types"
@@ -14,15 +15,6 @@ const MIME_EXTENSIONS: Record<string, string> = {
   "image/bmp": "bmp",
   "image/tiff": "tiff",
   "image/avif": "avif",
-}
-
-const download_blob = (blob: Blob, filename: string) => {
-  const url = URL.createObjectURL(blob)
-  const anchor = document.createElement("a")
-  anchor.href = url
-  anchor.download = filename
-  anchor.click()
-  URL.revokeObjectURL(url)
 }
 
 const collect_image_ids = (snapshot: CanvasSnapshot) => {

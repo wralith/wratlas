@@ -3,6 +3,7 @@ import { Check, Plus, Trash2, X } from "lucide-preact"
 import { useEffect, useMemo, useRef } from "preact/hooks"
 import { useLocation } from "preact-iso"
 import { cn } from "@/lib/cn"
+import { add_notification } from "@/lib/notifications"
 import { create_canvas } from "@/packages/canvas/internal/store"
 import { canvas_controller, canvas_store } from "@/packages/canvas/state"
 import { Button } from "@/ui/atoms/button/button"
@@ -112,6 +113,7 @@ const CanvasPopoverContent = ({ onClose }: { onClose: () => void }) => {
       await canvas_controller.add_image_to_canvas(canvasId, file)
     }
     canvas_controller.pendingArrange.value = true
+    add_notification({ type: "success", title: `${ids.length} asset${ids.length > 1 ? "s" : ""} sent to canvas` })
     onClose()
     route("/")
   }

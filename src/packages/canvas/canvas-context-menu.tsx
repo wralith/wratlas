@@ -2,6 +2,7 @@ import { useSignal, useSignalEffect } from "@preact/signals"
 import type { Canvas as FabricCanvas, TPointerEvent, TPointerEventInfo } from "fabric"
 import { util } from "fabric"
 import { useMemo, useRef } from "preact/hooks"
+import { add_notification } from "@/lib/notifications"
 import { asset_store } from "@/packages/assets/state"
 import { Menu, type MenuItem } from "@/ui/atoms/menu/menu"
 import {
@@ -190,6 +191,7 @@ export const CanvasContextMenu = () => {
         break
       case "arrange":
         canvas_controller.arrange_images()
+        add_notification({ type: "success", title: "Images arranged on canvas" })
         break
       case "reset-view": {
         const vpt = canvas.viewportTransform
@@ -222,6 +224,7 @@ export const CanvasContextMenu = () => {
     if (!files?.length) return
 
     await canvas_controller.add_image(files)
+    add_notification({ type: "success", title: `${files.length} image${files.length > 1 ? "s" : ""} added to canvas` })
 
     if (inputRef.current) {
       inputRef.current.value = ""

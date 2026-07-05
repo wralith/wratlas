@@ -1,4 +1,5 @@
 import { useSignalEffect } from "@preact/signals"
+import { add_notification } from "@/lib/notifications"
 import { is_editable_target } from "../internal/controls"
 import { canvas_controller, fabric_canvas } from "../state"
 
@@ -12,6 +13,10 @@ const filterOversized = (files: File[]): File[] =>
     }
     return true
   })
+
+const notify_images_added = (count: number) => {
+  add_notification({ type: "success", title: `${count} image${count > 1 ? "s" : ""} added to canvas` })
+}
 
 export const useDragDrop = () => {
   useSignalEffect(() => {
@@ -36,6 +41,7 @@ export const useDragDrop = () => {
       if (!images.length) return
 
       await canvas_controller.add_image(images)
+      notify_images_added(images.length)
     }
 
     const handlePaste = async (e: ClipboardEvent) => {
@@ -55,6 +61,7 @@ export const useDragDrop = () => {
       if (!files.length) return
 
       await canvas_controller.add_image(files)
+      notify_images_added(files.length)
     }
 
     wrapperEl.addEventListener("dragover", handleDragOver)

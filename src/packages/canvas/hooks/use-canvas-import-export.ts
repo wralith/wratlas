@@ -1,5 +1,6 @@
 import JSZip from "jszip"
 import { useRef } from "preact/hooks"
+import { add_notification } from "@/lib/notifications"
 import { create_canvas } from "../internal/store"
 import type { CanvasSnapshot } from "../internal/types"
 import { active_canvas, canvas_controller, fabric_canvas } from "../state"
@@ -136,6 +137,7 @@ export const useCanvasImportExport = () => {
 
     const file = await zip.generateAsync({ type: "blob" })
     download_blob(file, "canvas.zip")
+    add_notification({ type: "success", title: "Canvas exported" })
   }
 
   const handleImport = async (e: Event) => {
@@ -164,8 +166,10 @@ export const useCanvasImportExport = () => {
       }
 
       await canvas_controller.add_canvas(next_canvas)
+      add_notification({ type: "success", title: "Canvas imported" })
     } catch (error) {
-      console.error("Failed to import canvas:", error)
+      const message = error instanceof Error ? error.message : "Unknown error"
+      add_notification({ type: "error", title: "Import failed", message })
     } finally {
       if (importRef.current) importRef.current.value = ""
     }

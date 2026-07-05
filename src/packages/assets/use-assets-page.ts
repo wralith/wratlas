@@ -1,5 +1,6 @@
 import { useComputed, useSignal, useSignalEffect } from "@preact/signals"
 import { useEffect, useRef } from "preact/hooks"
+import { add_notification } from "@/lib/notifications"
 import { canvas_controller, canvas_store } from "@/packages/canvas/state"
 import { asset_store } from "./state"
 
@@ -109,6 +110,7 @@ export const useAssetsPage = () => {
     if (!blob) return
     const file = new File([blob], `asset-${asset_id}.${blob.type.split("/")[1] || "png"}`, { type: blob.type })
     await canvas_controller.add_image_to_canvas(canvas_id, file)
+    add_notification({ type: "success", title: "Asset sent to canvas" })
   }
 
   const delete_asset = async (asset_id: string) => {

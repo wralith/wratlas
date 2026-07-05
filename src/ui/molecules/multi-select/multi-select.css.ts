@@ -46,6 +46,7 @@ export const pill = style({
   display: "inline-flex",
   alignItems: "center",
   gap: 2,
+  height: 22,
   padding: `${vars.space.xs} ${vars.space.xs}`,
   fontSize: vars.textSize.xs,
   background: vars.bg.overlay,

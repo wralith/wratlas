@@ -1,4 +1,5 @@
 import { ErrorBoundary, LocationProvider, lazy, Route, Router } from "preact-iso"
+import { ToastContainer } from "@/ui/molecules/toast/toast"
 
 const CanvasPage = lazy(() => import("@/pages/canvas.tsx"))
 const AssetsPage = lazy(() => import("@/pages/assets.tsx"))
@@ -13,6 +14,7 @@ export function App() {
           <Route path="/assets" component={AssetsPage} />
           <NotFoundPage default />
         </Router>
+        <ToastContainer />
       </ErrorBoundary>
     </LocationProvider>
   )

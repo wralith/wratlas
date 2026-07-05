@@ -4,10 +4,12 @@ import { util } from "fabric"
 import { useMemo, useRef } from "preact/hooks"
 import { add_notification } from "@/lib/notifications"
 import { asset_store } from "@/packages/assets/state"
+import { extract_palette_from_blob } from "@/packages/colors/extract"
+import { open_suggestion } from "@/packages/colors/state"
 import { Box } from "@/ui/atoms/box/box"
 import { Button } from "@/ui/atoms/button/button"
-import { Modal } from "@/ui/atoms/modal/modal"
 import { Menu, type MenuItem } from "@/ui/atoms/menu/menu"
+import { Modal } from "@/ui/atoms/modal/modal"
 import { Text } from "@/ui/atoms/text/text"
 import {
   can_bring_active_object_forward,
@@ -147,6 +149,7 @@ export const CanvasContextMenu = () => {
         },
         { id: "copy-object", label: "Copy object" },
         ...(is_image_object ? [{ id: "save-to-assets" as const, label: "Save to Assets" }] : []),
+        ...(is_image_object ? [{ id: "generate-palette" as const, label: "Generate palette" }] : []),
         { id: "delete-object", label: "Delete object", danger: true },
       ]
     }
@@ -187,6 +190,31 @@ export const CanvasContextMenu = () => {
         break
       case "save-to-assets":
         void save_active_object_to_assets(canvas)
+        break
+      case "generate-palette":
+        void (async () => {
+          const obj = canvas.getActiveObject()
+          const image_id = (obj as { _image_id?: string } | undefined)?._image_id
+          if (typeof image_id !== "string") {
+            add_notification({ type: "error", title: "No image data found" })
+            return
+          }
+          try {
+            const blob = await canvas_controller.get_image_blob(image_id)
+            if (!blob) {
+              add_notification({ type: "error", title: "Could not read image" })
+              return
+            }
+            const colors = await extract_palette_from_blob(blob, 5)
+            if (colors.length === 0) {
+              add_notification({ type: "error", title: "No colors detected" })
+              return
+            }
+            open_suggestion(colors, state.value.x, state.value.y, image_id)
+          } catch {
+            add_notification({ type: "error", title: "Palette extraction failed" })
+          }
+        })()
         break
       case "delete-object":
         remove_active_object(canvas)

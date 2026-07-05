@@ -4,7 +4,11 @@ import { util } from "fabric"
 import { useMemo, useRef } from "preact/hooks"
 import { add_notification } from "@/lib/notifications"
 import { asset_store } from "@/packages/assets/state"
+import { Box } from "@/ui/atoms/box/box"
+import { Button } from "@/ui/atoms/button/button"
+import { Modal } from "@/ui/atoms/modal/modal"
 import { Menu, type MenuItem } from "@/ui/atoms/menu/menu"
+import { Text } from "@/ui/atoms/text/text"
 import {
   can_bring_active_object_forward,
   can_bring_active_object_to_front,
@@ -55,6 +59,7 @@ export const CanvasContextMenu = () => {
   const canvas = fabric_canvas.value
   const inputRef = useRef<HTMLInputElement>(null)
   const state = useSignal<MenuState>(initial_state)
+  const show_arrange_confirm = useSignal(false)
 
   useSignalEffect(() => {
     const activeCanvas = fabric_canvas.value
@@ -190,8 +195,7 @@ export const CanvasContextMenu = () => {
         inputRef.current?.click()
         break
       case "arrange":
-        canvas_controller.arrange_images()
-        add_notification({ type: "success", title: "Images arranged on canvas" })
+        show_arrange_confirm.value = true
         break
       case "reset-view": {
         const vpt = canvas.viewportTransform
@@ -241,6 +245,40 @@ export const CanvasContextMenu = () => {
         onClose={() => {
           state.value = initial_state
         }}
+      />
+      <Modal
+        open={show_arrange_confirm.value}
+        onClose={() => {
+          show_arrange_confirm.value = false
+        }}
+        header="Arrange images"
+        content={
+          <Box maxW={300}>
+            <Text>Text and boxes won't be touched. This will break your current layout. Be cautious</Text>
+          </Box>
+        }
+        footer={
+          <>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                show_arrange_confirm.value = false
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              color="danger"
+              onClick={() => {
+                canvas_controller.arrange_images()
+                add_notification({ type: "success", title: "Images arranged on canvas" })
+                show_arrange_confirm.value = false
+              }}
+            >
+              Confirm
+            </Button>
+          </>
+        }
       />
       <input ref={inputRef} type="file" accept="image/*" multiple onChange={handleFileChange} hidden />
     </>

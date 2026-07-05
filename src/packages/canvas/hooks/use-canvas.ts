@@ -1,5 +1,5 @@
 import { batch } from "@preact/signals"
-import { Canvas as FabricCanvas, FabricObject } from "fabric"
+import { ActiveSelection, Canvas as FabricCanvas, FabricObject, IText, Rect } from "fabric"
 import { useEffect, useRef } from "preact/hooks"
 import { canvas_controller, canvas_ready, fabric_canvas } from "../state"
 
@@ -43,6 +43,10 @@ export const useCanvas = () => {
     canvas_controller.init(canvas)
 
     fabricRef.current = canvas
+    ;(window as unknown as Record<string, unknown>).__fabric_canvas = canvas
+    ;(window as unknown as Record<string, unknown>).__fabric_Rect = Rect
+    ;(window as unknown as Record<string, unknown>).__fabric_IText = IText
+    ;(window as unknown as Record<string, unknown>).__fabric_ActiveSelection = ActiveSelection
     batch(() => {
       fabric_canvas.value = canvas
       canvas_ready.value = true

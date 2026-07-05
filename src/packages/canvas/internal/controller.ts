@@ -10,7 +10,7 @@ import {
 } from "../actions"
 import { clamp_zoom } from "../constants"
 import { arrange_images as arrange_images_layout } from "./arrange"
-import { encode_object_data } from "./clipboard"
+import { type CopiedObjectData, encode_object_data } from "./clipboard"
 import { create_canvas_history } from "./history"
 import { create_canvas_snapshot_patch } from "./snapshot"
 import type { CanvasStore } from "./store"
@@ -236,8 +236,6 @@ export const create_canvas_controller = (store: CanvasStore) => {
     const active_object = canvas.getActiveObject()
     if (!active_object) return false
 
-    const type = active_object.type?.toLowerCase()
-
     const object_canvas = active_object.toCanvasElement({
       enableRetinaScaling: true,
       format: "png",
@@ -252,16 +250,33 @@ export const create_canvas_controller = (store: CanvasStore) => {
 
     if (!pngBlob) return false
 
-    const clipboardData: Record<string, Blob> = { "image/png": pngBlob }
-
-    if (type !== "image") {
-      const properties = active_object.toObject()
-      delete (properties as Record<string, unknown>).version
-      const dataUrl = encode_object_data({ version: 1, type, properties })
-      clipboardData["text/plain"] = new Blob([dataUrl], { type: "text/plain" })
-    }
-
     try {
+      const clipboardData: Record<string, Blob> = { "image/png": pngBlob }
+
+      const serialized: CopiedObjectData["objects"] = []
+
+      if (active_object.type?.toLowerCase() === "activeselection") {
+        const objects = (active_object as unknown as { getObjects: () => import("fabric").FabricObject[] }).getObjects()
+        for (const obj of objects) {
+          try {
+            const raw = obj.toObject() as Record<string, unknown>
+            const { version: _, type: __, canvas: ___, group: ____, src: _____, ...properties } = raw
+            serialized.push({ type: String(obj.type ?? ""), properties })
+          } catch {
+            // skip object that failed to serialize
+          }
+        }
+      } else {
+        const raw = active_object.toObject() as Record<string, unknown>
+        const { version: _, type: __, canvas: ___, group: ____, src: _____, ...properties } = raw
+        serialized.push({ type: String(active_object.type ?? ""), properties })
+      }
+
+      if (serialized.length > 0) {
+        const dataUrl = encode_object_data({ version: 1, objects: serialized })
+        clipboardData["text/plain"] = new Blob([dataUrl], { type: "text/plain" })
+      }
+
       await navigator.clipboard.write([new ClipboardItem(clipboardData)])
     } catch {
       await navigator.clipboard.write([new ClipboardItem({ "image/png": pngBlob })])
@@ -269,38 +284,102 @@ export const create_canvas_controller = (store: CanvasStore) => {
     return true
   }
 
-  const paste_object_from_data = async (
-    data: { version: number; type: string; properties: Record<string, unknown> },
-    position?: { x: number; y: number },
-  ) => {
-    if (!canvas) return false
+  const paste_object_from_data = async (data: CopiedObjectData, position?: { x: number; y: number }) => {
+    if (!canvas || !data.objects?.length) return false
 
     const pos = position ?? canvas.getVpCenter()
 
+    let sumX = 0
+    let sumY = 0
+    let count = 0
+    for (const obj of data.objects) {
+      const l = Number(obj.properties.left ?? 0)
+      const t = Number(obj.properties.top ?? 0)
+      if (!Number.isNaN(l) && !Number.isNaN(t)) {
+        sumX += l
+        sumY += t
+        count++
+      }
+    }
+    const centerX = count > 0 ? sumX / count : 0
+    const centerY = count > 0 ? sumY / count : 0
+
     const stripKeys = (props: Record<string, unknown>) => {
-      const { version: _, type: __, ...rest } = props
+      const { group: _, canvas: __, version: ___, type: ____, ...rest } = props
       return rest
     }
 
-    let obj: import("fabric").FabricObject | null = null
+    const created: import("fabric").FabricObject[] = []
 
-    switch (data.type) {
-      case "rect": {
-        obj = new Rect({ ...stripKeys(data.properties), left: pos.x, top: pos.y })
-        break
-      }
-      case "i-text": {
-        const textStr = String(data.properties.text ?? "")
-        const { text: _, ...rest } = stripKeys(data.properties)
-        obj = new IText(textStr, { ...rest, left: pos.x, top: pos.y })
-        break
+    for (const objData of data.objects) {
+      const l = Number(objData.properties.left ?? 0)
+      const t = Number(objData.properties.top ?? 0)
+      const offsetX = Number.isNaN(l) ? 0 : l - centerX
+      const offsetY = Number.isNaN(t) ? 0 : t - centerY
+
+      try {
+        switch (objData.type?.toLowerCase()) {
+          case "rect": {
+            const obj = new Rect({
+              ...stripKeys(objData.properties),
+              left: pos.x + offsetX,
+              top: pos.y + offsetY,
+            })
+            canvas.add(obj)
+            created.push(obj)
+            break
+          }
+          case "itext":
+          case "i-text": {
+            const textStr = String(objData.properties.text ?? "")
+            const { text: _, path: __, styles: ___, ...rest } = stripKeys(objData.properties)
+            const obj = new IText(textStr, {
+              ...rest,
+              left: pos.x + offsetX,
+              top: pos.y + offsetY,
+            })
+            canvas.add(obj)
+            created.push(obj)
+            break
+          }
+          case "image": {
+            const imageId = objData.properties._image_id as string | undefined
+            if (!imageId) break
+            const blob = await get<Blob>(imageId, image_store)
+            if (!blob) break
+            const url = URL.createObjectURL(blob)
+            const img = await FabricImage.fromURL(url)
+            URL.revokeObjectURL(url)
+
+            let lastIndex = store.active_canvas.value.lastImageIndex
+            const activeId = store.active_canvas.value.id
+            lastIndex += 1
+            const newImageId = `${activeId}-${lastIndex}`
+
+            await set(newImageId, blob, image_store)
+            store.update_active_canvas({ lastImageIndex: lastIndex })
+
+            const { _image_id: __, src: ___, ...rest } = stripKeys(objData.properties)
+            img.set({
+              ...rest,
+              left: pos.x + offsetX,
+              top: pos.y + offsetY,
+              _image_id: newImageId,
+            })
+
+            canvas.add(img)
+            created.push(img)
+            break
+          }
+        }
+      } catch {
+        // skip object that failed to recreate
       }
     }
 
-    if (!obj) return false
+    if (created.length === 0) return false
 
-    canvas.add(obj)
-    canvas.setActiveObject(obj)
+    canvas.setActiveObject(created[created.length - 1])
     canvas.requestRenderAll()
     await save_state()
     return true

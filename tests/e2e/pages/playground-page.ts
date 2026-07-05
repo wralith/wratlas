@@ -58,7 +58,7 @@ export class PlaygroundPage {
   }
 
   goto = async () => {
-    await this.page.goto("/playground")
+    await this.page.goto("/")
     await expect(this.lowerCanvas).toBeVisible()
     await expect(this.upperCanvas).toBeVisible()
   }
@@ -147,6 +147,12 @@ export class PlaygroundPage {
     const storage = await this.getStorage()
     const activeCanvas = storage.canvases.find(canvas => canvas.id === storage.activeCanvasId)
     return activeCanvas?.objects.length ?? 0
+  }
+
+  getActiveCanvasObjectTypes = async () => {
+    const storage = await this.getStorage()
+    const activeCanvas = storage.canvases.find(canvas => canvas.id === storage.activeCanvasId)
+    return (activeCanvas?.objects ?? []).map(o => o.type)
   }
 
   getFirstObjectPosition = async (): Promise<Point | null> => {

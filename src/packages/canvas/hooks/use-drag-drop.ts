@@ -49,16 +49,16 @@ export const useDragDrop = () => {
       if (is_editable_target(e.target)) return
       e.preventDefault()
 
-      const text = e.clipboardData?.getData("text/plain")
-      if (text) {
-        const data = decode_object_data(text)
+      const raw = e.clipboardData?.getData("text/plain")
+      if (raw) {
+        const data = decode_object_data(raw)
         if (data) {
           const pos = last_mouse_scene_point.value
           const ok = await canvas_controller.paste_object_from_data(data, pos ?? undefined)
           if (ok) {
             add_notification({ type: "success", title: "Object pasted on canvas" })
+            return
           }
-          return
         }
       }
 

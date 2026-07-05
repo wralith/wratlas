@@ -1,9 +1,11 @@
-const PREFIX = "data:application/vnd.wratlas.canvas-object+json;base64,"
+const PREFIX = "WRATLAS_OBJ:"
 
 export type CopiedObjectData = {
   version: number
-  type: string
-  properties: Record<string, unknown>
+  objects: Array<{
+    type: string
+    properties: Record<string, unknown>
+  }>
 }
 
 const encodeBase64 = (json: string): string => {
@@ -29,8 +31,13 @@ export const encode_object_data = (data: CopiedObjectData): string => {
 }
 
 export const decode_object_data = (text: string): CopiedObjectData | null => {
-  if (!text.startsWith(PREFIX)) return null
-  const base64 = text.slice(PREFIX.length)
+  const idx = text.indexOf(PREFIX)
+  if (idx === -1) return null
+  const base64 = text
+    .slice(idx + PREFIX.length)
+    .split("\n")[0]
+    .trim()
+  if (!base64) return null
   try {
     return JSON.parse(decodeBase64(base64))
   } catch {

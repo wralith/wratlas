@@ -26,6 +26,7 @@ export const vars = createThemeContract({
   font: {
     ui: null,
     display: null,
+    handwritten: null,
   },
   textSize: {
     xs: null,

@@ -5,6 +5,7 @@ const base = {
   font: {
     ui: "JetBrains Mono, monospace",
     display: "Instrument Serif, serif",
+    handwritten: "'Architects Daughter', cursive",
   },
   textSize: {
     xs: "0.625rem",

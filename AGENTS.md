@@ -57,6 +57,7 @@ EVERYTHING IN CODE SHOULD BE SUPER SIMPLE AND READABLE.
 - Use tokens from `src/styles/vars.css.ts` through typed `vars` only.
 - Use recipes for visual variants and infer variant props using:
   - `RecipeVariants<typeof recipe>`
+- **No inline `style` props.** Every style must live in a `.css.ts` file or be part of a component's recipe. This includes layout spacing, colors, fonts, and positioning. Exceptions: dynamic values that can't be known at build time (e.g. positioning calculated from canvas viewport), though even those should be minimized.
 
 ### Design System
 

@@ -1,5 +1,5 @@
 import { signal } from "@preact/signals"
-import type { Canvas as FabricCanvas } from "fabric"
+import type { Canvas as FabricCanvas, FabricObject } from "fabric"
 import { create_canvas_controller } from "./internal/controller"
 import { create_canvas_store } from "./internal/store"
 
@@ -20,3 +20,11 @@ export const canvas_list = canvas_store.canvas_list
 export const active_canvas_id = canvas_store.active_canvas_id
 export const active_canvas_name = canvas_store.active_canvas_name
 export const active_canvas = canvas_store.active_canvas
+
+export const active_object = signal<FabricObject | null>(null)
+
+export const sidebar_version = signal(0)
+
+export const text_font_family = signal("JetBrains Mono")
+export const text_font_size = signal(24)
+export const text_color = signal("#cdd6f4")

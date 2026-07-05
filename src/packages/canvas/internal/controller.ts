@@ -244,12 +244,13 @@ export const create_canvas_controller = (store: CanvasStore) => {
       withoutShadow: false,
     })
 
-    const blob = await new Promise<Blob | null>(resolve => {
+    const pngBlob = await new Promise<Blob | null>(resolve => {
       object_canvas.toBlob(resolve, "image/png")
     })
 
-    if (!blob) return false
-    await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })])
+    if (!pngBlob) return false
+
+    await navigator.clipboard.write([new ClipboardItem({ "image/png": pngBlob })])
     return true
   }
 

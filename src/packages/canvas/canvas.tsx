@@ -11,6 +11,9 @@ import { useObjectDelete } from "./hooks/use-object-delete"
 import { usePanZoom } from "./hooks/use-pan-zoom"
 import { usePersistence } from "./hooks/use-persistence"
 import { useRectangleDraw } from "./hooks/use-rectangle-draw"
+import { useSelectionTracker } from "./hooks/use-selection-tracker"
+import { useTextDraw } from "./hooks/use-text-draw"
+import { CanvasSidebar } from "./sidebar"
 import { canvas_controller } from "./state"
 import { CanvasToolbar } from "./toolbar"
 
@@ -27,6 +30,8 @@ export const Canvas = () => {
   useCanvasShortcuts()
   usePersistence()
   useRectangleDraw()
+  useTextDraw()
+  useSelectionTracker()
 
   return (
     <div class={wrapper}>
@@ -35,6 +40,7 @@ export const Canvas = () => {
       <CanvasMinimap />
       <CanvasZoomControl />
       <canvas ref={canvasRef} class={canvasHost} />
+      <CanvasSidebar />
       <CanvasLoadingOverlay />
     </div>
   )

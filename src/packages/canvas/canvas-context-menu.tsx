@@ -210,7 +210,8 @@ export const CanvasContextMenu = () => {
               add_notification({ type: "error", title: "No colors detected" })
               return
             }
-            open_suggestion(colors, image_id)
+            const url = URL.createObjectURL(blob)
+            open_suggestion(colors, image_id, url)
           } catch {
             add_notification({ type: "error", title: "Palette extraction failed" })
           }

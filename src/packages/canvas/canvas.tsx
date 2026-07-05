@@ -1,4 +1,4 @@
-import { ColorSuggestionPopover } from "@/packages/colors/color-suggestion-popover"
+import { ColorSuggestionModal } from "@/packages/colors/color-suggestion-modal"
 import { LoadingOverlay } from "@/ui/atoms/loading-overlay/loading-overlay"
 import { canvasHost, wrapper } from "./canvas.css"
 import { CanvasContextMenu } from "./canvas-context-menu"
@@ -38,7 +38,7 @@ export const Canvas = () => {
     <div class={wrapper}>
       <CanvasToolbar />
       <CanvasContextMenu />
-      <ColorSuggestionPopover />
+      <ColorSuggestionModal />
       <CanvasMinimap />
       <CanvasZoomControl />
       <canvas ref={canvasRef} class={canvasHost} />

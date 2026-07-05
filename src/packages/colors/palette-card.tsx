@@ -1,4 +1,4 @@
-import { Copy, Trash2 } from "lucide-preact"
+import { Copy, Pencil, Trash2 } from "lucide-preact"
 import type { JSX } from "preact"
 import { add_notification } from "@/lib/notifications"
 import { Box } from "@/ui/atoms/box/box"
@@ -17,11 +17,17 @@ export type PaletteCardProps = {
   palette: PaletteMeta
   onContextMenu: (e: JSX.TargetedMouseEvent<HTMLDivElement>, palette: PaletteMeta) => void
   onDelete: (id: string) => void
+  onClick?: (palette: PaletteMeta) => void
 }
 
-export const PaletteCard = ({ palette, onContextMenu, onDelete }: PaletteCardProps) => {
+export const PaletteCard = ({ palette, onContextMenu, onDelete, onClick }: PaletteCardProps) => {
   return (
-    <div class={styles.card} onContextMenu={e => onContextMenu(e, palette)}>
+    <div
+      class={styles.card}
+      onContextMenu={e => onContextMenu(e, palette)}
+      onClick={() => onClick?.(palette)}
+      style={{ cursor: onClick ? "pointer" : undefined }}
+    >
       <Flex w="100%" h={80}>
         {palette.colors.map((c, i) => (
           <Box
@@ -29,7 +35,10 @@ export const PaletteCard = ({ palette, onContextMenu, onDelete }: PaletteCardPro
             flex={1}
             class={styles.swatchWrap}
             title={`${c} — click to copy`}
-            onClick={() => copy(c)}
+            onClick={e => {
+              e.stopPropagation()
+              copy(c)
+            }}
           >
             <Box w="100%" h="100%" style={{ backgroundColor: c } as JSX.CSSProperties} />
             <Flex class={styles.swatchOverlay} justify="center" align="end">
@@ -39,7 +48,7 @@ export const PaletteCard = ({ palette, onContextMenu, onDelete }: PaletteCardPro
         ))}
       </Flex>
 
-      <Flex direction="column" gap="sm" p="var(--space-sm)">
+      <Flex direction="column" gap="md" p="var(--space-md)">
         <Flex justify="between" align="center" gap="sm">
           <Text weight="semibold" class={styles.name}>
             {palette.name}
@@ -48,8 +57,22 @@ export const PaletteCard = ({ palette, onContextMenu, onDelete }: PaletteCardPro
             <Button
               size="icon-only"
               variant="ghost"
+              aria-label="Edit palette"
+              onClick={e => {
+                e.stopPropagation()
+                onClick?.(palette)
+              }}
+            >
+              <Pencil size={14} />
+            </Button>
+            <Button
+              size="icon-only"
+              variant="ghost"
               aria-label="Copy all colors"
-              onClick={() => copy(palette.colors.join(", "))}
+              onClick={e => {
+                e.stopPropagation()
+                copy(palette.colors.join(", "))
+              }}
             >
               <Copy size={14} />
             </Button>
@@ -58,7 +81,10 @@ export const PaletteCard = ({ palette, onContextMenu, onDelete }: PaletteCardPro
               color="danger"
               variant="ghost"
               aria-label="Delete palette"
-              onClick={() => onDelete(palette.id)}
+              onClick={e => {
+                e.stopPropagation()
+                onDelete(palette.id)
+              }}
             >
               <Trash2 size={14} />
             </Button>

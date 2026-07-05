@@ -1,3 +1,6 @@
+import { useSignal } from "@preact/signals"
+import { ColorDetailsModal } from "@/packages/colors/color-details-modal"
+import type { PaletteMeta } from "@/packages/colors/internal/types"
 import { PaletteFiltersBar } from "@/packages/colors/palette-filters-bar"
 import { PalettesGrid } from "@/packages/colors/palettes-grid"
 import { useColorsPage } from "@/packages/colors/use-colors-page"
@@ -7,6 +10,7 @@ import { PageLayout } from "@/ui/molecules/page-layout/page-layout"
 
 const ColorsPage = () => {
   const { menu, open_context_menu, close_menu, handle_menu_select } = useColorsPage()
+  const selected_palette = useSignal<PaletteMeta | null>(null)
 
   const menu_items: MenuItem[] = [
     { id: "copy-colors", label: "Copy colors" },
@@ -17,7 +21,12 @@ const ColorsPage = () => {
     <PageLayout>
       <PaletteFiltersBar />
       <Box p="1rem" flex={1} pb={80}>
-        <PalettesGrid open_context_menu={open_context_menu} />
+        <PalettesGrid
+          open_context_menu={open_context_menu}
+          onCardClick={p => {
+            selected_palette.value = p
+          }}
+        />
       </Box>
 
       <Menu
@@ -26,6 +35,13 @@ const ColorsPage = () => {
         items={menu_items}
         onSelect={handle_menu_select}
         onClose={close_menu}
+      />
+
+      <ColorDetailsModal
+        palette={selected_palette.value}
+        onClose={() => {
+          selected_palette.value = null
+        }}
       />
     </PageLayout>
   )

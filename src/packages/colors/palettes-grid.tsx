@@ -6,13 +6,14 @@ import type { PaletteMeta } from "./internal/types"
 import { PaletteCard } from "./palette-card"
 import { color_store } from "./state"
 
-const GRID_COLS = "repeat(auto-fill, minmax(260px, 1fr))"
+const GRID_COLS = "repeat(auto-fill, minmax(280px, 1fr))"
 
 export type PalettesGridProps = {
   open_context_menu: (e: JSX.TargetedMouseEvent<HTMLDivElement>, palette: PaletteMeta) => void
+  onCardClick: (palette: PaletteMeta) => void
 }
 
-export const PalettesGrid = ({ open_context_menu }: PalettesGridProps) => {
+export const PalettesGrid = ({ open_context_menu, onCardClick }: PalettesGridProps) => {
   const palettes = color_store.filtered_palettes.value
 
   if (palettes.length === 0) {
@@ -26,13 +27,14 @@ export const PalettesGrid = ({ open_context_menu }: PalettesGridProps) => {
   }
 
   return (
-    <Box p="1rem" style={{ display: "grid", gridTemplateColumns: GRID_COLS, gap: "var(--space-md)" } as never}>
+    <Box p="1.5rem" style={{ display: "grid", gridTemplateColumns: GRID_COLS, gap: "var(--space-lg)" } as never}>
       {palettes.map(p => (
         <PaletteCard
           key={p.id}
           palette={p}
           onContextMenu={open_context_menu}
           onDelete={id => color_store.remove_palette(id)}
+          onClick={onCardClick}
         />
       ))}
     </Box>

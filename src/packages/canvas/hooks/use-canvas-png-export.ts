@@ -69,7 +69,7 @@ export const useCanvasPngExport = () => {
       const bg_color = read_css_var(root, "--bg-base", "#282a36")
       const dot_color = read_css_var(root, "--color-border", "#44475a")
 
-      const fabric_view = fabric.toCanvasElement(1)
+      const fabric_view = fabric.toCanvasElement(2)
 
       const fabric_bg = fabric.backgroundColor
       if (typeof fabric_bg === "string" && fabric_bg) {

@@ -1,6 +1,6 @@
 import { signal } from "@preact/signals"
 import type { Canvas as FabricCanvas } from "fabric"
-import { FabricImage } from "fabric"
+import { FabricImage, IText, Rect } from "fabric"
 import { createStore, del, get, keys, set } from "idb-keyval"
 import {
   bring_active_object_forward,
@@ -10,6 +10,7 @@ import {
 } from "../actions"
 import { clamp_zoom } from "../constants"
 import { arrange_images as arrange_images_layout } from "./arrange"
+import { encode_object_data } from "./clipboard"
 import { create_canvas_history } from "./history"
 import { create_canvas_snapshot_patch } from "./snapshot"
 import type { CanvasStore } from "./store"
@@ -227,7 +228,6 @@ export const create_canvas_controller = (store: CanvasStore) => {
     canvas.requestRenderAll()
     void save_state()
   }
-
   const copy_image_to_clipboard = async () => {
     if (!canvas || !navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
       return false
@@ -235,6 +235,8 @@ export const create_canvas_controller = (store: CanvasStore) => {
 
     const active_object = canvas.getActiveObject()
     if (!active_object) return false
+
+    const type = active_object.type?.toLowerCase()
 
     const object_canvas = active_object.toCanvasElement({
       enableRetinaScaling: true,
@@ -250,7 +252,57 @@ export const create_canvas_controller = (store: CanvasStore) => {
 
     if (!pngBlob) return false
 
-    await navigator.clipboard.write([new ClipboardItem({ "image/png": pngBlob })])
+    const clipboardData: Record<string, Blob> = { "image/png": pngBlob }
+
+    if (type !== "image") {
+      const properties = active_object.toObject()
+      delete (properties as Record<string, unknown>).version
+      const dataUrl = encode_object_data({ version: 1, type, properties })
+      clipboardData["text/plain"] = new Blob([dataUrl], { type: "text/plain" })
+    }
+
+    try {
+      await navigator.clipboard.write([new ClipboardItem(clipboardData)])
+    } catch {
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": pngBlob })])
+    }
+    return true
+  }
+
+  const paste_object_from_data = async (
+    data: { version: number; type: string; properties: Record<string, unknown> },
+    position?: { x: number; y: number },
+  ) => {
+    if (!canvas) return false
+
+    const pos = position ?? canvas.getVpCenter()
+
+    const stripKeys = (props: Record<string, unknown>) => {
+      const { version: _, type: __, ...rest } = props
+      return rest
+    }
+
+    let obj: import("fabric").FabricObject | null = null
+
+    switch (data.type) {
+      case "rect": {
+        obj = new Rect({ ...stripKeys(data.properties), left: pos.x, top: pos.y })
+        break
+      }
+      case "i-text": {
+        const textStr = String(data.properties.text ?? "")
+        const { text: _, ...rest } = stripKeys(data.properties)
+        obj = new IText(textStr, { ...rest, left: pos.x, top: pos.y })
+        break
+      }
+    }
+
+    if (!obj) return false
+
+    canvas.add(obj)
+    canvas.setActiveObject(obj)
+    canvas.requestRenderAll()
+    await save_state()
     return true
   }
 
@@ -355,6 +407,7 @@ export const create_canvas_controller = (store: CanvasStore) => {
     redo: history.redo,
     arrange_images,
     copy_image_to_clipboard,
+    paste_object_from_data,
     order_active_object_backward,
     order_active_object_to_back,
     order_active_object_forward,

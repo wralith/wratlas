@@ -28,3 +28,5 @@ export const sidebar_version = signal(0)
 export const text_font_family = signal("JetBrains Mono")
 export const text_font_size = signal(24)
 export const text_color = signal("#cdd6f4")
+
+export const last_mouse_scene_point = signal<{ x: number; y: number } | null>(null)

@@ -3,7 +3,7 @@ import type { TPointerEvent, TPointerEventInfo } from "fabric"
 import { Point } from "fabric"
 import { clamp_zoom } from "../constants"
 import { clamp_viewport, is_mod_key, sync_viewport_signals } from "../internal/controls"
-import { fabric_canvas } from "../state"
+import { fabric_canvas, last_mouse_scene_point } from "../state"
 
 export const usePanZoom = () => {
   useSignalEffect(() => {
@@ -74,6 +74,11 @@ export const usePanZoom = () => {
       }
     }
 
+    const handleCanvasMouseMove = (opt: TPointerEventInfo<TPointerEvent>) => {
+      const pointer = canvas.getScenePoint(opt.e)
+      last_mouse_scene_point.value = { x: pointer.x, y: pointer.y }
+    }
+
     const handleMouseMove = (opt: TPointerEventInfo<MouseEvent>) => {
       if (!isPanning) return
 
@@ -118,6 +123,7 @@ export const usePanZoom = () => {
     const disposers = [
       canvas.on("mouse:wheel", handleWheel),
       canvas.on("mouse:down", handleMouseDown),
+      canvas.on("mouse:move", handleCanvasMouseMove),
       canvas.on("mouse:move", handleMouseMove),
       canvas.on("mouse:up", handleMouseUp),
     ]

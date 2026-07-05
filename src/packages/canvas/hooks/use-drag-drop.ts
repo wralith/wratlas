@@ -1,7 +1,8 @@
 import { useSignalEffect } from "@preact/signals"
 import { add_notification } from "@/lib/notifications"
+import { decode_object_data } from "../internal/clipboard"
 import { is_editable_target } from "../internal/controls"
-import { canvas_controller, fabric_canvas } from "../state"
+import { canvas_controller, fabric_canvas, last_mouse_scene_point } from "../state"
 
 const MAX_IMAGE_SIZE = 50 * 1024 * 1024
 
@@ -47,6 +48,20 @@ export const useDragDrop = () => {
     const handlePaste = async (e: ClipboardEvent) => {
       if (is_editable_target(e.target)) return
       e.preventDefault()
+
+      const text = e.clipboardData?.getData("text/plain")
+      if (text) {
+        const data = decode_object_data(text)
+        if (data) {
+          const pos = last_mouse_scene_point.value
+          const ok = await canvas_controller.paste_object_from_data(data, pos ?? undefined)
+          if (ok) {
+            add_notification({ type: "success", title: "Object pasted on canvas" })
+          }
+          return
+        }
+      }
+
       const items = e.clipboardData?.items
       if (!items) return
 

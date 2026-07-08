@@ -11,9 +11,10 @@ const GRID_COLS = "repeat(auto-fill, minmax(280px, 1fr))"
 export type PalettesGridProps = {
   open_context_menu: (e: JSX.TargetedMouseEvent<HTMLDivElement>, palette: PaletteMeta) => void
   onCardClick: (palette: PaletteMeta) => void
+  onDeleteRequest: (id: string) => void
 }
 
-export const PalettesGrid = ({ open_context_menu, onCardClick }: PalettesGridProps) => {
+export const PalettesGrid = ({ open_context_menu, onCardClick, onDeleteRequest }: PalettesGridProps) => {
   const palettes = color_store.filtered_palettes.value
 
   if (palettes.length === 0) {
@@ -33,7 +34,7 @@ export const PalettesGrid = ({ open_context_menu, onCardClick }: PalettesGridPro
           key={p.id}
           palette={p}
           onContextMenu={open_context_menu}
-          onDelete={id => color_store.remove_palette(id)}
+          onDelete={id => onDeleteRequest(id)}
           onClick={onCardClick}
         />
       ))}

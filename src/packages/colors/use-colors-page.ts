@@ -15,6 +15,7 @@ const initial: PaletteMenuState = { open: false, x: 0, y: 0, palette: null }
 
 export const useColorsPage = () => {
   const menu = useSignal<PaletteMenuState>(initial)
+  const pending_delete = useSignal<string | null>(null)
 
   const open_context_menu = (e: JSX.TargetedMouseEvent<HTMLDivElement>, palette: PaletteMeta) => {
     e.preventDefault()
@@ -25,13 +26,22 @@ export const useColorsPage = () => {
     menu.value = initial
   }
 
-  const delete_palette = (id: string) => {
-    color_store.remove_palette(id)
-    add_notification({ type: "info", title: "Palette deleted" })
+  const request_delete = (id: string) => {
+    close_menu()
+    pending_delete.value = id
   }
 
-  const rename_palette = (id: string, name: string) => {
-    color_store.update_palette(id, { name })
+  const confirm_delete = () => {
+    const id = pending_delete.value
+    if (id) {
+      color_store.remove_palette(id)
+      add_notification({ type: "info", title: "Palette deleted" })
+    }
+    pending_delete.value = null
+  }
+
+  const cancel_delete = () => {
+    pending_delete.value = null
   }
 
   const handle_menu_select = (id: string) => {
@@ -39,7 +49,7 @@ export const useColorsPage = () => {
     if (!palette) return
     switch (id) {
       case "delete":
-        delete_palette(palette.id)
+        request_delete(palette.id)
         break
       case "copy-colors":
         void navigator.clipboard.writeText(palette.colors.join(", "))
@@ -50,10 +60,12 @@ export const useColorsPage = () => {
 
   return {
     menu,
+    pending_delete,
     open_context_menu,
     close_menu,
-    delete_palette,
-    rename_palette,
+    request_delete,
+    confirm_delete,
+    cancel_delete,
     handle_menu_select,
   }
 }

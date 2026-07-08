@@ -85,8 +85,17 @@ export const ColorSuggestionModal = () => {
       header="Suggested palette"
       content={
         <Flex direction="column" gap="md" maxW={400}>
-          <Box w="100%" style={{ position: "relative", cursor: "crosshair" }} onClick={handleImageClick}>
-            <img ref={imageRef} src={suggestion.image_url} alt="Source" style={{ width: "100%", display: "block" }} />
+          <Box
+            w="100%"
+            style={{ position: "relative", cursor: "crosshair", maxHeight: 320, overflow: "hidden" }}
+            onClick={handleImageClick}
+          >
+            <img
+              ref={imageRef}
+              src={suggestion.image_url}
+              alt="Source"
+              style={{ width: "100%", display: "block", maxHeight: 320, objectFit: "contain" }}
+            />
             {crosshair.value && (
               <Box
                 w={16}

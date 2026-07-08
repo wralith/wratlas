@@ -5,11 +5,24 @@ import { PaletteFiltersBar } from "@/packages/colors/palette-filters-bar"
 import { PalettesGrid } from "@/packages/colors/palettes-grid"
 import { useColorsPage } from "@/packages/colors/use-colors-page"
 import { Box } from "@/ui/atoms/box/box"
+import { Button } from "@/ui/atoms/button/button"
+import { Flex } from "@/ui/atoms/flex/flex"
 import { Menu, type MenuItem } from "@/ui/atoms/menu/menu"
+import { Modal } from "@/ui/atoms/modal/modal"
+import { Text } from "@/ui/atoms/text/text"
 import { PageLayout } from "@/ui/molecules/page-layout/page-layout"
 
 const ColorsPage = () => {
-  const { menu, open_context_menu, close_menu, handle_menu_select } = useColorsPage()
+  const {
+    menu,
+    pending_delete,
+    open_context_menu,
+    close_menu,
+    request_delete,
+    confirm_delete,
+    cancel_delete,
+    handle_menu_select,
+  } = useColorsPage()
   const selected_palette = useSignal<PaletteMeta | null>(null)
 
   const menu_items: MenuItem[] = [
@@ -26,6 +39,7 @@ const ColorsPage = () => {
           onCardClick={p => {
             selected_palette.value = p
           }}
+          onDeleteRequest={request_delete}
         />
       </Box>
 
@@ -42,6 +56,23 @@ const ColorsPage = () => {
         onClose={() => {
           selected_palette.value = null
         }}
+      />
+
+      <Modal
+        open={pending_delete.value !== null}
+        onClose={cancel_delete}
+        header="Delete palette"
+        content={<Text>Are you sure you want to delete this palette? This action cannot be undone.</Text>}
+        footer={
+          <Flex gap="sm">
+            <Button variant="ghost" onClick={cancel_delete}>
+              Cancel
+            </Button>
+            <Button color="danger" onClick={confirm_delete}>
+              Delete
+            </Button>
+          </Flex>
+        }
       />
     </PageLayout>
   )

@@ -8,42 +8,18 @@ import { Button } from "@/ui/atoms/button/button"
 import { Flex } from "@/ui/atoms/flex/flex"
 import { Input } from "@/ui/atoms/input/input"
 import { Modal } from "@/ui/atoms/modal/modal"
+import { Select } from "@/ui/atoms/select/select"
 import { Text } from "@/ui/atoms/text/text"
-import { build_harmony } from "./harmonies"
+import { build_harmony, HARMONY_OPTIONS } from "./harmonies"
 import type { HarmonyType, PaletteMeta } from "./internal/types"
 import { color_store } from "./state"
 
-const HARMONY_SUGGESTIONS: HarmonyType[] = [
-  "analogous",
-  "monochromatic",
-  "triad",
-  "tetrad",
-  "splitcomplement",
-  "complement",
-]
-
-const HARMONY_LABELS: Record<HarmonyType, string> = {
-  none: "None",
-  analogous: "Analogous",
-  monochromatic: "Monochromatic",
-  triad: "Triad",
-  tetrad: "Tetrad",
-  splitcomplement: "Split Complement",
-  complement: "Complement",
+const padTo5 = (colors: string[]): string[] => {
+  const cs = [...colors]
+  const fallback = cs[0] ?? "#000000"
+  while (cs.length < 5) cs.push(fallback)
+  return cs
 }
-
-const ColorBox = ({ color, isDominant }: { color: string; isDominant?: boolean }) => (
-  <Flex direction="column" align="center" gap="xs">
-    <Box
-      w={isDominant ? 48 : 40}
-      h={isDominant ? 48 : 40}
-      bg={color}
-      bd={isDominant ? "2px solid var(--color-primary)" : "1px solid var(--color-border)"}
-      title={color}
-    />
-    <Text size="xs">{color}</Text>
-  </Flex>
-)
 
 export type ColorDetailsModalProps = {
   palette: PaletteMeta | null
@@ -81,7 +57,8 @@ export const ColorDetailsModal = ({ palette, onClose }: ColorDetailsModalProps) 
     containerRef.current = container
     wheelElement.appendChild(container)
 
-    const harmonyColors = build_harmony(dominant.value, harmony.value)
+    const harmonyColors =
+      harmony.value === "none" ? padTo5(harmony_colors.value) : build_harmony(dominant.value, harmony.value)
     harmony_colors.value = harmonyColors
 
     const picker = iro.ColorPicker(container, {
@@ -103,11 +80,13 @@ export const ColorDetailsModal = ({ palette, onClose }: ColorDetailsModalProps) 
       const activeHex = picker.color.hexString
       dominant.value = activeHex
 
+      if (harmony.value === "none") {
+        harmony_colors.value = picker.colors.map(c => c.hexString)
+        return
+      }
+
       isInternal = true
       const computed = build_harmony(activeHex, harmony.value)
-      console.log(dominant)
-      console.log(computed)
-      console.log(harmony.value)
       harmony_colors.value = computed
       picker.colors[activeIndex].hexString = computed[0]
       let ci = 1
@@ -136,13 +115,21 @@ export const ColorDetailsModal = ({ palette, onClose }: ColorDetailsModalProps) 
 
   if (!palette) return null
 
-  const suggestions = useComputed(() =>
-    HARMONY_SUGGESTIONS.map(h => ({ type: h, colors: build_harmony(dominant.value, h) })),
-  )
+  const colors5 = useComputed(() => {
+    const cs = [...harmony_colors.value]
+    const fallback = harmony.value === "none" ? (cs[0] ?? "#000000") : ""
+    while (cs.length < 5) cs.push(fallback)
+    return cs
+  })
 
-  const handleHarmonySelect = (h: HarmonyType) => {
+  const handleHarmonyChange = (id: string) => {
+    const h = id as HarmonyType
     harmony.value = h
-    harmony_colors.value = build_harmony(dominant.value, h)
+    if (h === "none") {
+      harmony_colors.value = padTo5([dominant.value])
+    } else {
+      harmony_colors.value = build_harmony(dominant.value, h)
+    }
   }
 
   const handleSave = () => {
@@ -161,48 +148,41 @@ export const ColorDetailsModal = ({ palette, onClose }: ColorDetailsModalProps) 
       onClose={onClose}
       header={palette.name}
       content={
-        <Flex direction="column" align="center" gap="lg" maxW={500}>
-          <div ref={setWheelElement} class="wheel-container"></div>
+        <Flex direction="column" gap="lg" maxW={720}>
+          <Flex gap="lg" align="stretch">
+            <Flex direction="column" gap="md" style={{ flexShrink: 0, width: 300 }}>
+              <div ref={setWheelElement} class="wheel-container"></div>
 
-          <Flex direction="column" gap="sm" w="100%">
-            <Text color="muted">Palette</Text>
-            <Flex gap="sm" wrap>
-              {harmony_colors.value.map((c, i) => (
-                <ColorBox key={`${c}-${i}`} color={c} isDominant={i === 0} />
-              ))}
+              <Flex direction="column" gap="xs">
+                <Text color="muted">Harmony</Text>
+                <Select
+                  ariaLabel="Harmony"
+                  value={harmony.value}
+                  options={HARMONY_OPTIONS}
+                  onChange={handleHarmonyChange}
+                />
+              </Flex>
             </Flex>
-          </Flex>
 
-          <Flex direction="column" gap="xs" w="100%">
-            <Text color="muted">Harmony</Text>
-            <Flex gap="sm" wrap>
-              {suggestions.value.map(({ type, colors }) => {
-                const isSelected = harmony.value === type
-                return (
-                  <button
-                    key={type}
-                    type="button"
-                    onClick={() => handleHarmonySelect(type)}
-                    title={HARMONY_LABELS[type]}
-                    style={{
-                      border: isSelected ? "2px solid var(--color-primary)" : "1px solid var(--color-border)",
-                      background: isSelected ? "var(--color-surface-2)" : "transparent",
-                      padding: 0,
-                      width: "calc(50% - var(--space-xs))",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <Flex h={24}>
-                      {colors.map((c, i) => (
-                        <Box key={`${c}-${i}`} flex={1} bg={c} />
-                      ))}
-                    </Flex>
-                    <Box px="xs" py="xs">
-                      <Text size="xs">{HARMONY_LABELS[type]}</Text>
-                    </Box>
-                  </button>
-                )
-              })}
+            <Flex direction="row" gap="xs" flex={1}>
+              {colors5.value.map((c, i) => (
+                <Flex key={i} direction="column" flex={1} align="center" gap="xs">
+                  <Box
+                    flex={1}
+                    w="100%"
+                    bg={c || "transparent"}
+                    bd={
+                      i === 0 && c
+                        ? "2px solid var(--color-primary)"
+                        : c
+                          ? "1px solid var(--color-border)"
+                          : "1px dashed var(--color-border)"
+                    }
+                    title={c || undefined}
+                  />
+                  {c && <Text size="xs">{c}</Text>}
+                </Flex>
+              ))}
             </Flex>
           </Flex>
 

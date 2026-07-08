@@ -4,6 +4,7 @@ import { AssetFiltersBar } from "@/packages/assets/asset-filters-bar"
 import { AssetResults } from "@/packages/assets/asset-results"
 import { BatchActionBar, SelectAllFloating } from "@/packages/assets/batch-action-bar"
 import { asset_store } from "@/packages/assets/state"
+import { AssetsTour } from "@/packages/assets/tour"
 import { useAssetsPage } from "@/packages/assets/use-assets-page"
 import { Box } from "@/ui/atoms/box/box"
 import { Button } from "@/ui/atoms/button/button"
@@ -61,6 +62,7 @@ const AssetsPage = () => {
 
   return (
     <PageLayout>
+      <AssetsTour />
       <AssetFiltersBar
         file_input_ref={file_input_ref}
         handle_import={handle_import}

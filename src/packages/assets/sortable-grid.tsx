@@ -40,7 +40,7 @@ export const SortableGrid = ({
   }, [])
 
   return (
-    <Flex gap="md" wrap data-dnd-grid>
+    <Flex gap="md" wrap data-dnd-grid data-tour="assets-grid">
       {filtered_assets.value.map((asset, idx) => (
         <SortableAssetCard
           key={asset.id}

@@ -51,6 +51,7 @@ export const Combobox = (props: ComboboxProps) => {
     hideSearch = false,
     open: controlledOpen,
     onOpenChange,
+    ...rest
   } = props
 
   const rootRef = useRef<HTMLDivElement>(null)
@@ -86,7 +87,7 @@ export const Combobox = (props: ComboboxProps) => {
   }
 
   return (
-    <div class={styles.root} ref={rootRef}>
+    <div class={styles.root} ref={rootRef} {...(rest as Record<string, unknown>)}>
       {trigger ? (
         trigger
       ) : (

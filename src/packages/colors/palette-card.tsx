@@ -20,13 +20,14 @@ export type PaletteCardProps = {
   onClick?: (palette: PaletteMeta) => void
 }
 
-export const PaletteCard = ({ palette, onContextMenu, onDelete, onClick }: PaletteCardProps) => {
+export const PaletteCard = ({ palette, onContextMenu, onDelete, onClick, ...rest }: PaletteCardProps) => {
   return (
     <div
       class={styles.card}
       onContextMenu={e => onContextMenu(e, palette)}
       onClick={() => onClick?.(palette)}
       style={{ cursor: onClick ? "pointer" : undefined }}
+      {...(rest as Record<string, unknown>)}
     >
       <Flex w="100%" h={80}>
         {palette.colors.map((c, i) => (

@@ -28,7 +28,7 @@ export const SelectAllFloating = () => {
 
   return (
     <div class={selectAllFloat}>
-      <Button size="small" onClick={select_all}>
+      <Button size="small" onClick={select_all} data-tour="assets-select-all">
         <Check size={14} />
         Select All ({filtered_assets.value.length})
       </Button>

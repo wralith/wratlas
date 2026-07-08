@@ -17,6 +17,7 @@ import { useTextDraw } from "./hooks/use-text-draw"
 import { CanvasSidebar } from "./sidebar"
 import { canvas_controller } from "./state"
 import { CanvasToolbar } from "./toolbar"
+import { CanvasTour } from "./tour"
 
 // NOTE: We didn't inlined this to prevent re-rendering the canvas on is_hydrating signal change
 const CanvasLoadingOverlay = () => <LoadingOverlay loading={canvas_controller.is_hydrating.value} />
@@ -36,12 +37,13 @@ export const Canvas = () => {
 
   return (
     <div class={wrapper}>
+      <CanvasTour />
       <CanvasToolbar />
       <CanvasContextMenu />
       <ColorSuggestionModal />
       <CanvasMinimap />
       <CanvasZoomControl />
-      <canvas ref={canvasRef} class={canvasHost} />
+      <canvas ref={canvasRef} class={canvasHost} data-tour="canvas-area" />
       <CanvasSidebar />
       <CanvasLoadingOverlay />
     </div>

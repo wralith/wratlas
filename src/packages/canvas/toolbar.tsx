@@ -26,25 +26,29 @@ export const CanvasToolbar = () => {
     <div class={styles.container}>
       <Toolbar>
         <Flex align="center" gap="xs">
-          <ToolbarCombobox />
-          <Tooltip content="Import">
-            <Button size="icon-only" onClick={openImport} aria-label="Import canvas">
-              <FileUp size={14} />
-            </Button>
-          </Tooltip>
-          <Tooltip content="Export">
-            <Button size="icon-only" onClick={handleExport} aria-label="Export canvas">
-              <Download size={14} />
-            </Button>
-          </Tooltip>
-          <Tooltip content="Download Canvas as PNG">
-            <Button size="icon-only" onClick={handleDownloadPng} aria-label="Download canvas as PNG">
-              <ImageDown size={14} />
-            </Button>
-          </Tooltip>
+          <Flex align="center" gap="xs">
+            <ToolbarCombobox />
+          </Flex>
+          <Flex align="center" gap="xs" data-tour="canvas-file-ops">
+            <Tooltip content="Import">
+              <Button size="icon-only" onClick={openImport} aria-label="Import canvas">
+                <FileUp size={14} />
+              </Button>
+            </Tooltip>
+            <Tooltip content="Export">
+              <Button size="icon-only" onClick={handleExport} aria-label="Export canvas">
+                <Download size={14} />
+              </Button>
+            </Tooltip>
+            <Tooltip content="Download Canvas as PNG">
+              <Button size="icon-only" onClick={handleDownloadPng} aria-label="Download canvas as PNG">
+                <ImageDown size={14} />
+              </Button>
+            </Tooltip>
+          </Flex>
         </Flex>
 
-        <Flex align="center" gap="xs">
+        <Flex align="center" gap="xs" data-tour="canvas-tools">
           {tools.map(tool => {
             const active = active_tool.value === tool.id
             const Icon = tool.icon

@@ -1,8 +1,8 @@
-import { useSignal } from "@preact/signals"
 import { ColorDetailsModal } from "@/packages/colors/color-details-modal"
-import type { PaletteMeta } from "@/packages/colors/internal/types"
 import { PaletteFiltersBar } from "@/packages/colors/palette-filters-bar"
 import { PalettesGrid } from "@/packages/colors/palettes-grid"
+import { detail_palette } from "@/packages/colors/state"
+import { ColorsTour } from "@/packages/colors/tour"
 import { useColorsPage } from "@/packages/colors/use-colors-page"
 import { Box } from "@/ui/atoms/box/box"
 import { Button } from "@/ui/atoms/button/button"
@@ -23,7 +23,7 @@ const ColorsPage = () => {
     cancel_delete,
     handle_menu_select,
   } = useColorsPage()
-  const selected_palette = useSignal<PaletteMeta | null>(null)
+  const selected_palette = detail_palette
 
   const menu_items: MenuItem[] = [
     { id: "copy-colors", label: "Copy colors" },
@@ -32,6 +32,7 @@ const ColorsPage = () => {
 
   return (
     <PageLayout>
+      <ColorsTour />
       <PaletteFiltersBar />
       <Box p="1rem" flex={1} pb={80}>
         <PalettesGrid

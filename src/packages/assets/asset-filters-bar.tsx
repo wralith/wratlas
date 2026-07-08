@@ -19,10 +19,10 @@ export const AssetFiltersBar = ({
   const { search_query, all_tags, selected_tags } = asset_store
 
   return (
-    <Box mx="1.5rem">
+    <Box mx="1.5rem" data-tour="assets-filters">
       <Toolbar>
         <Flex align="center" gap="md" flex="1" minW={0}>
-          <Box flex="1" maxW={320}>
+          <Box flex="1" maxW={320} data-tour="assets-search">
             <Input
               placeholder="Search assets..."
               value={search_query.value}
@@ -45,7 +45,7 @@ export const AssetFiltersBar = ({
             visibleCount={3}
           />
         </Flex>
-        <Flex gap="sm">
+        <Flex gap="sm" data-tour="assets-import">
           <Button left={<ImageUp size={16} />} onClick={handle_import}>
             Import
           </Button>

@@ -1,5 +1,6 @@
 import { signal } from "@preact/signals"
 import { create_color_store } from "./internal/store"
+import type { PaletteMeta } from "./internal/types"
 
 export const color_store = create_color_store()
 
@@ -20,3 +21,5 @@ export const close_suggestion = () => {
   if (prev) URL.revokeObjectURL(prev.image_url)
   suggested_palette.value = null
 }
+
+export const detail_palette = signal<PaletteMeta | null>(null)

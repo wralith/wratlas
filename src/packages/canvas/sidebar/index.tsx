@@ -21,7 +21,7 @@ const ObjectPanel = () => {
   if (!obj) return null
 
   return (
-    <div class={styles.panel}>
+    <>
       <div class={styles.tabBar}>
         {TABS.map(t => (
           <button
@@ -39,7 +39,7 @@ const ObjectPanel = () => {
       {tab.value === "properties" && <ObjProperties obj={obj} />}
       {tab.value === "order" && <OrderActions />}
       {tab.value === "actions" && <CopyDeleteActions />}
-    </div>
+    </>
   )
 }
 
@@ -47,23 +47,18 @@ export const CanvasSidebar = () => {
   const tool = active_tool.value
   const obj = active_object.value
 
-  if (obj) return <ObjectPanel />
+  let content = null
+  if (obj) content = <ObjectPanel />
+  else if (tool === "text") content = <TextToolOptions />
+  else if (tool === "draw") content = <RectToolOptions />
 
-  if (tool === "text") {
-    return (
-      <div class={styles.panel}>
-        <TextToolOptions />
-      </div>
-    )
-  }
-
-  if (tool === "draw") {
-    return (
-      <div class={styles.panel}>
-        <RectToolOptions />
-      </div>
-    )
-  }
-
-  return null
+  return (
+    <div
+      class={styles.panel}
+      data-tour="canvas-sidebar"
+      style={!content ? { opacity: 0, pointerEvents: "none" } : undefined}
+    >
+      {content}
+    </div>
+  )
 }

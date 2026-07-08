@@ -10,7 +10,7 @@ export const PaletteFiltersBar = () => {
   const { search_query, palettes } = color_store
 
   return (
-    <Box mx="1.5rem">
+    <Box mx="1.5rem" data-tour="colors-filters">
       <Toolbar>
         <Flex align="center" gap="md" flex="1" minW={0}>
           <Box flex="1" maxW={320}>

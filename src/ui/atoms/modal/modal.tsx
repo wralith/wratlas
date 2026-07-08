@@ -17,7 +17,7 @@ export type ModalProps = {
 }
 
 export const Modal = (props: ModalProps) => {
-  const { open, onClose, header, content, footer, width, height, class: className } = props
+  const { open, onClose, header, content, footer, width, height, class: className, ...rest } = props
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -43,6 +43,7 @@ export const Modal = (props: ModalProps) => {
           h={height}
           class={cn(styles.modal, className)}
           onClick={e => e.stopPropagation()}
+          {...(rest as Record<string, unknown>)}
           onKeyDown={e => {
             if (e.key === "Escape") onClose()
             e.stopPropagation()

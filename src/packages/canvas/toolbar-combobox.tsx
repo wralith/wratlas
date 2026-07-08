@@ -111,6 +111,7 @@ export const ToolbarCombobox = () => {
   return (
     <>
       <Combobox
+        data-tour="canvas-combobox"
         value={currentCanvasId}
         options={canvas_list.value.map(canvas => ({ id: canvas.id, label: canvas.name }))}
         onChange={handleCanvasChange}

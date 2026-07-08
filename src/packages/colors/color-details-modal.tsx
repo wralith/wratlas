@@ -150,7 +150,7 @@ export const ColorDetailsModal = ({ palette, onClose }: ColorDetailsModalProps) 
       content={
         <Flex direction="column" gap="lg" maxW={720}>
           <Flex gap="lg" align="stretch">
-            <Flex direction="column" gap="md" style={{ flexShrink: 0, width: 300 }}>
+            <Flex direction="column" gap="xl" style={{ flexShrink: 0, width: 300 }}>
               <div ref={setWheelElement} class="wheel-container"></div>
 
               <Flex direction="column" gap="xs">
@@ -164,9 +164,9 @@ export const ColorDetailsModal = ({ palette, onClose }: ColorDetailsModalProps) 
               </Flex>
             </Flex>
 
-            <Flex direction="row" gap="xs" flex={1}>
+            <Flex direction="row" gap="xs" flex={1} ml={42}>
               {colors5.value.map((c, i) => (
-                <Flex key={i} direction="column" flex={1} align="center" gap="xs">
+                <Flex key={i} direction="column" flex={1} align="center" gap="md">
                   <Box
                     flex={1}
                     w="100%"

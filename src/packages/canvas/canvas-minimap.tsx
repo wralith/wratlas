@@ -224,7 +224,7 @@ export const CanvasMinimap = () => {
   }
 
   return (
-    <div class={styles.container}>
+    <div class={styles.container} data-tour="canvas-navigation">
       <Tooltip content="Reset view" placement="top">
         <Button variant="ghost" size="icon-only" class={styles.resetButton} onClick={resetView} aria-label="Reset view">
           <LocateFixed size={12} />

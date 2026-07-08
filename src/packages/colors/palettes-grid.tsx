@@ -28,14 +28,19 @@ export const PalettesGrid = ({ open_context_menu, onCardClick, onDeleteRequest }
   }
 
   return (
-    <Box p="1.5rem" style={{ display: "grid", gridTemplateColumns: GRID_COLS, gap: "8px" } as never}>
-      {palettes.map(p => (
+    <Box
+      p="1.5rem"
+      data-tour="colors-grid"
+      style={{ display: "grid", gridTemplateColumns: GRID_COLS, gap: "8px" } as never}
+    >
+      {palettes.map((p, i) => (
         <PaletteCard
           key={p.id}
           palette={p}
           onContextMenu={open_context_menu}
           onDelete={id => onDeleteRequest(id)}
           onClick={onCardClick}
+          data-tour={i === 0 ? "colors-card" : undefined}
         />
       ))}
     </Box>

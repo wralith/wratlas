@@ -1,4 +1,5 @@
 import { ErrorBoundary, LocationProvider, lazy, Route, Router } from "preact-iso"
+import "driver.js/dist/driver.css"
 import { ToastContainer } from "@/ui/molecules/toast/toast"
 
 const CanvasPage = lazy(() => import("@/pages/canvas.tsx"))

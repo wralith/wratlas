@@ -27,7 +27,7 @@ export const PalettesGrid = ({ open_context_menu, onCardClick }: PalettesGridPro
   }
 
   return (
-    <Box p="1.5rem" style={{ display: "grid", gridTemplateColumns: GRID_COLS, gap: "var(--space-lg)" } as never}>
+    <Box p="1.5rem" style={{ display: "grid", gridTemplateColumns: GRID_COLS, gap: "8px" } as never}>
       {palettes.map(p => (
         <PaletteCard
           key={p.id}

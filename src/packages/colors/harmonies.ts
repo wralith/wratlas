@@ -13,7 +13,7 @@ export const build_harmony = (base: string, harmony: HarmonyType): string[] => {
     case "tetrad":
       return color.tetrad().map(c => c.toHexString())
     case "splitcomplement":
-      return color.splitcomplement().map(c => c.toHexString())
+      return splitcomplement(color).map(c => c.toHexString())
     case "complement":
       return [color.toHexString(), color.complement().toHexString()]
     default:
@@ -30,3 +30,12 @@ export const HARMONY_OPTIONS: { id: HarmonyType; label: string }[] = [
   { id: "splitcomplement", label: "Split complement" },
   { id: "complement", label: "Complement" },
 ]
+
+const splitcomplement = (color: TinyColor): TinyColor[] => {
+  var hsl = color.toHsl()
+  return [
+    color,
+    new TinyColor({ h: (hsl.h + 150) % 360, s: hsl.s, l: hsl.l }),
+    new TinyColor({ h: (hsl.h + 210) % 360, s: hsl.s, l: hsl.l }),
+  ]
+}

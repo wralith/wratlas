@@ -9,11 +9,13 @@ import {
   Keyboard,
   Menu,
   MousePointer2,
+  PaintBucket,
   PanelRightClose,
   PanelRightOpen,
   Square,
   Type,
 } from "lucide-preact"
+import { SettingsDropdown } from "@/components/settings-dropdown"
 import { Button } from "@/ui/atoms/button/button"
 import { Flex } from "@/ui/atoms/flex/flex"
 import { Popover } from "@/ui/atoms/popover/popover"
@@ -59,6 +61,7 @@ export const CanvasToolbar = () => {
   const { handleDownloadPng } = useCanvasPngExport()
   const shortcutsOpen = useSignal(false)
   const burgerOpen = useSignal(false)
+  const settingsOpen = useSignal(false)
 
   const handleAddImage = () => {
     const input = document.createElement("input")
@@ -230,6 +233,26 @@ export const CanvasToolbar = () => {
             </Tooltip>
           </span>
           <span class={styles.mobileOnly}>
+            <div class={styles.settingsAnchor}>
+              <Tooltip content="Theme">
+                <Button
+                  size="icon-only"
+                  onClick={() => {
+                    settingsOpen.value = !settingsOpen.value
+                  }}
+                  aria-label="Theme"
+                >
+                  <PaintBucket size={14} />
+                </Button>
+              </Tooltip>
+              {settingsOpen.value && (
+                <SettingsDropdown
+                  onClose={() => {
+                    settingsOpen.value = false
+                  }}
+                />
+              )}
+            </div>
             <Popover
               open={burgerOpen.value}
               onClose={() => {

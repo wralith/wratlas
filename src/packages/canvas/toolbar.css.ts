@@ -117,3 +117,7 @@ export const shortcutLabel = style({
   fontSize: vars.textSize.sm,
   whiteSpace: "nowrap",
 })
+
+export const settingsAnchor = style({
+  position: "relative",
+})

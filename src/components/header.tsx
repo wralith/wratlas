@@ -1,5 +1,5 @@
 import { useSignal } from "@preact/signals"
-import { HelpCircle, Settings } from "lucide-preact"
+import { HelpCircle, PaintBucket } from "lucide-preact"
 import { useEffect, useRef } from "preact/hooks"
 import { useLocation } from "preact-iso"
 import { brand, colorPicker, container, header, link, linkActive, settingsWrapper } from "@/components/header.css.ts"
@@ -101,7 +101,7 @@ export const Header = () => {
                 settingsOpen.value = !settingsOpen.value
               }}
             >
-              <Settings size={18} />
+              <PaintBucket size={16} />
             </Button>
             {settingsOpen.value && (
               <SettingsDropdown

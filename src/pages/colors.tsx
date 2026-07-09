@@ -1,3 +1,4 @@
+import { usePageMeta } from "@/lib/use-page-meta"
 import { ColorDetailsModal } from "@/packages/colors/color-details-modal"
 import { PaletteFiltersBar } from "@/packages/colors/palette-filters-bar"
 import { PalettesGrid } from "@/packages/colors/palettes-grid"
@@ -13,6 +14,7 @@ import { Text } from "@/ui/atoms/text/text"
 import { PageLayout } from "@/ui/molecules/page-layout/page-layout"
 
 const ColorsPage = () => {
+  usePageMeta("Colors", "Explore and manage your color palettes")
   const {
     menu,
     pending_delete,

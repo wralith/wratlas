@@ -1,4 +1,5 @@
 import { useSignal } from "@preact/signals"
+import { usePageMeta } from "@/lib/use-page-meta"
 import { AssetDetailsModal } from "@/packages/assets/asset-details-modal"
 import { AssetFiltersBar } from "@/packages/assets/asset-filters-bar"
 import { AssetResults } from "@/packages/assets/asset-results"
@@ -60,6 +61,7 @@ const AssetsPage = () => {
     deleteModalOpen.value = false
   }
 
+  usePageMeta("Assets", "Browse and manage your asset library")
   return (
     <PageLayout>
       <AssetsTour />

@@ -3,7 +3,14 @@ import { vars } from "@/styles/vars.css.ts"
 
 export const root = style({
   position: "relative",
-  minWidth: 220,
+  minWidth: 0,
+  flex: 1,
+  "@media": {
+    "screen and (min-width: 1024px)": {
+      minWidth: 220,
+      flex: "none",
+    },
+  },
 })
 
 export const trigger = style({
@@ -32,7 +39,6 @@ export const triggerLabel = style({
 
 export const panel = style({
   position: "absolute",
-  top: "calc(100% + 6px)",
   left: 0,
   width: "100%",
   minWidth: 220,
@@ -42,6 +48,14 @@ export const panel = style({
   boxShadow: vars.shadow.float,
   zIndex: vars.z.overlayTop,
   overflow: "hidden",
+})
+
+export const panelBottom = style({
+  top: "calc(100% + 6px)",
+})
+
+export const panelTop = style({
+  bottom: "calc(100% + 6px)",
 })
 
 export const search = style({

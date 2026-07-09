@@ -1,4 +1,5 @@
 import { style } from "@vanilla-extract/css"
+import { mobileAndTablet } from "@/lib/responsive.css"
 import { vars } from "@/styles/vars.css.ts"
 
 export const container = style({
@@ -6,6 +7,11 @@ export const container = style({
   marginBottom: "0.5rem",
   position: "relative",
   zIndex: `calc(${vars.z.hud} + 1)`,
+  "@media": {
+    [mobileAndTablet]: {
+      display: "none",
+    },
+  },
 })
 
 export const brand = style({
@@ -30,7 +36,13 @@ export const header = style({
   height: 60,
 })
 
-export const link = style({})
+export const link = style({
+  "@media": {
+    [mobileAndTablet]: {
+      display: "none",
+    },
+  },
+})
 
 export const linkActive = style({
   position: "relative",

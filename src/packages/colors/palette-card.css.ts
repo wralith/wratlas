@@ -5,7 +5,7 @@ export const card = style({
   display: "flex",
   flexDirection: "column",
   border: `1px solid ${vars.color.border}`,
-  backgroundColor: vars.bg.surface,
+  backgroundColor: vars.bg.base,
   padding: vars.space.sm,
   borderRadius: vars.radius.xs,
   overflow: "hidden",

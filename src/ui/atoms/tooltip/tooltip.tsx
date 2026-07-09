@@ -13,6 +13,7 @@ import {
 } from "@floating-ui/react"
 import type { ComponentChildren } from "preact"
 import { useState } from "preact/hooks"
+import { is_touch_device } from "@/lib/responsive"
 import * as styles from "./tooltip.css.ts"
 
 export type TooltipProps = {
@@ -26,6 +27,9 @@ export type TooltipProps = {
 
 export const Tooltip = (props: TooltipProps) => {
   const { content, children, placement = "bottom", offset: ofs = 8, portal = true } = props
+
+  if (is_touch_device) return <>{children}</>
+
   const [open, setOpen] = useState(false)
 
   const { refs, floatingStyles, context } = useFloating({

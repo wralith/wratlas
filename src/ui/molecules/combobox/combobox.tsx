@@ -35,6 +35,7 @@ type ComboboxProps = {
   hideSearch?: boolean
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  position?: "bottom" | "top"
 }
 
 export const Combobox = (props: ComboboxProps) => {
@@ -51,6 +52,7 @@ export const Combobox = (props: ComboboxProps) => {
     hideSearch = false,
     open: controlledOpen,
     onOpenChange,
+    position = "bottom",
     ...rest
   } = props
 
@@ -107,7 +109,7 @@ export const Combobox = (props: ComboboxProps) => {
       )}
 
       {openValue && (
-        <div class={styles.panel}>
+        <div class={cn(styles.panel, position === "top" ? styles.panelTop : styles.panelBottom)}>
           {!hideSearch && (
             <div class={styles.search}>
               <Input

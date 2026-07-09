@@ -1,4 +1,5 @@
 import { globalStyle } from "@vanilla-extract/css"
+import { mobile } from "@/lib/responsive.css"
 import { vars } from "@/styles/vars.css.ts"
 
 globalStyle("*, *::before, *::after", {
@@ -61,4 +62,12 @@ globalStyle("fieldset", {
   borderImage: "unset",
   paddingBlock: "unset",
   paddingInline: "unset",
+})
+
+globalStyle("input, textarea, select, button", {
+  "@media": {
+    [mobile]: {
+      fontSize: "16px",
+    },
+  },
 })

@@ -1,4 +1,5 @@
 import { style } from "@vanilla-extract/css"
+import { mobileAndTablet } from "@/lib/responsive.css"
 import { vars } from "@/styles/vars.css.ts"
 
 export const panel = style({
@@ -12,6 +13,21 @@ export const panel = style({
   backgroundColor: vars.bg.surface,
   border: `1px solid ${vars.color.border}`,
   padding: vars.space.md,
+  "@media": {
+    [mobileAndTablet]: {
+      position: "fixed",
+      right: 0,
+      left: 0,
+      top: 0,
+      bottom: "auto",
+      width: "100%",
+      maxHeight: "60vh",
+      borderLeft: "none",
+      borderRight: "none",
+      borderTop: "none",
+      borderBottom: `1px solid ${vars.color.border}`,
+    },
+  },
 })
 
 export const label = style({

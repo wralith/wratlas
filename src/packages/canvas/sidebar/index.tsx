@@ -1,6 +1,6 @@
 import { useSignal } from "@preact/signals"
 import * as styles from "../canvas-sidebar.css"
-import { active_object, active_tool, sidebar_version } from "../state"
+import { active_object, active_tool, object_details_open, sidebar_version } from "../state"
 import { CopyDeleteActions } from "./actions"
 import { OrderActions } from "./order"
 import { ObjProperties } from "./properties"
@@ -51,6 +51,8 @@ export const CanvasSidebar = () => {
   if (obj) content = <ObjectPanel />
   else if (tool === "text") content = <TextToolOptions />
   else if (tool === "draw") content = <RectToolOptions />
+
+  if (!object_details_open.value) return null
 
   return (
     <div

@@ -25,7 +25,7 @@ export const item = style({
   background: "transparent",
   color: vars.text.primary,
   fontFamily: vars.font.ui,
-  fontSize: vars.textSize.base,
+  fontSize: vars.textSize.sm,
   textAlign: "left",
   padding: `${vars.space.xs} ${vars.space.sm}`,
   cursor: "pointer",
@@ -33,6 +33,7 @@ export const item = style({
   alignItems: "center",
   justifyContent: "space-between",
   gap: vars.space.sm,
+  minHeight: 32,
   selectors: {
     "&:hover": {
       backgroundColor: vars.bg.base,

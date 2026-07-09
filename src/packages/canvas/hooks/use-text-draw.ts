@@ -17,8 +17,15 @@ export const useTextDraw = () => {
 
     if (tool !== "text") return
 
+    const is_primary_input = (e: Event) => {
+      if (e instanceof MouseEvent || e instanceof PointerEvent) {
+        return e.button === 0
+      }
+      return true
+    }
+
     const handleMouseDown = (opt: TPointerEventInfo<TPointerEvent>) => {
-      if (!(opt.e instanceof MouseEvent) || opt.e.button !== 0) return
+      if (!is_primary_input(opt.e)) return
 
       const existing = canvas.getActiveObject()
       if (existing && existing.type === "i-text") {

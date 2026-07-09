@@ -1,4 +1,5 @@
 import { style } from "@vanilla-extract/css"
+import { mobile, tablet } from "@/lib/responsive.css"
 import { vars } from "@/styles/vars.css.ts"
 
 export const card = style({
@@ -14,10 +15,18 @@ export const card = style({
       borderColor: vars.color.primary,
     },
   },
+  "@media": {
+    [tablet]: {
+      width: "calc(33.333% - 11px)",
+      minWidth: 220,
+    },
+    [mobile]: {
+      width: "100%",
+    },
+  },
 })
 
 export const thumbnailWrap = style({
-  position: "relative",
   width: "100%",
   height: 160,
 })

@@ -156,40 +156,54 @@ export const CanvasMinimap = () => {
   })
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMove = (e: MouseEvent | TouchEvent) => {
       if (!draggingRef.current) return
       const mc = minimapRef.current
       const canvas = fabric_canvas.value
       if (!mc || !canvas) return
 
-      const pos = minimap_to_canvas(e.clientX, e.clientY, mc)
+      const clientX = e instanceof MouseEvent ? e.clientX : e.touches[0]?.clientX
+      const clientY = e instanceof MouseEvent ? e.clientY : e.touches[0]?.clientY
+      if (clientX === undefined || clientY === undefined) return
+
+      const pos = minimap_to_canvas(clientX, clientY, mc)
       if (!pos) return
 
       pan_to(pos.x, pos.y)
       sync_viewport_signals(canvas)
     }
 
-    const handleMouseUp = () => {
+    const handleEnd = () => {
       draggingRef.current = false
     }
 
-    document.addEventListener("mousemove", handleMouseMove)
-    document.addEventListener("mouseup", handleMouseUp)
+    document.addEventListener("mousemove", handleMove)
+    document.addEventListener("mouseup", handleEnd)
+    document.addEventListener("touchmove", handleMove, { passive: false })
+    document.addEventListener("touchend", handleEnd)
+    document.addEventListener("touchcancel", handleEnd)
 
     return () => {
-      document.removeEventListener("mousemove", handleMouseMove)
-      document.removeEventListener("mouseup", handleMouseUp)
+      document.removeEventListener("mousemove", handleMove)
+      document.removeEventListener("mouseup", handleEnd)
+      document.removeEventListener("touchmove", handleMove)
+      document.removeEventListener("touchend", handleEnd)
+      document.removeEventListener("touchcancel", handleEnd)
     }
   }, [])
 
-  const handlePointerDown = (e: MouseEvent) => {
+  const handlePointerDown = (e: MouseEvent | TouchEvent) => {
     const mc = minimapRef.current
     const canvas = fabric_canvas.value
     if (!mc || !canvas) return
 
     draggingRef.current = true
 
-    const pos = minimap_to_canvas(e.clientX, e.clientY, mc)
+    const clientX = e instanceof MouseEvent ? e.clientX : e.touches[0]?.clientX
+    const clientY = e instanceof MouseEvent ? e.clientY : e.touches[0]?.clientY
+    if (clientX === undefined || clientY === undefined) return
+
+    const pos = minimap_to_canvas(clientX, clientY, mc)
     if (!pos) return
 
     pan_to(pos.x, pos.y)
@@ -230,7 +244,7 @@ export const CanvasMinimap = () => {
           <LocateFixed size={12} />
         </Button>
       </Tooltip>
-      <canvas ref={minimapRef} class={styles.canvas} onMouseDown={handlePointerDown} />
+      <canvas ref={minimapRef} class={styles.canvas} onMouseDown={handlePointerDown} onTouchStart={handlePointerDown} />
     </div>
   )
 }

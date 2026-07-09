@@ -9,19 +9,14 @@ import { Input } from "@/ui/atoms/input/input"
 import { Modal } from "@/ui/atoms/modal/modal"
 import { Select } from "@/ui/atoms/select/select"
 import { Text } from "@/ui/atoms/text/text"
+import { imageWrap, swatch } from "./color-suggestion-modal.css"
 import { extract_pixel_color } from "./extract"
 import { build_harmony, HARMONY_OPTIONS } from "./harmonies"
 import type { HarmonyType } from "./internal/types"
 import { close_suggestion, color_store, suggested_palette } from "./state"
 
 const Swatch = ({ color, active }: { color: string; active?: boolean }) => (
-  <Box
-    w={56}
-    h={56}
-    bg={color}
-    bd={active ? "2px solid var(--text-primary)" : "1px solid var(--color-border)"}
-    title={color}
-  />
+  <Box class={swatch} bg={color} bd={active ? "2px solid var(--text-primary)" : undefined} title={color} />
 )
 
 export const ColorSuggestionModal = () => {
@@ -87,7 +82,8 @@ export const ColorSuggestionModal = () => {
         <Flex direction="column" gap="md" maxW={400}>
           <Box
             w="100%"
-            style={{ position: "relative", cursor: "crosshair", maxHeight: 320, overflow: "hidden" }}
+            class={imageWrap}
+            style={{ position: "relative", cursor: "crosshair" }}
             onClick={handleImageClick}
           >
             <img

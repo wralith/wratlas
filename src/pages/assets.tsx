@@ -68,7 +68,7 @@ const AssetsPage = () => {
         handle_import={handle_import}
         handle_file_change={handle_file_change}
       />
-      <Box p="1rem" flex={1} pb={80}>
+      <Box p="1rem" flex={1}>
         <AssetResults asset_urls={asset_urls} open_context_menu={open_context_menu} />
       </Box>
 

@@ -1,5 +1,6 @@
 import { keyframes, style } from "@vanilla-extract/css"
 import { recipe } from "@vanilla-extract/recipes"
+import { mobileAndTablet } from "@/lib/responsive.css"
 import { vars } from "@/styles/vars.css.ts"
 
 const slideIn = keyframes({
@@ -16,6 +17,15 @@ export const container = style({
   flexDirection: "column",
   gap: 8,
   pointerEvents: "none",
+  "@media": {
+    [mobileAndTablet]: {
+      top: "auto",
+      bottom: 72,
+      left: "50%",
+      right: "auto",
+      transform: "translateX(-50%)",
+    },
+  },
 })
 
 export const itemWrapper = style({

@@ -6,6 +6,7 @@ import { Flex } from "@/ui/atoms/flex/flex"
 import { Input } from "@/ui/atoms/input/input"
 import { MultiSelect } from "@/ui/molecules/multi-select/multi-select"
 import { Toolbar } from "@/ui/molecules/toolbar/toolbar"
+import { toolbarWrapper } from "@/ui/molecules/toolbar/toolbar-wrapper.css"
 
 export const AssetFiltersBar = ({
   file_input_ref,
@@ -19,7 +20,7 @@ export const AssetFiltersBar = ({
   const { search_query, all_tags, selected_tags } = asset_store
 
   return (
-    <Box mx="1.5rem" data-tour="assets-filters">
+    <div data-tour="assets-filters" class={toolbarWrapper}>
       <Toolbar>
         <Flex align="center" gap="md" flex="1" minW={0}>
           <Box flex="1" maxW={320} data-tour="assets-search">
@@ -37,7 +38,7 @@ export const AssetFiltersBar = ({
               selected_tags.value = v
             }}
             options={all_tags.value}
-            placeholder="Filter by tags"
+            placeholder="Tags"
             searchPlaceholder="Search tags..."
             maxWidth={400}
             height={200}
@@ -52,6 +53,6 @@ export const AssetFiltersBar = ({
           <input ref={file_input_ref} type="file" accept="image/*" multiple hidden onChange={handle_file_change} />
         </Flex>
       </Toolbar>
-    </Box>
+    </div>
   )
 }

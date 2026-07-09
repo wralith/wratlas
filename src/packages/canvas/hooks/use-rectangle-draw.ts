@@ -42,8 +42,15 @@ export const useRectangleDraw = () => {
     let start_x = 0
     let start_y = 0
 
+    const is_primary_input = (e: Event) => {
+      if (e instanceof MouseEvent || e instanceof PointerEvent) {
+        return e.button === 0
+      }
+      return true
+    }
+
     const handleMouseDown = (opt: TPointerEventInfo<TPointerEvent>) => {
-      if (!(opt.e instanceof MouseEvent) || opt.e.button !== 0) return
+      if (!is_primary_input(opt.e)) return
 
       const pointer = canvas.getScenePoint(opt.e)
       start_x = pointer.x

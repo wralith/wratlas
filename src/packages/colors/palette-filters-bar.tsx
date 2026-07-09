@@ -1,16 +1,17 @@
-import { Boxes, Search } from "lucide-preact"
+import { Search } from "lucide-preact"
 import { color_store } from "@/packages/colors/state"
 import { Box } from "@/ui/atoms/box/box"
 import { Flex } from "@/ui/atoms/flex/flex"
 import { Input } from "@/ui/atoms/input/input"
 import { Text } from "@/ui/atoms/text/text"
 import { Toolbar } from "@/ui/molecules/toolbar/toolbar"
+import { toolbarWrapper } from "@/ui/molecules/toolbar/toolbar-wrapper.css"
 
 export const PaletteFiltersBar = () => {
   const { search_query, palettes } = color_store
 
   return (
-    <Box mx="1.5rem" data-tour="colors-filters">
+    <div data-tour="colors-filters" class={toolbarWrapper}>
       <Toolbar>
         <Flex align="center" gap="md" flex="1" minW={0}>
           <Box flex="1" maxW={320}>
@@ -29,11 +30,7 @@ export const PaletteFiltersBar = () => {
             </Text>
           </Flex>
         </Flex>
-        <Flex align="center" gap="sm">
-          <Boxes size={16} />
-          <Text color="muted">Saved color palettes</Text>
-        </Flex>
       </Toolbar>
-    </Box>
+    </div>
   )
 }

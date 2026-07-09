@@ -14,8 +14,9 @@ import { usePersistence } from "./hooks/use-persistence"
 import { useRectangleDraw } from "./hooks/use-rectangle-draw"
 import { useSelectionTracker } from "./hooks/use-selection-tracker"
 import { useTextDraw } from "./hooks/use-text-draw"
+import { useTouchGestures } from "./hooks/use-touch-gestures"
 import { CanvasSidebar } from "./sidebar"
-import { canvas_controller } from "./state"
+import { canvas_controller, nav_tools_open } from "./state"
 import { CanvasToolbar } from "./toolbar"
 import { CanvasTour } from "./tour"
 
@@ -25,6 +26,7 @@ const CanvasLoadingOverlay = () => <LoadingOverlay loading={canvas_controller.is
 export const Canvas = () => {
   const { canvasRef } = useCanvas()
 
+  useTouchGestures()
   usePanZoom()
   useHistory()
   useDragDrop()
@@ -41,8 +43,12 @@ export const Canvas = () => {
       <CanvasToolbar />
       <CanvasContextMenu />
       <ColorSuggestionModal />
-      <CanvasMinimap />
-      <CanvasZoomControl />
+      {nav_tools_open.value && (
+        <>
+          <CanvasMinimap />
+          <CanvasZoomControl />
+        </>
+      )}
       <canvas ref={canvasRef} class={canvasHost} data-tour="canvas-area" />
       <CanvasSidebar />
       <CanvasLoadingOverlay />

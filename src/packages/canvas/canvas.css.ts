@@ -12,4 +12,7 @@ export const wrapper = style({
 
 export const canvasHost = style({
   display: "block",
+  touchAction: "none",
+  userSelect: "none",
+  WebkitUserSelect: "none",
 })

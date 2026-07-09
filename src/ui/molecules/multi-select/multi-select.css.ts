@@ -1,8 +1,10 @@
 import { style } from "@vanilla-extract/css"
+import { mobileAndTablet } from "@/lib/responsive.css"
 import { vars } from "@/styles/vars.css.ts"
 
 export const root = style({
   position: "relative",
+  zIndex: vars.z.hud,
 })
 
 export const trigger = style({
@@ -109,6 +111,15 @@ export const panel = style({
   boxShadow: vars.shadow.float,
   zIndex: vars.z.overlayTop,
   overflow: "hidden",
+  "@media": {
+    [mobileAndTablet]: {
+      left: "50%",
+      transform: "translateX(-50%)",
+      width: "max-content",
+      maxWidth: "calc(100vw - 2rem)",
+      minWidth: 200,
+    },
+  },
 })
 
 export const list = style({

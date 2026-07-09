@@ -1,15 +1,26 @@
 import type { ComponentChildren } from "preact"
 import { useCallback, useEffect, useRef } from "preact/hooks"
 import { cn } from "@/lib/cn"
-import { panel, panelBottom, panelTop, wrapper } from "./popover.css.ts"
+import { panel, panelBottomEnd, panelBottomStart, panelTopEnd, panelTopStart, wrapper } from "./popover.css.ts"
+
+export type PopoverPosition = "top-start" | "top-end" | "bottom-start" | "bottom-end" | "top" | "bottom"
 
 export type PopoverProps = {
   open: boolean
   onClose: () => void
   trigger: ComponentChildren
   children: ComponentChildren
-  position?: "top" | "bottom"
+  position?: PopoverPosition
   class?: string
+}
+
+const positionMap: Record<PopoverPosition, string> = {
+  top: panelTopStart,
+  "top-start": panelTopStart,
+  "top-end": panelTopEnd,
+  bottom: panelBottomStart,
+  "bottom-start": panelBottomStart,
+  "bottom-end": panelBottomEnd,
 }
 
 export const Popover = (props: PopoverProps) => {
@@ -44,7 +55,7 @@ export const Popover = (props: PopoverProps) => {
     <div class={cn(wrapper, className)} ref={rootRef}>
       {trigger}
       {open && (
-        <div class={cn(panel, position === "top" ? panelTop : panelBottom)} onClick={e => e.stopPropagation()}>
+        <div class={cn(panel, positionMap[position])} onClick={e => e.stopPropagation()}>
           {children}
         </div>
       )}

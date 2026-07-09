@@ -1,6 +1,8 @@
 import { globalStyle } from "@vanilla-extract/css"
 import { vars } from "@/styles/vars.css.ts"
 
+const mobile = "screen and (max-width: 767px)"
+
 globalStyle("*, *::before, *::after", {
   boxSizing: "border-box",
 })
@@ -61,4 +63,12 @@ globalStyle("fieldset", {
   borderImage: "unset",
   paddingBlock: "unset",
   paddingInline: "unset",
+})
+
+globalStyle("input, textarea, select, button", {
+  "@media": {
+    [mobile]: {
+      fontSize: "16px",
+    },
+  },
 })

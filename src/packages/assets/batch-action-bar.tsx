@@ -15,6 +15,7 @@ import {
   batchBar,
   batchBarBody,
   batchCount,
+  batchLabel,
   selectAllFloat,
   suggestionHighlight,
   suggestionItem,
@@ -187,12 +188,13 @@ export const BatchActionBar = ({ onDeleteRequest }: { onDeleteRequest: () => voi
           />
           <span class={batchCount}>{count} selected</span>
 
-          <Flex gap="sm" ml="auto">
+          <Flex gap="sm" ml="auto" wrap>
             <Popover
               open={activePopover.value === "tag"}
               onClose={() => {
                 activePopover.value = null
               }}
+              position="top-end"
               trigger={
                 <Button
                   size="small"
@@ -202,7 +204,7 @@ export const BatchActionBar = ({ onDeleteRequest }: { onDeleteRequest: () => voi
                   }}
                 >
                   <Plus size={14} />
-                  Add Tag
+                  <span class={batchLabel}>Add Tag</span>
                 </Button>
               }
             >
@@ -218,6 +220,7 @@ export const BatchActionBar = ({ onDeleteRequest }: { onDeleteRequest: () => voi
               onClose={() => {
                 activePopover.value = null
               }}
+              position="top-end"
               trigger={
                 <Button
                   size="small"
@@ -227,7 +230,7 @@ export const BatchActionBar = ({ onDeleteRequest }: { onDeleteRequest: () => voi
                   }}
                 >
                   <Plus size={14} />
-                  Send to Canvas
+                  <span class={batchLabel}>Send to Canvas</span>
                 </Button>
               }
             >
@@ -240,12 +243,12 @@ export const BatchActionBar = ({ onDeleteRequest }: { onDeleteRequest: () => voi
 
             <Button size="small" variant="outline" color="danger" onClick={() => onDeleteRequest()}>
               <Trash2 size={14} />
-              Delete
+              <span class={batchLabel}>Delete</span>
             </Button>
 
             <Button size="small" variant="outline" onClick={() => clear_selection()}>
               <X size={14} />
-              Deselect
+              <span class={batchLabel}>Deselect</span>
             </Button>
           </Flex>
         </Flex>

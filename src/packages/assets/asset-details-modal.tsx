@@ -78,7 +78,6 @@ export const AssetDetailsModal = () => (
     onClose={close_details}
     header="Asset Details"
     width="650px"
-    height="60%"
     content={
       <Flex direction="column" gap="md">
         {details_state.value.thumbnail_url && (

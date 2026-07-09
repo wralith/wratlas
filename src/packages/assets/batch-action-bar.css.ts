@@ -1,4 +1,5 @@
 import { style } from "@vanilla-extract/css"
+import { mobileAndTablet } from "@/lib/responsive.css"
 import { vars } from "@/styles/vars.css.ts"
 
 export const batchBar = style({
@@ -10,6 +11,11 @@ export const batchBar = style({
   borderTop: `1px solid ${vars.color.border}`,
   backgroundColor: vars.bg.surface,
   boxShadow: vars.shadow.float,
+  "@media": {
+    [mobileAndTablet]: {
+      bottom: 56,
+    },
+  },
 })
 
 export const batchBarBody = style({
@@ -21,6 +27,14 @@ export const batchCount = style({
   fontSize: vars.textSize.sm,
   color: vars.text.secondary,
   whiteSpace: "nowrap",
+})
+
+export const batchLabel = style({
+  "@media": {
+    [mobileAndTablet]: {
+      display: "none",
+    },
+  },
 })
 
 export const suggestions = style({
@@ -57,6 +71,11 @@ export const selectAllFloat = style({
   bottom: 12,
   left: 12,
   zIndex: vars.z.overlayTop,
+  "@media": {
+    [mobileAndTablet]: {
+      bottom: 68,
+    },
+  },
 })
 
 export const dragging = style({

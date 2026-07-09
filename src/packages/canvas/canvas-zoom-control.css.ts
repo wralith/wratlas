@@ -3,10 +3,10 @@ import { vars } from "@/styles/vars.css.ts"
 
 export const container = style({
   position: "absolute",
-  right: vars.space.lg,
-  bottom: vars.space.lg,
+  right: vars.space.md,
+  bottom: 58,
   zIndex: vars.z.roadmapLines,
-  width: 200,
+  width: 202,
   display: "grid",
   gap: vars.space.xs,
   padding: vars.space.sm,

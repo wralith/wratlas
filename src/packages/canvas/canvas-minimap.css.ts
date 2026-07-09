@@ -3,12 +3,13 @@ import { vars } from "@/styles/vars.css.ts"
 
 export const container = style({
   position: "absolute",
-  right: vars.space.lg,
-  bottom: 96,
+  right: vars.space.md,
+  bottom: 128,
   zIndex: vars.z.roadmapLines,
   border: `1px solid ${vars.color.border}`,
   backgroundColor: vars.bg.surface,
   boxShadow: vars.shadow.float,
+  borderRadius: vars.radius.sm,
 })
 
 export const canvas = style({

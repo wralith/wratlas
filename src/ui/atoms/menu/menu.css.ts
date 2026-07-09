@@ -1,4 +1,5 @@
 import { style, styleVariants } from "@vanilla-extract/css"
+import { mobileAndTablet } from "@/lib/responsive.css"
 import { vars } from "@/styles/vars.css.ts"
 
 export const menu = style({
@@ -9,6 +10,12 @@ export const menu = style({
   backgroundColor: vars.bg.surface,
   boxShadow: vars.shadow.float,
   zIndex: vars.z.overlayTop,
+  "@media": {
+    [mobileAndTablet]: {
+      minWidth: 220,
+      padding: vars.space.sm,
+    },
+  },
 })
 
 export const list = style({
@@ -43,6 +50,12 @@ export const item = style({
     },
     "&:disabled:hover": {
       backgroundColor: "transparent",
+    },
+  },
+  "@media": {
+    [mobileAndTablet]: {
+      minHeight: 44,
+      padding: `${vars.space.sm} ${vars.space.md}`,
     },
   },
 })

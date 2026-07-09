@@ -1,5 +1,6 @@
 import { ErrorBoundary, LocationProvider, lazy, Route, Router } from "preact-iso"
 import "driver.js/dist/driver.css"
+import { BottomNav } from "@/components/bottom-nav"
 import { ToastContainer } from "@/ui/molecules/toast/toast"
 
 const CanvasPage = lazy(() => import("@/pages/canvas.tsx"))
@@ -18,6 +19,7 @@ export function App() {
           <NotFoundPage default />
         </Router>
         <ToastContainer />
+        <BottomNav />
       </ErrorBoundary>
     </LocationProvider>
   )

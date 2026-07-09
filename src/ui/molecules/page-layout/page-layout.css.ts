@@ -1,4 +1,5 @@
 import { style } from "@vanilla-extract/css"
+import { mobileAndTablet } from "@/lib/responsive.css"
 import { vars } from "@/styles/vars.css.ts"
 
 export const layout = style({
@@ -22,4 +23,10 @@ export const content = style({
   display: "flex",
   flexDirection: "column",
   overflowY: "auto",
+  "@media": {
+    [mobileAndTablet]: {
+      paddingBottom: 56,
+      borderTop: "none",
+    },
+  },
 })

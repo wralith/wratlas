@@ -3,6 +3,7 @@ import type { IroColorPicker } from "@jaames/iro/dist/ColorPicker"
 import { useComputed, useSignal } from "@preact/signals"
 import { useEffect, useRef, useState } from "preact/hooks"
 import { add_notification } from "@/lib/notifications"
+import { vars } from "@/styles/vars.css"
 import { Box } from "@/ui/atoms/box/box"
 import { Button } from "@/ui/atoms/button/button"
 import { Flex } from "@/ui/atoms/flex/flex"
@@ -10,6 +11,7 @@ import { Input } from "@/ui/atoms/input/input"
 import { Modal } from "@/ui/atoms/modal/modal"
 import { Select } from "@/ui/atoms/select/select"
 import { Text } from "@/ui/atoms/text/text"
+import { layout, swatchBox, swatchColumn, swatchItem, wheelColumn, wheelContainer } from "./color-details-modal.css"
 import { build_harmony, HARMONY_OPTIONS } from "./harmonies"
 import type { HarmonyType, PaletteMeta } from "./internal/types"
 import { color_store } from "./state"
@@ -149,11 +151,11 @@ export const ColorDetailsModal = ({ palette, onClose }: ColorDetailsModalProps) 
       header={palette.name}
       content={
         <Flex direction="column" gap="lg" maxW={720}>
-          <Flex gap="lg" align="stretch">
-            <Flex direction="column" gap="xl" style={{ flexShrink: 0, width: 300 }}>
-              <div ref={setWheelElement} class="wheel-container"></div>
+          <div class={layout}>
+            <div class={wheelColumn}>
+              <div ref={setWheelElement} class={`wheel-container ${wheelContainer}`}></div>
 
-              <Flex direction="column" gap="xs">
+              <Flex direction="column" gap="xs" w="100%" my={vars.space.md}>
                 <Text color="muted">Harmony</Text>
                 <Select
                   ariaLabel="Harmony"
@@ -162,14 +164,13 @@ export const ColorDetailsModal = ({ palette, onClose }: ColorDetailsModalProps) 
                   onChange={handleHarmonyChange}
                 />
               </Flex>
-            </Flex>
+            </div>
 
-            <Flex direction="row" gap="xs" flex={1} ml={42}>
+            <div class={swatchColumn}>
               {colors5.value.map((c, i) => (
-                <Flex key={i} direction="column" flex={1} align="center" gap="md">
+                <div key={i} class={swatchItem}>
                   <Box
-                    flex={1}
-                    w="100%"
+                    class={swatchBox}
                     bg={c || "transparent"}
                     bd={
                       i === 0 && c
@@ -181,10 +182,10 @@ export const ColorDetailsModal = ({ palette, onClose }: ColorDetailsModalProps) 
                     title={c || undefined}
                   />
                   {c && <Text size="xs">{c}</Text>}
-                </Flex>
+                </div>
               ))}
-            </Flex>
-          </Flex>
+            </div>
+          </div>
 
           <Box w="100%">
             <Input

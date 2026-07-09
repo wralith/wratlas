@@ -119,6 +119,7 @@ export const ToolbarCombobox = () => {
         placeholder="Select canvas"
         searchPlaceholder="Search canvases..."
         emptyLabel="No canvases"
+        position="bottom"
       />
 
       <Modal

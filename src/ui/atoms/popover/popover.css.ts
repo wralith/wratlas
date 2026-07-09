@@ -17,12 +17,22 @@ export const panel = style({
   padding: vars.space.sm,
 })
 
-export const panelTop = style({
+export const panelTopStart = style({
   bottom: "calc(100% + 8px)",
   left: 0,
 })
 
-export const panelBottom = style({
+export const panelTopEnd = style({
+  bottom: "calc(100% + 8px)",
+  right: 0,
+})
+
+export const panelBottomStart = style({
   top: "calc(100% + 8px)",
   left: 0,
+})
+
+export const panelBottomEnd = style({
+  top: "calc(100% + 8px)",
+  right: 0,
 })

@@ -11,10 +11,10 @@ export const container = style({
   zIndex: vars.z.roadmapLines,
   "@media": {
     [mobileAndTablet]: {
-      position: "static",
+      position: "relative",
       margin: "0.5rem 1rem 0",
       width: "auto",
-      zIndex: "auto",
+      zIndex: vars.z.hud,
     },
   },
 })

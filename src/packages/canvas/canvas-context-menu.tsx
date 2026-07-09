@@ -68,7 +68,8 @@ export const CanvasContextMenu = () => {
     const activeCanvas = fabric_canvas.value
     if (!activeCanvas) return
 
-    const longPressMs = 500
+    const LONG_PRESS_MS = 500
+    const MOVE_THRESHOLD = 10
     let longPressTimer: ReturnType<typeof setTimeout> | null = null
     let longPressPos: { x: number; y: number } | null = null
     let touchMoved = false
@@ -82,38 +83,44 @@ export const CanvasContextMenu = () => {
       touchMoved = false
     }
 
+    const isTouchPointer = (e: PointerEvent | Touch) => {
+      if ("pointerType" in e) return e.pointerType === "touch" || e.pointerType === "pen"
+      return typeof (e as Touch).identifier === "number"
+    }
+
     const handleNativeContextMenu = (event: Event) => {
       event.preventDefault()
     }
 
-    const handleMouseDown = (event: TPointerEventInfo<TPointerEvent>) => {
-      // biome-ignore lint/suspicious/noExplicitAny: fabric event shape depends on input source
-      const native = event.e as any
+    const showMenu = (x: number, y: number, target: MenuTarget) => {
+      state.value = { open: true, x, y, target }
+    }
 
-      if (typeof native.button === "number") {
+    const handleMouseDown = (event: TPointerEventInfo<TPointerEvent>) => {
+      const native = event.e as PointerEvent & Touch
+
+      if ("pointerType" in native && native.pointerType === "mouse") {
         if (native.button !== 2) {
           state.value = initial_state
           return
         }
-        native.preventDefault?.()
-
+        native.preventDefault()
+        const target: MenuTarget = event.target ? "object" : "canvas"
         if (event.target) {
           activeCanvas.setActiveObject(event.target)
           activeCanvas.requestRenderAll()
-          state.value = { open: true, x: native.clientX, y: native.clientY, target: "object" }
-          return
+        } else {
+          activeCanvas.discardActiveObject()
+          activeCanvas.requestRenderAll()
         }
-
-        activeCanvas.discardActiveObject()
-        activeCanvas.requestRenderAll()
-        state.value = { open: true, x: native.clientX, y: native.clientY, target: "canvas" }
+        showMenu(native.clientX, native.clientY, target)
         return
       }
 
-      state.value = initial_state
+      if (!isTouchPointer(native)) return
+      if (!is_touch_device) return
 
-      if (!is_touch_device.value) return
-      if (native.identifier === undefined) return
+      state.value = initial_state
 
       if (event.target) {
         activeCanvas.setActiveObject(event.target)
@@ -128,34 +135,35 @@ export const CanvasContextMenu = () => {
 
       longPressTimer = setTimeout(() => {
         if (!touchMoved && longPressPos) {
-          state.value = {
-            open: true,
-            x: longPressPos.x,
-            y: longPressPos.y,
-            target: event.target ? "object" : "canvas",
-          }
+          showMenu(longPressPos.x, longPressPos.y, event.target ? "object" : "canvas")
         }
         clearLongPress()
-      }, longPressMs)
+      }, LONG_PRESS_MS)
+    }
+
+    const handleMove = (event: TPointerEventInfo<TPointerEvent>) => {
+      if (!longPressTimer || !longPressPos) return
+      const native = event.e as PointerEvent
+      const dx = Math.abs(native.clientX - longPressPos.x)
+      const dy = Math.abs(native.clientY - longPressPos.y)
+      if (dx > MOVE_THRESHOLD || dy > MOVE_THRESHOLD) touchMoved = true
+    }
+
+    const handleUp = () => {
+      clearLongPress()
     }
 
     activeCanvas.upperCanvasEl.addEventListener("contextmenu", handleNativeContextMenu)
-    activeCanvas.upperCanvasEl.addEventListener("touchmove", () => {
-      touchMoved = true
-    })
-    activeCanvas.upperCanvasEl.addEventListener("touchend", clearLongPress)
-    activeCanvas.upperCanvasEl.addEventListener("touchcancel", clearLongPress)
     const disposeMouseDown = activeCanvas.on("mouse:down", handleMouseDown)
+    const disposeMouseMove = activeCanvas.on("mouse:move", handleMove)
+    const disposeMouseUp = activeCanvas.on("mouse:up", handleUp)
 
     return () => {
       clearLongPress()
       activeCanvas.upperCanvasEl?.removeEventListener("contextmenu", handleNativeContextMenu)
-      activeCanvas.upperCanvasEl?.removeEventListener("touchmove", () => {
-        touchMoved = true
-      })
-      activeCanvas.upperCanvasEl?.removeEventListener("touchend", clearLongPress)
-      activeCanvas.upperCanvasEl?.removeEventListener("touchcancel", clearLongPress)
       disposeMouseDown()
+      disposeMouseMove()
+      disposeMouseUp()
     }
   })
 

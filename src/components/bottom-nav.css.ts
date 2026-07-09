@@ -24,10 +24,8 @@ export const nav = style({
 
 export const navItem = style({
   display: "flex",
-  flexDirection: "column",
   alignItems: "center",
   justifyContent: "center",
-  gap: 2,
   flex: 1,
   height: "100%",
   padding: "4px 8px",
@@ -36,6 +34,7 @@ export const navItem = style({
   color: vars.text.muted,
   fontFamily: vars.font.ui,
   fontSize: vars.textSize.xs,
+  fontWeight: 600,
   cursor: "pointer",
   minHeight: 44,
   minWidth: 44,
@@ -44,4 +43,5 @@ export const navItem = style({
 
 export const navItemActive = style({
   color: vars.color.primary,
+  borderTop: `2px solid ${vars.color.primary}`,
 })

@@ -28,7 +28,7 @@ export type TooltipProps = {
 export const Tooltip = (props: TooltipProps) => {
   const { content, children, placement = "bottom", offset: ofs = 8, portal = true } = props
 
-  if (is_touch_device.value) return <>{children}</>
+  if (is_touch_device) return <>{children}</>
 
   const [open, setOpen] = useState(false)
 

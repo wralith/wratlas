@@ -1,15 +1,15 @@
 import { style } from "@vanilla-extract/css"
 import { mobileAndTablet } from "@/lib/responsive.css"
+import { vars } from "@/styles/vars.css.ts"
 
 export const layout = style({
   display: "flex",
-  gap: "var(--space-lg)",
+  gap: vars.space.lg,
   alignItems: "stretch",
   "@media": {
     [mobileAndTablet]: {
       flexDirection: "column",
       alignItems: "stretch",
-      gap: "var(--space-lg)",
     },
   },
 })
@@ -19,12 +19,12 @@ export const wheelColumn = style({
   width: 300,
   display: "flex",
   flexDirection: "column",
-  gap: "var(--space-xl)",
+  gap: vars.space.xl,
   "@media": {
     [mobileAndTablet]: {
       width: "100%",
       alignItems: "center",
-      gap: "var(--space-lg)",
+      gap: vars.space.lg,
     },
   },
 })
@@ -32,13 +32,13 @@ export const wheelColumn = style({
 export const swatchColumn = style({
   display: "flex",
   flexDirection: "row",
-  gap: "var(--space-xs)",
+  gap: vars.space.xs,
   flex: 1,
   marginLeft: 42,
   "@media": {
     [mobileAndTablet]: {
       flexDirection: "row",
-      gap: "var(--space-sm)",
+      gap: vars.space.sm,
       marginLeft: 0,
       minHeight: 80,
     },
@@ -50,11 +50,11 @@ export const swatchItem = style({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  gap: "var(--space-md)",
+  gap: vars.space.md,
   "@media": {
     [mobileAndTablet]: {
       flexDirection: "column-reverse",
-      gap: "var(--space-sm)",
+      gap: vars.space.sm,
     },
   },
 })

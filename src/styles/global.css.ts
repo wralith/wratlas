@@ -1,7 +1,6 @@
 import { globalStyle } from "@vanilla-extract/css"
+import { mobile } from "@/lib/responsive.css"
 import { vars } from "@/styles/vars.css.ts"
-
-const mobile = "screen and (max-width: 767px)"
 
 globalStyle("*, *::before, *::after", {
   boxSizing: "border-box",

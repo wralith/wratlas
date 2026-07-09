@@ -20,6 +20,7 @@ type AssetStorage = {
 }
 
 const ASSETS_INDEX_KEY = "wratlas.assets.v1.index"
+const TOURS_KEY = "wratlas.tours"
 
 export class AssetsPage {
   readonly page: Page
@@ -39,6 +40,9 @@ export class AssetsPage {
         request.onblocked = () => resolve()
       })
     }, ASSETS_INDEX_KEY)
+    await this.page.evaluate(toursKey => {
+      localStorage.setItem(toursKey, JSON.stringify({ assets_intro: true }))
+    }, TOURS_KEY)
   }
 
   goto = async () => {

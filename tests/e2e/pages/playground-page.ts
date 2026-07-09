@@ -29,6 +29,7 @@ type Point = {
 
 const CANVAS_INDEX_KEY = "wratlas.canvas.v1.index"
 const ASSETS_INDEX_KEY = "wratlas.assets.v1.index"
+const TOURS_KEY = "wratlas.tours"
 const IMAGE_DB_NAME = "wratlas-canvas-images-db"
 
 export class PlaygroundPage {
@@ -55,6 +56,10 @@ export class PlaygroundPage {
         request.onblocked = () => resolve()
       })
     }, IMAGE_DB_NAME)
+
+    await this.page.evaluate(toursKey => {
+      localStorage.setItem(toursKey, JSON.stringify({ canvas_intro: true, assets_intro: true, colors_intro: true }))
+    }, TOURS_KEY)
   }
 
   goto = async () => {

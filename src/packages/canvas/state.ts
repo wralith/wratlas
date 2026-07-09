@@ -31,6 +31,6 @@ export const text_color = signal("#cdd6f4")
 
 export const nav_tools_open = signal(true)
 
-export const object_details_open = signal(false)
+export const object_details_open = signal(true)
 
 export const last_mouse_scene_point = signal<{ x: number; y: number } | null>(null)

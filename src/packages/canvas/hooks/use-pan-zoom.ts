@@ -28,7 +28,7 @@ export const usePanZoom = () => {
       if (!canvas.viewportTransform) return
 
       if (is_mod_key(e)) {
-        const delta = -e.deltaY
+        const delta = e.deltaY
         let zoom = canvas.getZoom()
         zoom *= 0.999 ** delta
         zoom = clamp_zoom(zoom)
@@ -39,8 +39,8 @@ export const usePanZoom = () => {
       }
 
       const vpt = canvas.viewportTransform
-      vpt[4] -= e.deltaX
-      vpt[5] -= e.deltaY
+      vpt[4] += e.deltaX
+      vpt[5] += e.deltaY
       refreshViewport()
     }
 

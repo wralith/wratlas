@@ -13,12 +13,22 @@ type Rect = { x: number; y: number; w: number; h: number }
 const MC_W = 200
 const MC_H = 140
 
-const get_object_bounds = (obj: Record<string, unknown>): Rect => ({
-  x: (obj.left as number) ?? 0,
-  y: (obj.top as number) ?? 0,
-  w: ((obj.width as number) ?? 0) * ((obj.scaleX as number) ?? 1),
-  h: ((obj.height as number) ?? 0) * ((obj.scaleY as number) ?? 1),
-})
+const get_object_bounds = (obj: Record<string, unknown>): Rect => {
+  const left = (obj.left as number) ?? 0
+  const top = (obj.top as number) ?? 0
+  const w = ((obj.width as number) ?? 0) * ((obj.scaleX as number) ?? 1)
+  const h = ((obj.height as number) ?? 0) * ((obj.scaleY as number) ?? 1)
+
+  const ox = obj.originX as string
+  const oy = obj.originY as string
+
+  return {
+    x: ox === "center" ? left - w / 2 : left,
+    y: oy === "center" ? top - h / 2 : top,
+    w,
+    h,
+  }
+}
 
 const get_world_bounds = () => {
   const canvas = fabric_canvas.value
@@ -28,10 +38,25 @@ const get_world_bounds = () => {
   const panX = pan_x.value
   const panY = pan_y.value
 
-  const vpX = -panX / zoom
-  const vpY = -panY / zoom
-  const vpW = canvas.width / zoom
-  const vpH = canvas.height / zoom
+  const el = canvas.getElement()
+  const wrapper = el.parentElement
+  if (!wrapper) return null
+
+  const cvRect = el.getBoundingClientRect()
+  const wrRect = wrapper.getBoundingClientRect()
+
+  const visibleLeft = Math.max(0, wrRect.left - cvRect.left)
+  const visibleTop = Math.max(0, wrRect.top - cvRect.top)
+  const visibleRight = Math.min(cvRect.width, wrRect.right - cvRect.left)
+  const visibleBottom = Math.min(cvRect.height, wrRect.bottom - cvRect.top)
+
+  const visibleCssW = Math.max(0, visibleRight - visibleLeft)
+  const visibleCssH = Math.max(0, visibleBottom - visibleTop)
+
+  const vpX = (visibleLeft - panX) / zoom
+  const vpY = (visibleTop - panY) / zoom
+  const vpW = visibleCssW / zoom
+  const vpH = visibleCssH / zoom
 
   const objects = canvas.getObjects().map(o => o.toObject() as Record<string, unknown>)
 
@@ -65,7 +90,7 @@ const get_world_bounds = () => {
   }
 }
 
-const minimap_to_canvas = (clientX: number, clientY: number, el: HTMLElement) => {
+const minimap_to_canvas = (clientX: number, clientY: number, el: HTMLCanvasElement) => {
   const bounds = get_world_bounds()
   if (!bounds) return null
 
